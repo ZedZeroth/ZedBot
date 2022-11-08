@@ -1,0 +1,3 @@
+## Zed's Currency Trading Bot
+
+More details coming soon...
