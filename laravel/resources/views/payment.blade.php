@@ -16,7 +16,13 @@
         <h2>PlatformId: {{ $payment->platformId }}</h2>
         <h2>PublicId: {{ $payment->publicId }}</h2>
 
-        <p>Currency: {{ $payment->currency->symbol }}</p>
+        <p>Amount: {{ $payment->amount }}</p>
+        <p>Currency:
+            <a href='/currency/{{ $payment->currency()->first()->code }}'>
+                {{ $payment->currency()->first()->code }}
+                ({{ $payment->currency()->first()->nameSingular }})
+            </a>
+        </p>
 
     </body>
 </html>

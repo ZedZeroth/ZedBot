@@ -33,5 +33,21 @@
             {{ $currency->baseUnitNamePlural }}
         </p>
 
+        <h3>Related payments</h3>
+
+        <?php
+        foreach ($currency->payments()->get() as $payment) {
+            echo "
+                <p>
+                    $payment->id.
+                    <a href='/payment/$payment->id'>
+                        $payment->amount
+                        $payment->currency
+                    </a>
+                </p>
+            ";
+        }
+        ?>
+
     </body>
 </html>

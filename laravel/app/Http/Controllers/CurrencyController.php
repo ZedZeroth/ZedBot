@@ -15,7 +15,7 @@ class CurrencyController extends Controller
     public function showAll()
     {
         /* Create currencies if they do not exist */
-        if (!Currency::all()) {
+        if (!Currency::all()->count()) {
             $this->createAll();
         }
 
@@ -33,6 +33,8 @@ class CurrencyController extends Controller
      */
     public function show($code)
     {
+        //var_dump(Currency::findOrFail($code)->payments()->get());
+
         return view('currency', [
             'currency' => Currency::findOrFail($code)
         ]);

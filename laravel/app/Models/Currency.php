@@ -37,4 +37,16 @@ class Currency extends Model
      * @var string
      */
     protected $keyType = 'string';
+
+    /**
+    * Get the payments in this currency.
+    */
+    public function payments()
+    {
+        return $this->hasMany(
+            Payment::class,
+            'currency',
+            'code'
+        );
+    }
 }

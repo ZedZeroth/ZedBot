@@ -16,7 +16,8 @@
                 <p>
                     $payment->id.
                     <a href='payment/$payment->id'>
-                        $payment->money->amount
+                        $payment->amount
+                        $payment->currency
                     </a>
                 </p>
             ";
