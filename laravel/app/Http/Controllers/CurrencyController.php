@@ -14,6 +14,12 @@ class CurrencyController extends Controller
      */
     public function showAll()
     {
+        /* Create currencies if they do not exist */
+        if (!Currency::all()) {
+            $this->createAll();
+        }
+
+        /* Show all currencies */
         return view('currencies', [
             'currencies' => Currency::all()
         ]);

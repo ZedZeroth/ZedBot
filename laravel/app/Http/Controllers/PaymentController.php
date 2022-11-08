@@ -7,7 +7,6 @@ use App\Models\Payment;
 
 class PaymentController extends Controller
 {
-    
     /**
      * Show all payments.
      *
@@ -43,7 +42,8 @@ class PaymentController extends Controller
         $payment = Payment::updateOrCreate(
             ['id' => '1'],
             [
-                'money' => new Money,
+                'amount' => 0,
+                'currency' => 'BTC'
             ]
         );
     }

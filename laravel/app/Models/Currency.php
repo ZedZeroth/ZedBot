@@ -10,27 +10,6 @@ class Currency extends Model
     use HasFactory;
 
     /**
-     * The primary key associated with the table.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'code';
-
-    /**
-     * Indicates if the model's ID is auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * The data type of the auto-incrementing ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -44,4 +23,18 @@ class Currency extends Model
         'baseUnitNamePlural',
         'decimalPlaces',
     ];
+
+    /**
+     * The primary key associated with the table.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'code';
+
+    /**
+     * The data type of the auto-incrementing ID.
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
 }

@@ -15,6 +15,19 @@ class Payment extends Model
      * @var array
      */
     protected $fillable = [
-        'money',
+        'amount',
+        'currency',
     ];
+
+    /**
+     * Defines the payment's currency relation.
+     */
+    public function currency()
+    {
+        return $this->belongsTo(
+            Currency::class,
+            'currency',
+            'code'
+        );
+    }
 }
