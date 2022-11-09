@@ -10,18 +10,15 @@
 
         <h1>Currencies</h1>
 
-        <?php
-        foreach ($currencies as $currency) {
-            echo "
-                <p>
-                    $currency->id.
-                    <a href='currency/$currency->code'>
-                        $currency->code
+        <ol>
+            @foreach($currencies as $currency)
+                <li>
+                    <a href='currency/{{ $currency->code }}'>
+                        {{ $currency->code }}
                     </a>
-                </p>
-            ";
-        }
-        ?>
+                </li>
+            @endforeach
+        </ol>
 
     </body>
 </html>

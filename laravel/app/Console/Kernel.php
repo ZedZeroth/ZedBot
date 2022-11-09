@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
 
-        Commands\CurrencyCreateAllCommand::class,
+        Commands\PopulateCurrenciesCommand::class,
+        Commands\SchedulerIsRunningCommand::class,
 
     ];
 
@@ -24,7 +25,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('schedule:running')->everyMinute();//->appendOutputTo('zedlog');
+        $schedule->command('currencies:populate')->everyMinute();//->appendOutputTo('zedlog');
     }
 
     /**

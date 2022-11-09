@@ -10,19 +10,15 @@
 
         <h1>Payments</h1>
 
-        <?php
-        foreach ($payments as $payment) {
-            echo "
-                <p>
-                    $payment->id.
-                    <a href='payment/$payment->id'>
-                        $payment->amount
-                        $payment->currency
-                    </a>
-                </p>
-            ";
-        }
-        ?>
+        @foreach($payments as $payment)
+            <p>
+                {{ $payment->id }}.
+                <a href='payment/$payment->id'>
+                    {{ $payment->amount }}
+                    {{ $payment->currency }}
+                </a>
+            </p>
+        @endforeach
 
     </body>
 </html>

@@ -1,3 +1,28 @@
+@font-face {
+    font-family: ShareTech;
+    src: url(ShareTech-Regular.ttf);
+}
+
+body {
+    font-size: 200%;
+    font-family: ShareTech;
+}
+
+button {
+    font-size: 100%;
+    font-family: ShareTech;
+    background-color: #F80;
+}
+
+button:hover {
+    background-color: #FA2;
+}
+
+a:hover {
+    color: #E70;
+    text-decoration: none;
+  }
+
 h1 {
     color: #E70;
 }
@@ -9,4 +34,8 @@ h2 {
 a {
     color: #A30;
     font-weight: bold;
+}
+
+li {
+    line-height: 2.2;
 }

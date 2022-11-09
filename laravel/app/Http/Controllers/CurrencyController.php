@@ -14,12 +14,6 @@ class CurrencyController extends Controller
      */
     public function showAll()
     {
-        /* Create currencies if they do not exist */
-        if (!Currency::all()->count()) {
-            $this->createAll();
-        }
-
-        /* Show all currencies */
         return view('currencies', [
             'currencies' => Currency::all()
         ]);
@@ -33,18 +27,16 @@ class CurrencyController extends Controller
      */
     public function show($code)
     {
-        //var_dump(Currency::findOrFail($code)->payments()->get());
-
         return view('currency', [
             'currency' => Currency::findOrFail($code)
         ]);
     }
 
     /**
-     * Create all currencies in the database.
+     * Creates all required currencies.
      *
      */
-    public function createAll()
+    public function populate()
     {
         /* BTC */
         $currency = Currency::updateOrCreate(
@@ -69,6 +61,19 @@ class CurrencyController extends Controller
                 'baseUnitNameSingular' => 'penny',
                 'baseUnitNamePlural' => 'pence',
                 'decimalPlaces' => 2,
+            ]
+        );
+
+        /* ETH */
+        $currency = Currency::updateOrCreate(
+            ['code' => 'ETH'],
+            [
+                'symbol' => 'Ξ',
+                'nameSingular' => 'ether',
+                'namePlural' => 'ether',
+                'baseUnitNameSingular' => 'wei',
+                'baseUnitNamePlural' => 'wei',
+                'decimalPlaces' => 18,
             ]
         );
     }

@@ -14,15 +14,6 @@ class PaymentController extends Controller
      */
     public function showAll()
     {
-        /* Create payments if they do not exist */
-        if (!Payment::all()->count()) {
-            $this->upsertNew();
-        }
-
-        /* Create a new payment */
-        $this->create();
-
-        /* Show all payments */
         return view('payments', [
             'payments' => Payment::all()
         ]);
@@ -42,27 +33,28 @@ class PaymentController extends Controller
     }
 
     /**
-     * Inserts a new relational payment.
+     * Inserts a new payment.
      *
      */
-    private function create()
+    public function create()
     {
         /* Testing... */
         $payment = Payment::factory()
+            /* How does this work? */
             //->hasCurrency(1, ['code' => 'BTC'])
             ->create(
                 [
-                    'amount' => 0,
+                    'amount' => rand(1, 100),
                     'currency' => 'GBP'
                 ]
             );
     }
 
     /**
-     * Upsert any new payments into the database from API calls.
+     * Upsert (insert new / update existing) payments.
      *
      */
-    private function upsertNew()
+    private function upsert()
     {
         /* Testing... */
         $payment = Payment::updateOrCreate(
