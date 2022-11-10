@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use App\Models\Payment;
 
 class PaymentController extends Controller
@@ -20,7 +21,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * Show the profile for a given payment.
+     * Show one payment by ID.
      *
      * @param  string  $id
      * @return \Illuminate\View\View
@@ -38,7 +39,7 @@ class PaymentController extends Controller
      */
     public function create()
     {
-        /* Testing... */
+        // Factory advantages?
         $payment = Payment::factory()
             /* How does this work? */
             //->hasCurrency(1, ['code' => 'BTC'])
@@ -51,18 +52,33 @@ class PaymentController extends Controller
     }
 
     /**
-     * Upsert (insert new / update existing) payments.
+     * Fetches recent payments from external platforms
+     * and inserts any new ones.
      *
+     * @param string $platform
+     * @return array
      */
-    private function upsert()
+    public function sync($platform)
     {
-        /* Testing... */
-        $payment = Payment::updateOrCreate(
-            ['id' => '1'],
-            [
-                'amount' => 0,
-                'currency' => 'BTC'
-            ]
-        );
+        // Fetch the payment data
+        $adapterClass = 'App\Http\Controllers\PaymentAdapterFor' . $platform;
+        $recentPaymentDTOs = (new PaymentFetcher())
+            ->fetch(new $adapterClass());
+
+        foreach ($recentPaymentDTOs as $dto) {
+            echo Payment::firstOrCreate(
+                ['platformIdentifier' => $dto->platformIdentifier],
+                [
+                    'platform' => $dto->platform,
+                    'currency' => $dto->currency,
+                    'amount' => $dto->amount,
+                    'platformIdentifier' => $dto->platformIdentifier,
+                    'publicIdentifier' => $dto->publicIdentifier,
+                    'timestamp' => $dto->timestamp,
+                ]
+            );
+        }
+
+        return $recentPaymentDTOs;
     }
 }

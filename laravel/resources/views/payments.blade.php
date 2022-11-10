@@ -6,14 +6,15 @@
 
     <body>
 
-        <a href="..">Back</a>
+    <a href="/">🏠</a> &bull; <a href="/">↩️</a>
 
         <h1>Payments</h1>
 
         @foreach($payments as $payment)
             <p>
-                {{ $payment->id }}.
-                <a href='payment/$payment->id'>
+                {{ $payment->timestamp }}
+                
+                <a href='payment/{{ $payment->id }}'>
                     {{ $payment->amount }}
                     {{ $payment->currency }}
                 </a>

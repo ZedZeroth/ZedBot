@@ -9,19 +9,23 @@
 
     <body>
 
-        <a href="/payments">Back</a>
+        <a href="/">🏠</a> &bull; <a href="/payments">↩️</a>
 
         <h1>Payment: {{ $payment->id }}</h1>
 
-        <h2>PlatformId: {{ $payment->platformId }}</h2>
-        <h2>PublicId: {{ $payment->publicId }}</h2>
+        <h3>Platform Identifier: {{ $payment->platformIdentifier }}</h3>
+        <h3>Public Identifier: {{ $payment->publicIdentifier }}</h3>
 
         <p>Amount: {{ $payment->amount }}</p>
         <p>Currency:
             <a href='/currency/{{ $payment->currency()->first()->code }}'>
                 {{ $payment->currency()->first()->code }}
-                ({{ $payment->currency()->first()->nameSingular }})
+                &bull;
+                {{ $payment->currency()->first()->symbol }}
+                &bull;
+                {{ $payment->currency()->first()->nameSingular }}
             </a>
+            <p>Timestamp: {{ $payment->timestamp }}</p>
         </p>
 
     </body>

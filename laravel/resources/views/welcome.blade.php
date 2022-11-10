@@ -10,7 +10,7 @@
 
     <body>
 
-        <h1>ZedBot v0.0</h1>
+        <h1>ZedBot v0.1</h1>
 
          
         

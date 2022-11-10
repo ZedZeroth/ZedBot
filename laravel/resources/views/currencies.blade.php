@@ -6,7 +6,7 @@
 
     <body>
 
-        <a href="..">Back</a>
+    <a href="/">🏠</a> &bull; <a href="/">↩️</a>
 
         <h1>Currencies</h1>
 
@@ -15,6 +15,7 @@
                 <li>
                     <a href='currency/{{ $currency->code }}'>
                         {{ $currency->code }}
+                        ({{ $currency->symbol }})
                     </a>
                 </li>
             @endforeach

@@ -10,13 +10,12 @@ class Payment extends Model
     use HasFactory;
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that aren't mass assignable.
      *
      * @var array
      */
-    protected $fillable = [
-        'amount',
-        'currency',
+    protected $guarded = [
+        'id',
     ];
 
     /**

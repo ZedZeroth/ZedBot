@@ -21,13 +21,7 @@ use App\Http\Controllers\PaymentController;
 
 /* Welcome page */
 Route::get('/', function () {
-    return view(
-        'welcome',
-        [
-            'currencies' => Currency::all(),
-            'payments' => Payment::all()
-        ]
-    );
+    return view('welcome');
 });
 
 /* Currencies */
