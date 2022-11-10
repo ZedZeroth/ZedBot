@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
-    use HasFactory;
-
     /**
      * The attributes that aren't mass assignable.
      *
@@ -27,6 +25,21 @@ class Payment extends Model
             Currency::class,
             'currency',
             'code'
+        );
+    }
+
+    /**
+     * Formats the payment amount into non-base units.
+     *
+     * @return string
+     */
+    public function formatAmount()
+    {
+        return number_format(
+            $this->amount / pow(10, $this->currency()->first()->decimalPlaces),
+            2,
+            '.',
+            ',',
         );
     }
 }

@@ -33,8 +33,8 @@ Route::get('/currencies/populate', function () {
 });
 
 /* Payments */
-Route::get('/payments', [PaymentController::class, 'showAll']);
-Route::get('/payment/{id}', [PaymentController::class, 'show']);
+Route::get('/payments', [PaymentController::class, 'viewAll']);
+Route::get('/payment/{id}', [PaymentController::class, 'viewById']);
 Route::get('/payments/fetch', function () {
     Artisan::call('payments:fetch');
     return Redirect::back();

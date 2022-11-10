@@ -16,7 +16,7 @@
         <h3>Platform Identifier: {{ $payment->platformIdentifier }}</h3>
         <h3>Public Identifier: {{ $payment->publicIdentifier }}</h3>
 
-        <p>Amount: {{ $payment->amount }}</p>
+        <p>Amount: {{ $payment->formatAmount() }}</p>
         <p>Currency:
             <a href='/currency/{{ $payment->currency()->first()->code }}'>
                 {{ $payment->currency()->first()->code }}

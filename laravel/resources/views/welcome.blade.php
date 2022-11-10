@@ -20,11 +20,11 @@
         <ol>
             <li>
                 <a href="currencies">Currencies</a>
-                <livewire:currency-populator />
+                <livewire:currency-populator-component />
             </li>
             <li>
                 <a href="payments">Payments</a>
-                <livewire:payment-fetcher />
+                <livewire:payment-fetcher-component />
             </li>
         </ol>
 

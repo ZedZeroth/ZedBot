@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use App\Models\Payment;
-
 class PaymentController extends Controller
 {
     /**
@@ -13,42 +9,20 @@ class PaymentController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function showAll()
+    public function viewAll()
     {
-        return view('payments', [
-            'payments' => Payment::all()
-        ]);
+        return (new PaymentViewer())->viewAll();
     }
 
     /**
-     * Show one payment by ID.
+     * Show one payment by its ID.
      *
      * @param  string  $id
      * @return \Illuminate\View\View
      */
-    public function show($id)
+    public function viewById($id)
     {
-        return view('payment', [
-            'payment' => Payment::findOrFail($id)
-        ]);
-    }
-
-    /**
-     * Inserts a new payment.
-     *
-     */
-    public function create()
-    {
-        // Factory advantages?
-        $payment = Payment::factory()
-            /* How does this work? */
-            //->hasCurrency(1, ['code' => 'BTC'])
-            ->create(
-                [
-                    'amount' => rand(1, 100),
-                    'currency' => 'GBP'
-                ]
-            );
+        return (new PaymentViewer())->viewById(id: $id);
     }
 
     /**
@@ -56,29 +30,15 @@ class PaymentController extends Controller
      * and inserts any new ones.
      *
      * @param string $platform
+     * @param int $numberOfPayments
      * @return array
      */
-    public function sync($platform)
+    public function sync($platform, $numberOfPayments)
     {
-        // Fetch the payment data
-        $adapterClass = 'App\Http\Controllers\PaymentAdapterFor' . $platform;
-        $recentPaymentDTOs = (new PaymentFetcher())
-            ->fetch(new $adapterClass());
-
-        foreach ($recentPaymentDTOs as $dto) {
-            echo Payment::firstOrCreate(
-                ['platformIdentifier' => $dto->platformIdentifier],
-                [
-                    'platform' => $dto->platform,
-                    'currency' => $dto->currency,
-                    'amount' => $dto->amount,
-                    'platformIdentifier' => $dto->platformIdentifier,
-                    'publicIdentifier' => $dto->publicIdentifier,
-                    'timestamp' => $dto->timestamp,
-                ]
+        return (new PaymentSynchroniser())
+            ->sync(
+                platform: $platform,
+                numberOfPayments: $numberOfPayments,
             );
-        }
-
-        return $recentPaymentDTOs;
     }
 }

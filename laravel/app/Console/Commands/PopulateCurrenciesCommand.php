@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\CurrencyController;
+use App\Models\Currency;
 
 class PopulateCurrenciesCommand extends Command
 {
@@ -30,11 +31,16 @@ class PopulateCurrenciesCommand extends Command
      */
     public function handle()
     {
+        /* Initial output messages */
+        $output = 'Populating currencies ...';
+        $this->info($output);
+        Log::info($output);
+
         /* Run the CurrencyController 'populate' method */
         (new CurrencyController())->populate();
 
-        /* Output messages */
-        $output = 'Currencies populated.';
+        /* Final output messages */
+        $output = '... ' . Currency::all()->count() . ' currencies populated.';
         $this->info($output);
         Log::info($output);
     }

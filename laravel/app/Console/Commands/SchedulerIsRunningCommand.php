@@ -30,7 +30,7 @@ class SchedulerIsRunningCommand extends Command
     public function handle()
     {
         /* Output messages */
-        $output = 'The scheduler is running...';
+        $output = 'The scheduler is running ...';
         $this->info($output);
         Log::info($output);
     }

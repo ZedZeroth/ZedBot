@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Currency;
+use App\Http\Livewire\CurrencyPopulatorComponent;
 
 class CurrencyController extends Controller
 {
@@ -76,5 +77,8 @@ class CurrencyController extends Controller
                 'decimalPlaces' => 18,
             ]
         );
+
+        // Refresh the web component
+        (new CurrencyPopulatorComponent())->render();
     }
 }

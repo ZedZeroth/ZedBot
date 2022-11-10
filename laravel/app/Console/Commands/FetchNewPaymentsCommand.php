@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\PaymentController;
+use App\Models\Payment;
 
 class FetchNewPaymentsCommand extends Command
 {
@@ -31,18 +32,47 @@ class FetchNewPaymentsCommand extends Command
     {
         // Try the PaymentController 'sync' method
         try {
-            $paymentsFetched = (new PaymentController())->sync('Enumis');
+            // Number of payments to fetch
+            // Add this as command argument?
+            $numberOfPayments = 100;
 
-            // Output success messages
-            $numberOfPaymentsFetched = count($paymentsFetched);
-            $output = $numberOfPaymentsFetched . ' payments fetched.';
-
-            if ($numberOfPaymentsFetched) {
+            // Initial output messages
+            $initialPayments = Payment::all()->count();
+            $outputs = [
+                '...',
+                '#####################################',
+                '### payments:fetch command called ###',
+                'There are ' . $initialPayments . ' payments.',
+                'Fetching ' . $numberOfPayments . ' most recent payments ...',
+            ];
+            foreach ($outputs as $output) {
                 $this->info($output);
                 Log::info($output);
-            } else {
-                $this->warn($output);
-                Log::warning($output);
+            }
+
+            // Run the commanded action
+            $paymentsFetched = (new PaymentController())
+                ->sync('Enumis', $numberOfPayments);
+
+            // Final output success messages
+            $numberOfPaymentsFetched = count($paymentsFetched);
+            $finalPayments = Payment::all()->count();
+
+            $outputs = [
+                '... ' . $numberOfPaymentsFetched . ' payments fetched.',
+                'There are now ' . $finalPayments . ' payments.',
+                ($finalPayments - $initialPayments) . ' new payments were created.',
+                '### payments:fetch command complete ###',
+                '#######################################',
+            ];
+            foreach ($outputs as $output) {
+                if ($numberOfPaymentsFetched) {
+                    $this->info($output);
+                    Log::info($output);
+                } else {
+                    $this->warn($output);
+                    Log::warning($output);
+                }
             }
         } catch (Throwable $e) {
             report($e);

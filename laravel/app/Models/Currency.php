@@ -7,22 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Currency extends Model
 {
-    use HasFactory;
-
     /**
-     * The attributes that are mass assignable.
+     * The attributes that aren't mass assignable.
      *
      * @var array
      */
-    protected $fillable = [
-        'code',
-        'symbol',
-        'nameSingular',
-        'namePlural',
-        'baseUnitNameSingular',
-        'baseUnitNamePlural',
-        'decimalPlaces',
-    ];
+    protected $guarded = [];
 
     /**
      * The primary key associated with the table.
