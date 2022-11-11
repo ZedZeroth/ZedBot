@@ -62,7 +62,9 @@ class PopulateCurrenciesCommand extends Command
         );
 
         // Run the commanded action
-        $currenciesPopulated = (new CurrencyController())->populate();
+        $currenciesPopulated = count(
+            (new CurrencyController())->populate()
+        );
 
         // Finalize
         $this->finish(

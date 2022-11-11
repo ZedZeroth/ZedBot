@@ -10,7 +10,7 @@
 
         <h1>Payments</h1>
 
-        @foreach($payments->sortByDesc('timestamp'); as $payment)
+        @foreach($payments->sortByDesc('timestamp') as $payment)
             <p>
                 {{ $payment->timestamp }}
                 

@@ -30,8 +30,10 @@ class FetchNewPaymentsCommand extends Command
      * @param int $numberOfPaymentsToFetch
      * @param int $initialPayments
      */
-    public function start($numberOfPaymentsToFetch, $initialPayments)
-    {
+    public function start(
+        int $numberOfPaymentsToFetch,
+        int $initialPayments
+    ) {
         $outputs = [
             'Current number of payments:         ' . $initialPayments,
             'Number of recent payments to fetch: ' . $numberOfPaymentsToFetch,
@@ -85,8 +87,11 @@ class FetchNewPaymentsCommand extends Command
      * @param int $initialPayments
      * @param int $paymentsFetched
      */
-    public function finish($numberOfPaymentsToFetch, $initialPayments, $paymentsFetched)
-    {
+    public function finish(
+        int $numberOfPaymentsToFetch,
+        int $initialPayments,
+        int $paymentsFetched
+    ) {
         $numberOfPaymentsFetched = count($paymentsFetched);
         $finalPayments = Payment::all()->count();
 

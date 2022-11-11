@@ -37,12 +37,9 @@
 
         @foreach($currency->payments()->get() as $payment)
             <p>
-                {{ $payment->timestamp }}
-                
-                <a href='/payment/{{ $payment->id }}'>
-                    {{ $payment->amount }}
-                    {{ $payment->currency }}
-                </a>
+                <a href='/payment/{{ $payment->id }}'>{{ $payment->timestamp }}</a>
+                {{ $payment->formatAmount() }}
+                {{ $payment->currency }}
             </p>
         @endforeach
 

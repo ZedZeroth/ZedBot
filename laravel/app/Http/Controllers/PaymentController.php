@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Payments\PaymentViewer;
+use App\Http\Controllers\Payments\PaymentSynchroniser;
+
 class PaymentController extends Controller
 {
     /**

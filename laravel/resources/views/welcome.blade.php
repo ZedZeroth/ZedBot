@@ -17,16 +17,24 @@
 
         <h2>Models</h2>
 
-        <ol>
-            <li>
-                <a href="currencies">Currencies</a>
-                <livewire:currency-populator-component />
-            </li>
-            <li>
+        <table>
+            <tr>
+                <td>
+                    <a href="currencies">Currencies</a>
+                </td>
+                <td>
+                    <livewire:currency-populator-component />
+                </td>
+            </tr>
+            <tr>
+                <td>
                 <a href="payments">Payments</a>
+                </td>
+                <td>
                 <livewire:payment-fetcher-component />
-            </li>
-        </ol>
+                </td>
+            </tr>
+        </table>
 
     </body>
 </html>
