@@ -85,12 +85,12 @@ class FetchNewPaymentsCommand extends Command
      *
      * @param int $numberOfPaymentsToFetch
      * @param int $initialPayments
-     * @param int $paymentsFetched
+     * @param array $paymentsFetched
      */
     public function finish(
         int $numberOfPaymentsToFetch,
         int $initialPayments,
-        int $paymentsFetched
+        array $paymentsFetched
     ) {
         $numberOfPaymentsFetched = count($paymentsFetched);
         $finalPayments = Payment::all()->count();

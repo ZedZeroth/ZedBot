@@ -13,6 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
+        /**
+         * ADD 'HELD' and 'CLAIMED' ATTRIBUTES!
+         */
+
         Schema::create('payments', function (Blueprint $table) {
             // Identifiable
             $table->id();

@@ -2,11 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
-use App\Models\Currency;
 use App\Http\Controllers\CurrencyController;
-use App\Console\Commands\PopulateCurrenciesCommand;
-use App\Models\Payment;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ChartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,3 +37,6 @@ Route::get('/payments/fetch', function () {
     Artisan::call('payments:fetch');
     return Redirect::back();
 });
+
+/* Charts */
+Route::get('/chart', [ChartController::class, 'view']);

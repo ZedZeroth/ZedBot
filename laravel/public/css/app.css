@@ -33,6 +33,7 @@ form {
 
 td {
     padding: 5px 10px;
+    vertical-align: top;
 }
 
 a:hover {
