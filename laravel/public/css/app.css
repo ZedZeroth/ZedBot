@@ -20,6 +20,17 @@ button:hover {
     background-color: #fa2;
 }
 
+input {
+    font-size: 100%;
+    font-family: ShareTech;
+    background-color: #fa2;
+    text-align: center;
+}
+
+form {
+    display: inline;
+}
+
 a:hover {
     color: #e70;
     text-decoration: none;

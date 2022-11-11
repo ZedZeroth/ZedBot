@@ -39,8 +39,10 @@ class CurrencyController extends Controller
      */
     public function populate()
     {
+        $currenciesCreatedCounter = 0;
+
         /* BTC */
-        $currency = Currency::updateOrCreate(
+        $currency = Currency::firstOrCreate(
             ['code' => 'BTC'],
             [
                 'symbol' => '₿',
@@ -51,9 +53,12 @@ class CurrencyController extends Controller
                 'decimalPlaces' => 8,
             ]
         );
+        if ($currency->wasRecentlyCreated) {
+            $currenciesCreatedCounter++;
+        }
 
         /* GBP */
-        $currency = Currency::updateOrCreate(
+        $currency = Currency::firstOrCreate(
             ['code' => 'GBP'],
             [
                 'symbol' => '£',
@@ -64,9 +69,12 @@ class CurrencyController extends Controller
                 'decimalPlaces' => 2,
             ]
         );
+        if ($currency->wasRecentlyCreated) {
+            $currenciesCreatedCounter++;
+        }
 
         /* ETH */
-        $currency = Currency::updateOrCreate(
+        $currency = Currency::firstOrCreate(
             ['code' => 'ETH'],
             [
                 'symbol' => 'Ξ',
@@ -77,8 +85,13 @@ class CurrencyController extends Controller
                 'decimalPlaces' => 18,
             ]
         );
+        if ($currency->wasRecentlyCreated) {
+            $currenciesCreatedCounter++;
+        }
 
         // Refresh the web component
         (new CurrencyPopulatorComponent())->render();
+
+        return $currenciesCreatedCounter;
     }
 }

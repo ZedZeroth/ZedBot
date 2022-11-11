@@ -25,23 +25,79 @@ class PopulateCurrenciesCommand extends Command
     protected $description = 'Creates all required currencies.';
 
     /**
+     * Initial output message
+     *
+     * @param int $initialCurrencies
+     */
+    public function start($initialCurrencies)
+    {
+        $outputs = [
+            'Current number of currencies:      ' . $initialCurrencies,
+            '... Populating ...',
+        ];
+
+        $formattedOutputs = (new OutputFormatter())->format(
+            commandName: $this->signature,
+            startOrEnd: 'start',
+            textArray: $outputs
+        );
+
+        foreach ($formattedOutputs as $output) {
+            $this->info($output);
+            Log::info($output);
+        }
+    }
+
+    /**
      * Execute the console command.
      *
-     * @return int
      */
     public function handle()
     {
-        /* Initial output messages */
-        $output = 'Populating currencies ...';
-        $this->info($output);
-        Log::info($output);
+        $initialCurrencies = Currency::all()->count();
 
-        /* Run the CurrencyController 'populate' method */
-        (new CurrencyController())->populate();
+        // Initialize
+        $this->start(
+            initialCurrencies: $initialCurrencies,
+        );
 
-        /* Final output messages */
-        $output = '... ' . Currency::all()->count() . ' currencies populated.';
-        $this->info($output);
-        Log::info($output);
+        // Run the commanded action
+        $currenciesPopulated = (new CurrencyController())->populate();
+
+        // Finalize
+        $this->finish(
+            initialCurrencies: $initialCurrencies,
+            currenciesPopulated: $currenciesPopulated,
+        );
+    }
+
+    /**
+     * Final output message
+     *
+     * @param int $initialCurrencies
+     * @param int $paymentsFetched
+     */
+    public function finish($initialCurrencies, $currenciesPopulated)
+    {
+        $numberOfCurrenciesPopulated = $currenciesPopulated;
+        $finalCurrencies = Currency::all()->count();
+
+        $outputs = [
+            '... [ DONE ] ...',
+            'Currencies successfully populated: ' . $numberOfCurrenciesPopulated,
+            'New total number of currencies:    ' . $finalCurrencies,
+            'New currencies created:            ' . ($finalCurrencies - $initialCurrencies),
+        ];
+
+        $formattedOutputs = (new OutputFormatter())->format(
+            commandName: $this->signature,
+            startOrEnd: 'end',
+            textArray: $outputs
+        );
+
+        foreach ($formattedOutputs as $output) {
+            $this->info($output);
+            Log::info($output);
+        }
     }
 }

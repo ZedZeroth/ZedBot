@@ -15,7 +15,7 @@ class FetchNewPaymentsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'payments:fetch';
+    protected $signature = 'payments:fetch {number}';
 
     /**
      * The console command description.
@@ -25,61 +25,92 @@ class FetchNewPaymentsCommand extends Command
     protected $description = 'Fetches new payments from payment platforms.';
 
     /**
+     * Initial output message
+     *
+     * @param int $numberOfPaymentsToFetch
+     * @param int $initialPayments
+     */
+    public function start($numberOfPaymentsToFetch, $initialPayments)
+    {
+        $outputs = [
+            'Current number of payments:         ' . $initialPayments,
+            'Number of recent payments to fetch: ' . $numberOfPaymentsToFetch,
+            '... Fetching ...',
+        ];
+
+        $formattedOutputs = (new OutputFormatter())->format(
+            commandName: $this->signature,
+            startOrEnd: 'start',
+            textArray: $outputs
+        );
+
+        foreach ($formattedOutputs as $output) {
+            $this->info($output);
+            Log::info($output);
+        }
+    }
+
+    /**
      * Execute the console command.
      *
      */
     public function handle()
     {
-        // Try the PaymentController 'sync' method
-        try {
-            // Number of payments to fetch
-            // Add this as command argument?
-            $numberOfPayments = 100;
+        $numberOfPaymentsToFetch = $this->argument('number');
+        $initialPayments = Payment::all()->count();
 
-            // Initial output messages
-            $initialPayments = Payment::all()->count();
-            $outputs = [
-                '...',
-                '#####################################',
-                '### payments:fetch command called ###',
-                'There are ' . $initialPayments . ' payments.',
-                'Fetching ' . $numberOfPayments . ' most recent payments ...',
-            ];
-            foreach ($outputs as $output) {
+        // Initialize
+        /* Add payment number as command argument */
+        $this->start(
+            numberOfPaymentsToFetch: $numberOfPaymentsToFetch,
+            initialPayments: $initialPayments,
+        );
+
+        // Run the commanded action
+        $paymentsFetched = (new PaymentController())
+            ->sync('Enumis', $numberOfPaymentsToFetch);
+
+        // Finalize
+        $this->finish(
+            numberOfPaymentsToFetch: $numberOfPaymentsToFetch,
+            initialPayments: $initialPayments,
+            paymentsFetched: $paymentsFetched,
+        );
+    }
+
+    /**
+     * Final output message
+     *
+     * @param int $numberOfPaymentsToFetch
+     * @param int $initialPayments
+     * @param int $paymentsFetched
+     */
+    public function finish($numberOfPaymentsToFetch, $initialPayments, $paymentsFetched)
+    {
+        $numberOfPaymentsFetched = count($paymentsFetched);
+        $finalPayments = Payment::all()->count();
+
+        $outputs = [
+            '... [ DONE ] ...',
+            'Payments successfully fetched: ' . $numberOfPaymentsFetched,
+            'New total number of payments:  ' . $finalPayments,
+            'New payments created:          ' . ($finalPayments - $initialPayments),
+        ];
+
+        $formattedOutputs = (new OutputFormatter())->format(
+            commandName: $this->signature,
+            startOrEnd: 'end',
+            textArray: $outputs
+        );
+
+        foreach ($formattedOutputs as $output) {
+            if ($numberOfPaymentsFetched) {
                 $this->info($output);
                 Log::info($output);
+            } else {
+                $this->warn($output);
+                Log::warning($output);
             }
-
-            // Run the commanded action
-            $paymentsFetched = (new PaymentController())
-                ->sync('Enumis', $numberOfPayments);
-
-            // Final output success messages
-            $numberOfPaymentsFetched = count($paymentsFetched);
-            $finalPayments = Payment::all()->count();
-
-            $outputs = [
-                '... ' . $numberOfPaymentsFetched . ' payments fetched.',
-                'There are now ' . $finalPayments . ' payments.',
-                ($finalPayments - $initialPayments) . ' new payments were created.',
-                '### payments:fetch command complete ###',
-                '#######################################',
-            ];
-            foreach ($outputs as $output) {
-                if ($numberOfPaymentsFetched) {
-                    $this->info($output);
-                    Log::info($output);
-                } else {
-                    $this->warn($output);
-                    Log::warning($output);
-                }
-            }
-        } catch (Throwable $e) {
-            report($e);
-            // Output error messages
-            $output = '!ERROR! ' . $e->getMessage();
-            $this->error($output);
-            Log::error($output);
         }
     }
 }
