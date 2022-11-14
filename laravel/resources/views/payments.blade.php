@@ -16,7 +16,7 @@
                 
                 <a href='payment/{{ $payment->id }}'>
                     {{ $payment->formatAmount() }}
-                    {{ $payment->currency }}
+                    {{ $payment->currency->code }}
                 </a>
             </p>
         @endforeach

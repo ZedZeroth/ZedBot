@@ -19,49 +19,16 @@ return new class extends Migration
 
         Schema::create('payments', function (Blueprint $table) {
             // Identifiable
-            $table->id();
-
-            // 'belongsTo' relationships
-            $table->string('platform');
-            $table->string('currency');
-
-            /**
-             * 'belongsToMany' account relationships are
-             * defined in the payment_orginator and
-             * payment_beneficiary intermediate tables.
-             */
-
-            // Non-relational attributes
-
-            /**
-             * Amount transfered in the currency base unit
-             */
+            $table->id(); // Laravel
+            $table->string('network'); // e.g. FPS, ethereum, LocalBitcoins
+            $table->string('identifier'); // For FPS this is currently Enumis-specific
             $table->integer('amount');
-
-            /**
-             * The ID reference used by the external platform.
-             * Banks: e.g. Enumis transaction ID
-             * Exchange: Transaction ID?
-             * Blockchain: TXID
-             */
-            $table->string('platformIdentifier');
-
-            /**
-             * A reference code shared between all parties.
-             * Banks: 'Payment Reference'
-             * Exchange: ???
-             * Blockchain: null
-             */
-            $table->string('publicIdentifier');
-
-            /**
-             * Datetime of the transaction as
-             * recorded by the external platform.
-             */
-            $table->timestamp('timestamp');
-
-            // Required by all
-            $table->timestamps();
+            $table->integer('currency_id'); // Currency
+            $table->integer('originator_id'); // Account
+            $table->integer('beneficiary_id'); // Account
+            $table->string('memo'); // e.g. Public payment reference
+            $table->timestamp('timestamp'); // On network
+            $table->timestamps(); // Laravel
         });
     }
 

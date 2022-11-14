@@ -12,21 +12,26 @@
         <a href="/">🏠</a> &bull; <a href="/payments">↩️</a>
 
         <h1>Payment: {{ $payment->id }}</h1>
+        <p>Timestamp: {{ $payment->timestamp }}</p>
 
-        <h3>Platform Identifier: {{ $payment->platformIdentifier }}</h3>
-        <h3>Public Identifier: {{ $payment->publicIdentifier }}</h3>
+        <h3>Memo: {{ $payment->memo }}</h3>
 
-        <p>Amount: {{ $payment->formatAmount() }}</p>
-        <p>Currency:
+        <h3>
+            Money: {{ $payment->formatAmount() }}
             <a href='/currency/{{ $payment->currency()->first()->code }}'>
-                {{ $payment->currency()->first()->code }}
-                &bull;
-                {{ $payment->currency()->first()->symbol }}
-                &bull;
-                {{ $payment->currency()->first()->nameSingular }}
+                {{ $payment->currency->code }}
             </a>
-            <p>Timestamp: {{ $payment->timestamp }}</p>
-        </p>
+        </h3>
+
+        <h3>
+            Accounts:
+            {{ $payment->originator->identifier }}
+            &rarr;
+            {{ $payment->beneficiary->identifier }}
+        </h3>
+
+        <p>Network: {{ $payment->network }}</p>
+        <p>Identifier: {{ $payment->identifier }}</p>
 
     </body>
 </html>

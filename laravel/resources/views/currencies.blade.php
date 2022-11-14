@@ -11,7 +11,7 @@
         <h1>Currencies</h1>
 
         <ol>
-            @foreach($currencies->sort() as $currency)
+            @foreach($currencies->sortBy('code') as $currency)
                 <li>
                     <a href='currency/{{ $currency->code }}'>
                         {{ $currency->code }}

@@ -12,20 +12,30 @@ class Payment extends Model
      *
      * @var array
      */
-    protected $guarded = [
-        'id',
-    ];
+    protected $guarded = [];
 
     /**
-     * Defines the payment's currency relation.
+     * Defines the payment's currency.
      */
     public function currency()
     {
-        return $this->belongsTo(
-            Currency::class,
-            'currency',
-            'code'
-        );
+        return $this->belongsTo(Currency::class);
+    }
+
+    /**
+     * Defines the originator account.
+     */
+    public function originator()
+    {
+        return $this->belongsTo(Account::class, 'originator_id');
+    }
+
+    /**
+     * Defines the beneficiary account.
+     */
+    public function beneficiary()
+    {
+        return $this->belongsTo(Account::class, 'beneficiary_id');
     }
 
     /**

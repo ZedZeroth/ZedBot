@@ -28,7 +28,7 @@ class CurrencyController extends Controller
     public function show($code)
     {
         return view('currency', [
-            'currency' => Currency::findOrFail($code)
+            'currency' => Currency::where('code', $code)->first()
         ]);
     }
 

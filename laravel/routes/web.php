@@ -38,5 +38,13 @@ Route::get('/payments/fetch', function () {
     return Redirect::back();
 });
 
+/* Accounts */
+Route::get('/accounts', [PaymentController::class, 'viewAll']);
+Route::get('/account/{id}', [PaymentController::class, 'viewById']);
+Route::get('/payments/fetch', function () {
+    Artisan::call('payments:fetch');
+    return Redirect::back();
+});
+
 /* Charts */
 Route::get('/chart', [ChartController::class, 'view']);

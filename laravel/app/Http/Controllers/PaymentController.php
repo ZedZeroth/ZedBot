@@ -32,15 +32,15 @@ class PaymentController extends Controller
      * Fetches recent payments from external platforms
      * and inserts any new ones.
      *
-     * @param string $platform
+     * @param string $provider
      * @param int $numberOfPayments
      * @return array
      */
-    public function sync($platform, $numberOfPayments)
+    public function sync($provider, $numberOfPayments)
     {
         return (new PaymentSynchroniser())
             ->sync(
-                platform: $platform,
+                provider: $provider,
                 numberOfPayments: $numberOfPayments,
             );
     }

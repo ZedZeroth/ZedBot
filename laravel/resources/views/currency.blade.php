@@ -39,7 +39,7 @@
             <p>
                 <a href='/payment/{{ $payment->id }}'>{{ $payment->timestamp }}</a>
                 {{ $payment->formatAmount() }}
-                {{ $payment->currency }}
+                {{ $payment->currency->code }}
             </p>
         @endforeach
 

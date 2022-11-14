@@ -33,7 +33,15 @@
                             <a href="payments">Payments</a>
                             </td>
                             <td>
-                            <livewire:payment-fetcher-component />
+                            <livewire:payment-synchronizer-component />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            <a href="accounts">Accounts</a>
+                            </td>
+                            <td>
+                            <livewire:account-synchronizer-component />
                             </td>
                         </tr>
                     </table>
@@ -41,7 +49,10 @@
 
                 <td>
                     <h2>Rates</h2>
-                    <livewire:rates-chart-component />
+                    DISABLED
+                    <!--
+                        <livewire:rates-chart-component />
+                    -->
                 </td>
             </tr>
         </table>
