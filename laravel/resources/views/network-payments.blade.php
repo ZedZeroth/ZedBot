@@ -6,20 +6,22 @@
 
     <body>
 
-    <a href="/">🏠</a> &bull; <a href="/">↩️</a>
+        <a href="/">🏠</a> &bull; <a href="/account/networks">↩️</a>
 
-        <h1>Payments</h1>
+        <h1>Payments on the {{ $network }} Network</h1>
 
-        @foreach($payments->sortByDesc('timestamp') as $payment)
-            <p>
+        <ul>
+        @foreach($paymentsOnNetwork as $payment)
+            <li>
                 {{ $payment->timestamp }}
                 
-                <a href='payment/{{ $payment->id }}'>
+                <a href='/payment/{{ $payment->id }}'>
                     {{ $payment->formatAmount() }}
                     {{ $payment->currency->code }}
                 </a>
-            </p>
+            </li>
         @endforeach
+        </ul>
 
     </body>
 </html>

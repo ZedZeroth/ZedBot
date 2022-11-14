@@ -2,9 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\ChartController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\ChartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,26 +26,16 @@ Route::get('/', function () {
 /* Currencies */
 Route::get('/currencies', [CurrencyController::class, 'showAll']);
 Route::get('/currency/{code}', [CurrencyController::class, 'show']);
-Route::get('/currencies/populate', function () {
-    Artisan::call('currencies:populate');
-    return Redirect::back();
-});
 
 /* Payments */
-Route::get('/payments', [PaymentController::class, 'viewAll']);
+Route::get('/payment/networks', [PaymentController::class, 'viewNetworks']);
+Route::get('/{network}/payments', [PaymentController::class, 'viewPaymentsOnNetwork']);
 Route::get('/payment/{id}', [PaymentController::class, 'viewById']);
-Route::get('/payments/fetch', function () {
-    Artisan::call('payments:fetch');
-    return Redirect::back();
-});
 
 /* Accounts */
-Route::get('/accounts', [PaymentController::class, 'viewAll']);
-Route::get('/account/{id}', [PaymentController::class, 'viewById']);
-Route::get('/payments/fetch', function () {
-    Artisan::call('payments:fetch');
-    return Redirect::back();
-});
+Route::get('/account/networks', [AccountController::class, 'viewNetworks']);
+Route::get('/{network}/accounts', [AccountController::class, 'viewAccountsOnNetwork']);
+Route::get('/account/{identfier}', [AccountController::class, 'viewByIdentifier']);
 
 /* Charts */
 Route::get('/chart', [ChartController::class, 'view']);

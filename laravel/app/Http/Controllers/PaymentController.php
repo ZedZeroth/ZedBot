@@ -8,13 +8,24 @@ use App\Http\Controllers\Payments\PaymentSynchroniser;
 class PaymentController extends Controller
 {
     /**
-     * Show all payments.
+     * Show all payment networks.
      *
      * @return \Illuminate\View\View
      */
-    public function viewAll()
+    public function viewNetworks()
     {
-        return (new PaymentViewer())->viewAll();
+        return (new PaymentViewer())->viewNetworks();
+    }
+
+    /**
+     * Show all payments on one payment network.
+     *
+     * @param  string  $network
+     * @return \Illuminate\View\View
+     */
+    public function viewPaymentsOnNetwork($network)
+    {
+        return (new PaymentViewer())->viewPaymentsOnNetwork(network: $network);
     }
 
     /**
