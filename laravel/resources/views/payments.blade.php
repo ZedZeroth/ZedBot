@@ -6,15 +6,19 @@
 
     <body>
 
-        <a href="/">🏠</a> &bull; <a href="/payment/networks">↩️</a>
+        <a href="/">🏠</a> &bull; <a href="/">↩️</a>
 
-        <h1>Payments on the {{ $network }} Network</h1>
+        <h1>Payments on every network</h1>
+
+        <a href='/payment/networks'>
+            View payments by network
+        </a>
 
         <ul>
-        @foreach($paymentsOnNetwork as $payment)
+        @foreach($payments as $payment)
             <li>
                 {{ $payment->timestamp }}
-                
+                [{{ $payment->network }}]
                 <a href='/payment/{{ $payment->id }}'>
                     {{ $payment->formatAmount() }}
                     {{ $payment->currency->code }}

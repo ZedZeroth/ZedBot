@@ -7,33 +7,32 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Account;
 use App\Models\Currency;
+use App\Http\Controllers\RequestAdapters\RequestAdapterENM;
 
-class PaymentAdapterForEnumis implements PaymentAdapterInterface
+class PaymentAdapterENM implements PaymentAdapterInterface
 {
     /**
-     * Requests transacations (payments) from Enumis.
+     * Requests transacations (payments) from ENM.
      *
      * @param int $numberOfPayments
      * @return Http
      */
     public function adaptRequest($numberOfPayments)
     {
-        $apiURL = env('ZED_ENUMIS_BASE_URL') . env('ZED_ENUMIS_TRANSACTIONS_ENDPOINT');
-
-        $postInput = [
-            'accountCode' => env('ZED_ENUMIS_ACCOUNT_CODE'),
+        $postParameters = [
+            'accountCode' => env('ZED_ENM_ACCOUNT_CODE'),
             'take' => $numberOfPayments,
         ];
 
-        $headers = [
-            'Authorization' => 'Bearer ' . DB::table('keys')->where('service', 'enumis')->first()->key
-        ];
-
-        return Http::withHeaders($headers)->timeout(30)->post($apiURL, $postInput);
+        return (new RequestAdapterENM())
+            ->request(
+                endpoint: env('ZED_ENM_TRANSACTIONS_ENDPOINT'),
+                postParameters: $postParameters,
+            );
     }
 
     /**
-     * Converts an Enumis request response into
+     * Converts an ENM request response into
      * an array of DTOs for the controller.
      *
      * @param array $responseBody
@@ -43,7 +42,6 @@ class PaymentAdapterForEnumis implements PaymentAdapterInterface
     {
         $DTOs = [];
         foreach ($responseBody['results'] as $result) {
-
             /*💬*/ //print_r($result);
 
             try {
@@ -55,11 +53,11 @@ class PaymentAdapterForEnumis implements PaymentAdapterInterface
                 // Find/create originator and beneficiary
                 $debitOrCredit = $result['payload']['DebitCreditCode'];
                 if ($debitOrCredit == 'Debit') {
-                    $originatorIdenfifier = 'fps:' .$result['payload']['Account_Iban'];
-                    $beneficiaryIdenfifier = 'fps:' .$result['payload']['CounterpartAccount_Iban'];
+                    $originatorIdenfifier = 'fps::' . $result['payload']['Account_Iban'];
+                    $beneficiaryIdenfifier = 'fps::' . $result['payload']['CounterpartAccount_Iban'];
                 } else {
-                    $originatorIdenfifier = 'fps:' .$result['payload']['CounterpartAccount_Iban'];
-                    $beneficiaryIdenfifier = 'fps:' .$result['payload']['Account_Iban'];
+                    $originatorIdenfifier = 'fps::' . $result['payload']['CounterpartAccount_Iban'];
+                    $beneficiaryIdenfifier = 'fps::' . $result['payload']['Account_Iban'];
                 }
 
                 foreach ([$originatorIdenfifier, $beneficiaryIdenfifier] as $accountIdentifier) {
@@ -80,7 +78,7 @@ class PaymentAdapterForEnumis implements PaymentAdapterInterface
                     $DTOs,
                     new PaymentDTO(
                         network: 'FPS',
-                        identifier: (string) 'enumis:' . $result['payload']['EndToEndTransactionId'],
+                        identifier: (string) 'enm::' . $result['payload']['EndToEndTransactionId'],
                         amount: (int) $amount,
                         currency_id: (int) $currency->id,
                         originator_id: (int) Account::where('identifier', $originatorIdenfifier)->first()->id,

@@ -2,34 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
 use App\Models\Currency;
 use App\Http\Controllers\Currencies\CurrencyPopulator;
+use App\Http\Controllers\Currencies\CurrencyViewer;
 
 class CurrencyController extends Controller
 {
     /**
      * Show all currencies.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function showAll()
+    public function showAll(): View
     {
-        return view('currencies', [
-            'currencies' => Currency::all()
-        ]);
+        return (new CurrencyViewer())->showAll();
     }
 
     /**
      * Show the profile for a given currency.
      *
-     * @param  string  $code
-     * @return \Illuminate\View\View
+     * @param string $identifier
+     * @return View
      */
-    public function show($code)
-    {
-        return view('currency', [
-            'currency' => Currency::where('code', $code)->first()
-        ]);
+    public function showByIdentifier(
+        string $identifier
+    ): View {
+        return (new CurrencyViewer())->showByIdentifier(
+            identifier: $identifier
+        );
     }
 
     /**

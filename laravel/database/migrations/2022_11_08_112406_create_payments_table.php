@@ -14,14 +14,14 @@ return new class extends Migration
     public function up()
     {
         /**
-         * ADD 'HELD' and 'CLAIMED' ATTRIBUTES!
+         * ADD 'HELD' and 'CLAIMED' ATTRIBUTES?
          */
 
         Schema::create('payments', function (Blueprint $table) {
             // Identifiable
             $table->id(); // Laravel
-            $table->string('network'); // e.g. FPS, ethereum, LocalBitcoins
-            $table->string('identifier'); // For FPS this is currently Enumis-specific
+            $table->string('network'); // e.g. FPS, ethereum, LBC...
+            $table->string('identifier'); // For FPS this is currently ENM-specific
             $table->integer('amount');
             $table->integer('currency_id'); // Currency
             $table->integer('originator_id'); // Account

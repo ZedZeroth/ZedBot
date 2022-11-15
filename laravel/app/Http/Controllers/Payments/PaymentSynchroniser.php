@@ -18,7 +18,10 @@ class PaymentSynchroniser
     public function sync($provider, $numberOfPayments)
     {
         // Fetch the payment data
-        $adapterClass = 'App\Http\Controllers\Payments\PaymentAdapterFor' . $provider;
+        $adapterClass =
+            'App\Http\Controllers\Payments\PaymentAdapter'
+            . $provider;
+
         $recentPaymentDTOs = (new PaymentFetcher())
             ->fetch(
                 adapter: new $adapterClass(),

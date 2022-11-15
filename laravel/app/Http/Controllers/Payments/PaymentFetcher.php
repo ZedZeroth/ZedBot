@@ -17,7 +17,9 @@ class PaymentFetcher
      */
     public function fetch($adapter, $numberOfPayments)
     {
-        $response = $adapter->adaptRequest(numberOfPayments: $numberOfPayments);
+        $response = $adapter
+            ->adaptRequest(numberOfPayments: $numberOfPayments);
+
         $statusCode = $response->status();
         $responseBody = json_decode($response->getBody(), true);
 
@@ -30,27 +32,5 @@ class PaymentFetcher
             }
             return [];
         }
-
-        /* Fetch bank account data */
-        /*
-        $apiURL = env('ZED_ENUMIS_BASE_URL') . env('ZED_ENUMIS_BENEFICIARIES_ENDPOINT');
-        $postInput = [
-            'accountERN' => env('ZED_ENUMIS_ACCOUNT_ERN'),
-            'take' => 10
-        ];
-        $headers = [
-            'Authorization' => 'Bearer ' . env('ZED_ENUMIS_ACCESS_KEY')
-        ];
-
-        $response = Http::withHeaders($headers)->post($apiURL, $postInput);
-        $statusCode = $response->status();
-        $responseBody = json_decode($response->getBody(), true);
-
-        if ($statusCode == 200) {
-            echo 'Success!';
-        } else {
-            echo 'Error code: ' . $statusCode;
-        }
-        */
     }
 }

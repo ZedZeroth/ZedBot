@@ -70,7 +70,7 @@ class SyncPaymentsCommand extends Command
 
         // Run the commanded action
         $paymentsFetched = (new PaymentController())
-            ->sync('Enumis', $numberOfPaymentsToFetch);
+            ->sync('ENM', $numberOfPaymentsToFetch);
 
         // Finalize
         $this->finish(

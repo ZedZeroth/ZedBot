@@ -2,51 +2,73 @@
 
 namespace App\Http\Controllers\Payments;
 
+use Illuminate\View\View;
+use App\Http\Controllers\CrossDomainInterfaces\ViewerInterface;
 use App\Models\Payment;
 
-class PaymentViewer
+class PaymentViewer implements ViewerInterface
 {
+    /**
+     * Show all payments (on every network).
+     *
+     * @return View
+     */
+    public function showAll(): View
+    {
+        return view('payments', [
+            'payments' => Payment::all()
+        ]);
+    }
+
+    /**
+     * Show the profile for a specific payment.
+     *
+     * @param string $identifier
+     * @return View
+     */
+    public function showByIdentifier(
+        string $identifier
+    ): View {
+        return view('payment', [
+            'payment' =>
+                Payment::where('id', $identifier)
+                    ->first()
+        ]);
+    }
+
     /**
      * Show all payment networks.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function viewNetworks()
+    public function showPaymentNetworks(): View
     {
         return view(
             'payment-networks',
-            ['payments' => Payment::all()->unique('network')]
+            [
+                'payments' => Payment::all()
+                    ->unique('network')
+            ]
         );
     }
 
     /**
      * Show all payments on one payment network.
      *
-     * @param  string  $network
-     * @return \Illuminate\View\View
+     * @param string $network
+     * @return View
      */
-    public function viewPaymentsOnNetwork($network)
-    {
+    public function showPaymentsOnNetwork(
+        string $network
+    ): View {
         return view(
             'network-payments',
             [
                 'network' => $network,
-                'paymentsOnNetwork' => Payment::where('network', $network)->get(),
+                'paymentsOnNetwork'
+                    => Payment::where('network', $network)
+                        ->get()
             ]
-        );
-    }
-
-    /**
-     * Show one payment by its ID.
-     *
-     * @param  string  $id
-     * @return \Illuminate\View\View
-     */
-    public function viewById($id)
-    {
-        return view(
-            'payment',
-            ['payment' => Payment::where('id', $id)->firstOrFail()]
         );
     }
 }

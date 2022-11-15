@@ -30,7 +30,7 @@
                         </tr>
                         <tr>
                             <td>
-                            <a href="payment/networks">Payments</a>
+                            <a href="payments">Payments</a>
                             </td>
                             <td>
                             <livewire:payment-synchronizer-component />
@@ -38,7 +38,7 @@
                         </tr>
                         <tr>
                             <td>
-                            <a href="account/networks/">Accounts</a>
+                            <a href="accounts">Accounts</a>
                             </td>
                             <td>
                             <livewire:account-synchronizer-component />

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Payments;
 interface PaymentAdapterInterface
 {
     /**
-     * Requests transacations (payments) from Enumis.
+     * Requests transacations (payments) from an API.
      *
      * @param int $numberOfPayments
      * @return Http

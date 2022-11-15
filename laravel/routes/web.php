@@ -25,17 +25,19 @@ Route::get('/', function () {
 
 /* Currencies */
 Route::get('/currencies', [CurrencyController::class, 'showAll']);
-Route::get('/currency/{code}', [CurrencyController::class, 'show']);
+Route::get('/currency/{code}', [CurrencyController::class, 'showByIdentifier']);
 
 /* Payments */
-Route::get('/payment/networks', [PaymentController::class, 'viewNetworks']);
-Route::get('/{network}/payments', [PaymentController::class, 'viewPaymentsOnNetwork']);
-Route::get('/payment/{id}', [PaymentController::class, 'viewById']);
+Route::get('/payments', [PaymentController::class, 'showAll']);
+Route::get('/payment/networks', [PaymentController::class, 'showPaymentNetworks']);
+Route::get('/payment/{identfier}', [PaymentController::class, 'showByIdentifier']);
+Route::get('/{network}/payments', [PaymentController::class, 'showPaymentsOnNetwork']);
 
 /* Accounts */
-Route::get('/account/networks', [AccountController::class, 'viewNetworks']);
-Route::get('/{network}/accounts', [AccountController::class, 'viewAccountsOnNetwork']);
-Route::get('/account/{identfier}', [AccountController::class, 'viewByIdentifier']);
+Route::get('/accounts', [AccountController::class, 'showAll']);
+Route::get('/account/networks', [AccountController::class, 'showAccountNetworks']);
+Route::get('/account/{identfier}', [AccountController::class, 'showByIdentifier']);
+Route::get('/{network}/accounts', [AccountController::class, 'showAccountsOnNetwork']);
 
 /* Charts */
 Route::get('/chart', [ChartController::class, 'view']);
