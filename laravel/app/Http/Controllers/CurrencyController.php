@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\View\View;
-use App\Models\Currency;
 use App\Http\Controllers\Currencies\CurrencyPopulator;
 use App\Http\Controllers\Currencies\CurrencyViewer;
 

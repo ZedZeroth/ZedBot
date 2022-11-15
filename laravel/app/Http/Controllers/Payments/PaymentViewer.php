@@ -17,6 +17,7 @@ class PaymentViewer implements ViewerInterface
     {
         return view('payments', [
             'payments' => Payment::all()
+                ->sortByDesc('timestamp')
         ]);
     }
 

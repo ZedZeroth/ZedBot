@@ -13,21 +13,22 @@ class SchedulerIsRunningCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'schedule:running';
+    protected /* Do not define */ $signature =
+        'schedule:running';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Messages the console that the scheduler is running.';
+    protected /* Do not define */ $description =
+        'Messages the console that the scheduler is running.';
 
     /**
      * Execute the console command.
      *
-     * @return int
      */
-    public function handle()
+    public function handle(): void
     {
         /* Output messages */
         $output = 'The scheduler is running ...';

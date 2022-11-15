@@ -5,7 +5,7 @@ namespace App\Http\Controllers\RequestAdapters;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 
-class RequestAdapterENM implements RequestAdapterInterface
+class GeneralRequestAdapterENM implements GeneralRequestAdapterInterface
 {
     /**
      * Makes requests to the ENM API

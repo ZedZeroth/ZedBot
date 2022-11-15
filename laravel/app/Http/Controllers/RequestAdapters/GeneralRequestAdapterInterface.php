@@ -4,7 +4,7 @@ namespace App\Http\Controllers\RequestAdapters;
 
 use Illuminate\Support\Facades\Http;
 
-interface RequestAdapterInterface
+interface GeneralRequestAdapterInterface
 {
     /**
      * Makes requests to an API

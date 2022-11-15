@@ -18,13 +18,13 @@ class PaymentSynchroniser
     public function sync($provider, $numberOfPayments)
     {
         // Fetch the payment data
-        $adapterClass =
-            'App\Http\Controllers\Payments\PaymentAdapter'
+        $requestAdapterClass =
+            'App\Http\Controllers\Payments\PaymentRequestAdapter'
             . $provider;
 
         $recentPaymentDTOs = (new PaymentFetcher())
             ->fetch(
-                adapter: new $adapterClass(),
+                requestAdapter: new $requestAdapterClass(),
                 numberOfPayments: $numberOfPayments,
             );
 
@@ -44,7 +44,7 @@ class PaymentSynchroniser
         }
 
         // Refresh view component payment count.
-        //(new PaymentFetcherComponent())->render();
+        (new PaymentFetcherComponent())->render();
 
         return $recentPaymentDTOs;
     }

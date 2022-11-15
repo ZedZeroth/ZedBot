@@ -15,14 +15,16 @@ class SyncPaymentsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'payments:sync {number}';
+    protected /* Do not define */ $signature =
+        'payments:sync {number}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Synchronizes the payment table with new payments from payment services.';
+    protected /* Do not define */ $description =
+        'Synchronizes the payment table with new payments from payment services.';
 
     /**
      * Initial output message
@@ -33,7 +35,7 @@ class SyncPaymentsCommand extends Command
     public function start(
         int $numberOfPaymentsToFetch,
         int $initialPayments
-    ) {
+    ): void {
         $outputs = [
             'Current number of payments:         ' . $initialPayments,
             'Number of recent payments to fetch: ' . $numberOfPaymentsToFetch,
@@ -56,7 +58,7 @@ class SyncPaymentsCommand extends Command
      * Execute the console command.
      *
      */
-    public function handle()
+    public function handle(): void
     {
         $numberOfPaymentsToFetch = $this->argument('number');
         $initialPayments = Payment::all()->count();
@@ -70,7 +72,10 @@ class SyncPaymentsCommand extends Command
 
         // Run the commanded action
         $paymentsFetched = (new PaymentController())
-            ->sync('ENM', $numberOfPaymentsToFetch);
+            ->sync(
+                provider: 'ENM',
+                numberOfPayments: $numberOfPaymentsToFetch
+            );
 
         // Finalize
         $this->finish(
@@ -91,7 +96,7 @@ class SyncPaymentsCommand extends Command
         int $numberOfPaymentsToFetch,
         int $initialPayments,
         array $paymentsFetched
-    ) {
+    ): void {
         $numberOfPaymentsFetched = count($paymentsFetched);
         $finalPayments = Payment::all()->count();
 

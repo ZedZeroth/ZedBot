@@ -7,7 +7,7 @@ class PaymentDTO
     /**
      * The payment data transfer object
      * for moving payment data between
-     * an adapter and the controller.
+     * an adapter and the synchronizer.
      */
     public function __construct(
         public string $network,

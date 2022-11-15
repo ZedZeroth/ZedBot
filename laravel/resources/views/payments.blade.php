@@ -20,6 +20,7 @@
                 {{ $payment->timestamp }}
                 [{{ $payment->network }}]
                 <a href='/payment/{{ $payment->id }}'>
+                    {{ $payment->memo }}:
                     {{ $payment->formatAmount() }}
                     {{ $payment->currency->code }}
                 </a>

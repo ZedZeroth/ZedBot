@@ -15,21 +15,23 @@ class PopulateCurrenciesCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'currencies:populate';
+    protected /* Do not define */ $signature =
+        'currencies:populate';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Creates all required currencies.';
+    protected /* Do not define */ $description =
+        'Creates all required currencies.';
 
     /**
      * Initial output message
      *
      * @param int $initialCurrencies
      */
-    public function start($initialCurrencies)
+    public function start(int $initialCurrencies): void
     {
         $outputs = [
             'Current number of currencies:      ' . $initialCurrencies,
@@ -52,7 +54,7 @@ class PopulateCurrenciesCommand extends Command
      * Execute the console command.
      *
      */
-    public function handle()
+    public function handle(): void
     {
         $initialCurrencies = Currency::all()->count();
 
@@ -79,8 +81,10 @@ class PopulateCurrenciesCommand extends Command
      * @param int $initialCurrencies
      * @param int $paymentsFetched
      */
-    public function finish($initialCurrencies, $currenciesPopulated)
-    {
+    public function finish(
+        int $initialCurrencies,
+        int $currenciesPopulated
+    ): void {
         $numberOfCurrenciesPopulated = $currenciesPopulated;
         $finalCurrencies = Currency::all()->count();
 
