@@ -72,7 +72,7 @@ class SyncAccountsCommand extends Command
         // Run the commanded action
         $accountsFetched = (new AccountController())
             ->sync(
-                provider: 'ENM',
+                provider: 'LCS',
                 numberOfAccounts: $numberOfAccountsToFetch
             );
 
