@@ -35,7 +35,9 @@ class AccountSynchroniser
                 [
                     'network' => $dto->network,
                     'customer_id' => $dto->customer_id,
-                    'assumedAccountName' => $dto->assumedAccountName
+                    'assumedAccountName' => $dto->assumedAccountName,
+                    'currency_id' => $dto->currency_id,
+                    'balance' => $dto->balance,
                 ]
             );
         }

@@ -43,5 +43,15 @@
             </p>
         @endforeach
 
+        <h3>Accounts in this currency</h3>
+
+        @foreach($currency->accounts()->get() as $account)
+            <p>
+                <a href='/account/{{ $account->identifier }}'>{{ $account->identifier }}</a>
+            </p>
+        @endforeach
+
+        <p>Database ID: {{ $currency->id }}</p>
+
     </body>
 </html>

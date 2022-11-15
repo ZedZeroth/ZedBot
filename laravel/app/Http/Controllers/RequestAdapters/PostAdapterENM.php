@@ -5,32 +5,33 @@ namespace App\Http\Controllers\RequestAdapters;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 
-class GeneralRequestAdapterLCS implements GeneralRequestAdapterInterface
+class PostAdapterENM implements PostAdapterInterface
 {
     /**
-     * Makes requests to the LCS API
+     * Makes a POST request to the ENM API
      *
      * @param string $endpoint
      * @param array $postParameters
      * @return Http
      */
-    public function request(
+    public function post(
         string $endpoint,
         array $postParameters
     ) {
-        $url = env('ZED_LCS_DOMAIN')
-            . env('ZED_LCS_PATH')
+        $url = env('ZED_ENM_DOMAIN')
+            . env('ZED_ENM_PATH')
             . $endpoint;
 
         $headers = [
-            'Authorization' => 'Token '
+            'Authorization' => 'Bearer '
                 . DB::table('keys')
-                    ->where('service', 'LCS')
-                    ->first()->key,
-            'Content-Type' => 'application/json'
+                    ->where('service', 'ENM')
+                    ->first()->key
         ];
 
         return Http::withHeaders($headers)
-            ->timeout(30)->get($url);
+            ->connectTimeout(30)
+            ->retry(3, 100)
+            ->post($url, $postParameters);
     }
 }

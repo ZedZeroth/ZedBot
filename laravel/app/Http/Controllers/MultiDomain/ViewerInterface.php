@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\CrossDomainInterfaces;
+namespace App\Http\Controllers\MultiDomain;
 
 use Illuminate\View\View;
 

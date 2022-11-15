@@ -22,7 +22,7 @@ return new class extends Migration
             $table->id(); // Laravel
             $table->string('network'); // e.g. FPS, ethereum, LBC...
             $table->string('identifier'); // For FPS this is currently ENM-specific
-            $table->integer('amount');
+            $table->bigInteger('amount'); // Wei amounts make exceed 2^63...?
             $table->integer('currency_id'); // Currency
             $table->integer('originator_id'); // Account
             $table->integer('beneficiary_id'); // Account

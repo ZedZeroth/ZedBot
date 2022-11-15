@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Accounts;
 
 use Illuminate\View\View;
-use App\Http\Controllers\CrossDomainInterfaces\ViewerInterface;
+use App\Http\Controllers\MultiDomain\ViewerInterface;
 use App\Models\Account;
 
 class AccountViewer implements ViewerInterface

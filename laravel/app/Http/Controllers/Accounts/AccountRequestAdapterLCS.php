@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Accounts;
 
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\RequestAdapters\GeneralRequestAdapterLCS;
+use App\Http\Controllers\RequestAdapters\GetAdapterLCS;
 
 class AccountRequestAdapterLCS implements AccountRequestAdapterInterface
 {
@@ -16,12 +16,9 @@ class AccountRequestAdapterLCS implements AccountRequestAdapterInterface
     public function request(
         int $numberOfAccounts
     ): array {
-        $postParameters = [];
-
-        $response = (new GeneralRequestAdapterLCS())
-            ->request(
+        $response = (new GetAdapterLCS())
+            ->get(
                 endpoint: env('ZED_LCS_WALLETS_ENDPOINT'),
-                postParameters: $postParameters
             );
 
         $statusCode = $response->status();

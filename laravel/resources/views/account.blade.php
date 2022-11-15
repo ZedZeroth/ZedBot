@@ -18,6 +18,13 @@
             </a>
         </h2>
 
+        <h3>
+            Balance:
+            {{ $account->formatBalance() }}
+            <a href="/currency/{{ $account->currency()->first()->code }}">
+                {{ $account->currency()->first()->code }}
+            </a>
+        </h3>
         <h3>Holder: - </h3>
 
         <p>Network account name: {{ $account->networkAccountName }}</p>

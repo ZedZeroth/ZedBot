@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Payments;
 
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\RequestAdapters\GeneralRequestAdapterENM;
+use App\Http\Controllers\RequestAdapters\PostAdapterENM;
 
 class PaymentRequestAdapterENM implements PaymentRequestAdapterInterface
 {
@@ -21,8 +21,8 @@ class PaymentRequestAdapterENM implements PaymentRequestAdapterInterface
             'take' => $numberOfPayments
         ];
 
-        $response = (new GeneralRequestAdapterENM())
-            ->request(
+        $response = (new PostAdapterENM())
+            ->post(
                 endpoint: env('ZED_ENM_TRANSACTIONS_ENDPOINT'),
                 postParameters: $postParameters
             );

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Accounts;
 
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\RequestAdapters\GeneralRequestAdapterENM;
+use App\Http\Controllers\RequestAdapters\PostAdapterENM;
 
 class AccountRequestAdapterENM implements AccountRequestAdapterInterface
 {
@@ -21,8 +21,8 @@ class AccountRequestAdapterENM implements AccountRequestAdapterInterface
             'take' => $numberOfAccounts
         ];
 
-        $response = (new GeneralRequestAdapterENM())
-            ->request(
+        $response = (new PostAdapterENM())
+            ->post(
                 endpoint: env('ZED_ENM_BENEFICIARIES_ENDPOINT'),
                 postParameters: $postParameters
             );

@@ -21,4 +21,12 @@ class Currency extends Model
     {
         return $this->hasMany(Payment::class);
     }
+
+    /**
+    * Get the accounts in this currency.
+    */
+    public function accounts()
+    {
+        return $this->hasMany(Account::class);
+    }
 }

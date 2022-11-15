@@ -60,28 +60,30 @@ class SyncAccountsCommand extends Command
      */
     public function handle(): void
     {
-        $numberOfAccountsToFetch = $this->argument('number');
-        $initialAccounts = Account::all()->count();
+        foreach(['ENM', 'LCS'] as $provider) {
+            $numberOfAccountsToFetch = $this->argument('number');
+            $initialAccounts = Account::all()->count();
 
-        // Initialize
-        $this->start(
-            numberOfAccountsToFetch: $numberOfAccountsToFetch,
-            initialAccounts: $initialAccounts,
-        );
-
-        // Run the commanded action
-        $accountsFetched = (new AccountController())
-            ->sync(
-                provider: 'LCS',
-                numberOfAccounts: $numberOfAccountsToFetch
+            // Initialize
+            $this->start(
+                numberOfAccountsToFetch: $numberOfAccountsToFetch,
+                initialAccounts: $initialAccounts,
             );
 
-        // Finalize
-        $this->finish(
-            numberOfAccountsToFetch: $numberOfAccountsToFetch,
-            initialAccounts: $initialAccounts,
-            accountsFetched: $accountsFetched,
-        );
+            // Run the commanded action
+            $accountsFetched = (new AccountController())
+                ->sync(
+                    provider: $provider,
+                    numberOfAccounts: $numberOfAccountsToFetch
+                );
+
+            // Finalize
+            $this->finish(
+                numberOfAccountsToFetch: $numberOfAccountsToFetch,
+                initialAccounts: $initialAccounts,
+                accountsFetched: $accountsFetched,
+            );
+        }
     }
 
     /**

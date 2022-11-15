@@ -19,10 +19,9 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
         string $iban
     ): string {
         return 'fps'
-            . '::'
-            . substr($iban, -14, 6) // Sort code
-            . '::'
-            . substr($iban, -8); // Account number
+            . '::' . 'gbp'
+            . '::' . substr($iban, -14, 6) // Sort code
+            . '::' . substr($iban, -8); // Account number
     }
     
     /**
@@ -95,7 +94,9 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
                             [
                                 'network' => 'FPS',
                                 'customer_id' => 0,
-                                'assumedAccountName' => $result['CounterpartAccount_TransactionOwnerName']
+                                'assumedAccountName' => $result['CounterpartAccount_TransactionOwnerName'],
+                                'currency_id' => $currency->id,
+                                'balance' => 0
                             ]
                         );
                     // Credits provide network account names
@@ -105,7 +106,9 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
                             [
                                 'network' => 'FPS',
                                 'customer_id' => 0,
-                                'networkAccountName' => $result['CounterpartAccount_TransactionOwnerName']
+                                'networkAccountName' => $result['CounterpartAccount_TransactionOwnerName'],
+                                'currency_id' => $currency->id,
+                                'balance' => 0
                             ]
                         );
                     }

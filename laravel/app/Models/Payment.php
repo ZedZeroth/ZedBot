@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Http\Controllers\MultiDomain\MoneyFormatter;
 
 class Payment extends Model
 {
@@ -39,17 +39,16 @@ class Payment extends Model
     }
 
     /**
-     * Formats the payment amount into non-base units.
+     * Formats the account balance into
+     * its standard denomination.
      *
      * @return string
      */
     public function formatAmount()
     {
-        return number_format(
-            $this->amount / pow(10, $this->currency()->first()->decimalPlaces),
-            2,
-            '.',
-            ',',
+        return (new MoneyFormatter())->format(
+            amount: $this->amount,
+            currency: $this->currency()->first()
         );
     }
 }
