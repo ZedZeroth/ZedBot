@@ -10,6 +10,7 @@ use App\Models\Account;
 class AccountSynchronizerComponent extends Component
 {
     public Collection $accounts;
+    public string $numberToFetch = '10';
 
     /**
      * Calls the 'accounts:sync' command.
@@ -17,7 +18,7 @@ class AccountSynchronizerComponent extends Component
      */
     public function sync()
     {
-        Artisan::call('accounts:sync');
+        Artisan::call('accounts:sync ' . $this->numberToFetch);
     }
 
     /**

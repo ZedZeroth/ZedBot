@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\View\View;
 use App\Http\Controllers\Accounts\AccountViewer;
+use App\Http\Controllers\Accounts\AccountSynchroniser;
 
 class AccountController extends Controller
 {
@@ -54,6 +55,23 @@ class AccountController extends Controller
         return (new AccountViewer())
             ->showAccountsOnNetwork(
                 network: $network
+            );
+    }
+
+    /**
+     * Fetches recent accounts from external providers
+     * and creates any new ones that do not exist.
+     *
+     * @param string $provider
+     * @param int $numberOfAccounts
+     * @return array
+     */
+    public function sync($provider, $numberOfAccounts)
+    {
+        return (new AccountSynchroniser())
+            ->sync(
+                provider: $provider,
+                numberOfAccounts: $numberOfAccounts,
             );
     }
 }

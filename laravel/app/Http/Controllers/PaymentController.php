@@ -59,8 +59,8 @@ class PaymentController extends Controller
     }
 
     /**
-     * Fetches recent payments from external platforms
-     * and inserts any new ones.
+     * Fetches recent payments from external providers
+     * and creates any new ones that do not exist.
      *
      * @param string $provider
      * @param int $numberOfPayments

@@ -6,6 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Account extends Model
 {
+
+    /**
+     * The feault attributes.
+     *
+     * @var array<int, string>
+     */
+    protected $attributes = [
+        'networkAccountName' => '',
+        'assumedAccountName' => ''
+    ];
+
     /**
      * The attributes that aren't mass assignable.
      *

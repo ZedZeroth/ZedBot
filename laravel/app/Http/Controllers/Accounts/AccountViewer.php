@@ -17,6 +17,7 @@ class AccountViewer implements ViewerInterface
     {
         return view('accounts', [
             'accounts' => Account::all()
+                ->sortBy('identifier')
         ]);
     }
 

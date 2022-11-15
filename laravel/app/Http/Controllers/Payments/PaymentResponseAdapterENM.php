@@ -9,8 +9,25 @@ use App\Models\Currency;
 class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
 {
     /**
-     * Converts an ENM request response into
-     * an array of DTOs for the controller.
+     * Converts an IBAN into this system's
+     * FPS account identifier.
+     *
+     * @param string $iban
+     * @return string
+     */
+    public function convertIban(
+        string $iban
+    ): string {
+        return 'fps'
+            . '::'
+            . substr($iban, -14, 6) // Sort code
+            . '::'
+            . substr($iban, -8); // Account number
+    }
+    
+    /**
+     * Converts an ENM payment request response into
+     * an array of payment DTOs for the synchronizer.
      *
      * @param array $responseBody
      * @return array
@@ -22,6 +39,9 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
         foreach ($responseBody['results'] as $result) {
             /*💬*/ //print_r($result);
 
+            // Shift focus
+            $result = $result['payload'];
+
             try {
                 /**
                  * Find currency and convert
@@ -31,7 +51,7 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
                 $currency = Currency::
                         where(
                             'code',
-                            $result['payload']['CurrencyCode']
+                            $result['CurrencyCode']
                         )->firstOrFail();
 
                 $multiplier = pow(
@@ -40,28 +60,26 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
                 );
 
                 $amount = $multiplier
-                    * $result['payload']['Amount'];
+                    * $result['Amount'];
 
                 /**
                  * Determine originator / beneficiary.
                  *
                  */
-                $debitOrCredit = $result['payload']['DebitCreditCode'];
+                $debitOrCredit = $result['DebitCreditCode'];
                 if ($debitOrCredit == 'Debit') {
-                    $originatorIdenfifier = 'fps::'
-                        . $result['payload']['Account_Iban'];
-                    $beneficiaryIdenfifier = 'fps::'
-                        . $result['payload']['CounterpartAccount_Iban'];
+                    $originatorIdenfifier = $this->convertIban($result['Account_Iban']);
+                    $beneficiaryIdenfifier = $this->convertIban($result['CounterpartAccount_Iban']);
                 } else {
-                    $originatorIdenfifier = 'fps::'
-                        . $result['payload']['CounterpartAccount_Iban'];
-                    $beneficiaryIdenfifier = 'fps::'
-                        . $result['payload']['Account_Iban'];
+                    $originatorIdenfifier = $this->convertIban($result['CounterpartAccount_Iban']);
+                    $beneficiaryIdenfifier = $this->convertIban($result['Account_Iban']);
                 }
 
                 /**
-                 * Find or create originator/beneficiary
-                 * accounts if they don't exist.
+                 * Create originator/beneficiary accounts
+                 * if they don't exist and use
+                 * updateOrCreate to override their
+                 * networkAccountName if they do.
                  *
                  */
                 foreach (
@@ -70,13 +88,27 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
                         $beneficiaryIdenfifier
                     ] as $accountIdentifier
                 ) {
-                    $account = Account::firstOrCreate(
-                        ['identifier' => $accountIdentifier],
-                        [
-                            'network' => 'FPS',
-                            'customer_id' => 0,
-                        ]
-                    );
+                    // Debits use assumed account names
+                    if ($debitOrCredit == 'Debit') {
+                        $account = Account::firstOrCreate(
+                            ['identifier' => $accountIdentifier],
+                            [
+                                'network' => 'FPS',
+                                'customer_id' => 0,
+                                'assumedAccountName' => $result['CounterpartAccount_TransactionOwnerName']
+                            ]
+                        );
+                    // Credits provide network account names
+                    } else {
+                        $account = Account::updateOrCreate(
+                            ['identifier' => $accountIdentifier],
+                            [
+                                'network' => 'FPS',
+                                'customer_id' => 0,
+                                'networkAccountName' => $result['CounterpartAccount_TransactionOwnerName']
+                            ]
+                        );
+                    }
                     if ($account->wasRecentlyCreated) {
                         Log::info(
                             'Account created: '
@@ -92,9 +124,9 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
                 array_push(
                     $DTOs,
                     new PaymentDTO(
-                        network: 'FPS',
+                        network: (string) 'FPS',
                         identifier: (string) 'enm::'
-                            . $result['payload']['EndToEndTransactionId'],
+                            . $result['EndToEndTransactionId'],
                         amount: (int) $amount,
                         currency_id: (int) $currency->id,
                         originator_id: (int) Account::
@@ -103,10 +135,10 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
                         beneficiary_id: (int) Account::
                             where('identifier', $beneficiaryIdenfifier)
                             ->first()->id,
-                        memo: (string) $result['payload']['Reference'],
+                        memo: (string) $result['Reference'],
                         timestamp: (string) date(
                             'Y-m-d H:i:s',
-                            strtotime($result['payload']['SettledTime'])
+                            strtotime($result['SettledTime'])
                         ),
                     )
                 );

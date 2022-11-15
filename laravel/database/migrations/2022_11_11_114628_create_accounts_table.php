@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('network');
             $table->string('identifier');
             $table->integer('customer_id');
+            $table->string('networkAccountName');
+            $table->string('assumedAccountName');
             $table->timestamps();
         });
     }

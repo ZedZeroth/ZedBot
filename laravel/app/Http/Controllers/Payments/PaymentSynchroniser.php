@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Payments;
 
 use App\Models\Payment;
-use App\Http\Livewire\PaymentFetcherComponent;
+use App\Http\Livewire\PaymentSynchronizerComponent;
 
 class PaymentSynchroniser
 {
     /**
-     * Fetches recent payments from external platforms
-     * and inserts any new ones.
+     * Fetches recent payments from external providers
+     * and creates any new ones that do not exist.
      *
      * @param string $provider
      * @param int $numberOfPayments
@@ -44,7 +44,7 @@ class PaymentSynchroniser
         }
 
         // Refresh view component payment count.
-        (new PaymentFetcherComponent())->render();
+        (new PaymentSynchronizerComponent())->render();
 
         return $recentPaymentDTOs;
     }

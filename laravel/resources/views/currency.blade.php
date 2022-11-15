@@ -33,7 +33,7 @@
             {{ $currency->baseUnitNamePlural }}
         </p>
 
-        <h3>Related payments</h3>
+        <h3>Payments in this currency</h3>
 
         @foreach($currency->payments()->get() as $payment)
             <p>

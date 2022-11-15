@@ -20,6 +20,10 @@
                 <a href="/account/{{ $account->identifier }}">
                     {{ $account->identifier }}
                 </a>
+                <span style="font-weight: bold;">
+                    {{ $account->networkAccountName }}
+                </span>
+                ({{ $account->assumedAccountName }})
             </li>
         @endforeach
         </ul>

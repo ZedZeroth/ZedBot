@@ -5,10 +5,10 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\PaymentController;
-use App\Models\Payment;
+use App\Http\Controllers\AccountController;
+use App\Models\Account;
 
-class SyncPaymentsCommand extends Command
+class SyncAccountsCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -16,7 +16,7 @@ class SyncPaymentsCommand extends Command
      * @var string
      */
     protected /* Do not define */ $signature =
-        'payments:sync {number}';
+        'accounts:sync {number}';
 
     /**
      * The console command description.
@@ -24,21 +24,21 @@ class SyncPaymentsCommand extends Command
      * @var string
      */
     protected /* Do not define */ $description =
-        'Synchronizes the payment table with new payments from payment providers.';
+        'Synchronizes the account table with accounts from account providers.';
 
     /**
      * Initial output message
      *
-     * @param int $numberOfPaymentsToFetch
-     * @param int $initialPayments
+     * @param int $numberOfAccountsToFetch
+     * @param int $initialAccounts
      */
     public function start(
-        int $numberOfPaymentsToFetch,
-        int $initialPayments
+        int $numberOfAccountsToFetch,
+        int $initialAccounts
     ): void {
         $outputs = [
-            'Current number of payments:         ' . $initialPayments,
-            'Number of recent payments to fetch: ' . $numberOfPaymentsToFetch,
+            'Current number of accounts:         ' . $initialAccounts,
+            'Number of recent accounts to fetch: ' . $numberOfAccountsToFetch,
             '... Fetching ...',
         ];
 
@@ -60,50 +60,50 @@ class SyncPaymentsCommand extends Command
      */
     public function handle(): void
     {
-        $numberOfPaymentsToFetch = $this->argument('number');
-        $initialPayments = Payment::all()->count();
+        $numberOfAccountsToFetch = $this->argument('number');
+        $initialAccounts = Account::all()->count();
 
         // Initialize
         $this->start(
-            numberOfPaymentsToFetch: $numberOfPaymentsToFetch,
-            initialPayments: $initialPayments,
+            numberOfAccountsToFetch: $numberOfAccountsToFetch,
+            initialAccounts: $initialAccounts,
         );
 
         // Run the commanded action
-        $paymentsFetched = (new PaymentController())
+        $accountsFetched = (new AccountController())
             ->sync(
                 provider: 'ENM',
-                numberOfPayments: $numberOfPaymentsToFetch
+                numberOfAccounts: $numberOfAccountsToFetch
             );
 
         // Finalize
         $this->finish(
-            numberOfPaymentsToFetch: $numberOfPaymentsToFetch,
-            initialPayments: $initialPayments,
-            paymentsFetched: $paymentsFetched,
+            numberOfAccountsToFetch: $numberOfAccountsToFetch,
+            initialAccounts: $initialAccounts,
+            accountsFetched: $accountsFetched,
         );
     }
 
     /**
      * Final output message
      *
-     * @param int $numberOfPaymentsToFetch
-     * @param int $initialPayments
-     * @param array $paymentsFetched
+     * @param int $numberOfAccountsToFetch
+     * @param int $initialAccounts
+     * @param array $accountsFetched
      */
     public function finish(
-        int $numberOfPaymentsToFetch,
-        int $initialPayments,
-        array $paymentsFetched
+        int $numberOfAccountsToFetch,
+        int $initialAccounts,
+        array $accountsFetched
     ): void {
-        $numberOfPaymentsFetched = count($paymentsFetched);
-        $finalPayments = Payment::all()->count();
+        $numberOfAccountsToFetch = count($accountsFetched);
+        $finalAccounts = Account::all()->count();
 
         $outputs = [
             '... [ DONE ] ...',
-            'Payments successfully fetched: ' . $numberOfPaymentsFetched,
-            'New total number of payments:  ' . $finalPayments,
-            'New payments created:          ' . ($finalPayments - $initialPayments),
+            'Accounts successfully fetched: ' . $numberOfAccountsToFetch,
+            'New total number of accounts:  ' . $finalAccounts,
+            'New accounts created:          ' . ($finalAccounts - $initialAccounts),
         ];
 
         $formattedOutputs = (new OutputFormatter())->format(
@@ -113,7 +113,7 @@ class SyncPaymentsCommand extends Command
         );
 
         foreach ($formattedOutputs as $output) {
-            if ($numberOfPaymentsFetched) {
+            if ($numberOfAccountsToFetch) {
                 $this->info($output);
                 Log::info($output);
             } else {

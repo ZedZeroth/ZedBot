@@ -12,9 +12,10 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
 
-        Commands\SyncPaymentsCommand::class,
         Commands\PopulateCurrenciesCommand::class,
         Commands\SchedulerIsRunningCommand::class,
+        Commands\SyncAccountsCommand::class,
+        Commands\SyncPaymentsCommand::class,
 
     ];
 
