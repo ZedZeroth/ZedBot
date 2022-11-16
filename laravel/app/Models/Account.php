@@ -15,7 +15,7 @@ class Account extends Model
      */
     protected $attributes = [
         'networkAccountName' => '',
-        'assumedAccountName' => ''
+        'label' => ''
     ];
 
     /**

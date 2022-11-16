@@ -14,7 +14,7 @@ class AccountDTO
         public string $identifier,
         public int $customer_id,
         public string $networkAccountName,
-        public string $assumedAccountName,
+        public string $label,
         public int $currency_id,
         public int $balance,
     ) {

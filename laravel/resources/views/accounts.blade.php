@@ -23,7 +23,7 @@
                 <span style="font-weight: bold;">
                     {{ $account->networkAccountName }}
                 </span>
-                ({{ $account->assumedAccountName }})
+                ({{ $account->label }})
             </li>
         @endforeach
         </ul>

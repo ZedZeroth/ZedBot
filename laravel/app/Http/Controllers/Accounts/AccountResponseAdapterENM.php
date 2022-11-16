@@ -45,7 +45,7 @@ class AccountResponseAdapterENM implements AccountResponseAdapterInterface
                         . '::' . $result['accountNumber'],
                     customer_id: (int) 0,
                     networkAccountName: (string) '',
-                    assumedAccountName: (string) $result['accountName'],
+                    label: (string) $result['accountName'],
                     currency_id: (int) $currency->id,
                     balance: (int) 0,
                 ),

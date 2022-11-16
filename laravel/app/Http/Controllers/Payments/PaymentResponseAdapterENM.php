@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Payments;
 
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\MultiDomain\MoneyConverter;
+use App\Http\Controllers\Accounts\AccountDTO;
+use App\Http\Controllers\Accounts\AccountSynchronizer;
 use App\Models\Account;
 use App\Models\Currency;
 
 class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
 {
     /**
-     * Converts an IBAN into this system's
+     * Convert an IBAN into this system's
      * FPS account identifier.
      *
      * @param string $iban
@@ -23,7 +26,7 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
             . '::' . substr($iban, -14, 6) // Sort code
             . '::' . substr($iban, -8); // Account number
     }
-    
+
     /**
      * Converts an ENM payment request response into
      * an array of payment DTOs for the synchronizer.
@@ -31,40 +34,32 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
      * @param array $responseBody
      * @return array
      */
-    public function respond(
+    public function adapt(
         array $responseBody
     ): array {
         $DTOs = [];
         foreach ($responseBody['results'] as $result) {
             /*💬*/ //print_r($result);
 
-            // Shift focus
+            // Shift focus to the payload array
             $result = $result['payload'];
 
             try {
-                /**
-                 * Find currency and convert
-                 * amount to base units.
-                 *
-                 */
+                // Determine the currency
                 $currency = Currency::
                         where(
                             'code',
                             $result['CurrencyCode']
                         )->firstOrFail();
 
-                $multiplier = pow(
-                    10,
-                    $currency->decimalPlaces
-                );
+                // Convert amount to base units
+                $amount = (new MoneyConverter())
+                    ->convert(
+                        amount: $result['Amount'],
+                        currency: $currency
+                    );
 
-                $amount = $multiplier
-                    * $result['Amount'];
-
-                /**
-                 * Determine originator / beneficiary.
-                 *
-                 */
+                //Determine originator / beneficiary
                 $debitOrCredit = $result['DebitCreditCode'];
                 if ($debitOrCredit == 'Debit') {
                     $originatorIdenfifier = $this->convertIban($result['Account_Iban']);
@@ -81,44 +76,41 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
                  * networkAccountName if they do.
                  *
                  */
+                $accountDTOs = [];
                 foreach (
                     [
                         $originatorIdenfifier,
                         $beneficiaryIdenfifier
                     ] as $accountIdentifier
                 ) {
-                    // Debits use assumed account names
+                    // Debits use labels (assumed account names)
                     if ($debitOrCredit == 'Debit') {
-                        $account = Account::firstOrCreate(
-                            ['identifier' => $accountIdentifier],
-                            [
-                                'network' => 'FPS',
-                                'customer_id' => 0,
-                                'assumedAccountName' => $result['CounterpartAccount_TransactionOwnerName'],
-                                'currency_id' => $currency->id,
-                                'balance' => 0
-                            ]
-                        );
-                    // Credits provide network account names
+                        $label = $result['CounterpartAccount_TransactionOwnerName'];
+                        $networkAccountName = '';
+                    // Credits provide confirmed network account names
                     } else {
-                        $account = Account::updateOrCreate(
-                            ['identifier' => $accountIdentifier],
-                            [
-                                'network' => 'FPS',
-                                'customer_id' => 0,
-                                'networkAccountName' => $result['CounterpartAccount_TransactionOwnerName'],
-                                'currency_id' => $currency->id,
-                                'balance' => 0
-                            ]
-                        );
+                        $label = '';
+                        $networkAccountName = $result['CounterpartAccount_TransactionOwnerName'];
                     }
-                    if ($account->wasRecentlyCreated) {
-                        Log::info(
-                            'Account created: '
-                            . $account->identifier
-                        );
-                    }
+
+                    // Create the DTO
+                    array_push(
+                        $accountDTOs,
+                        new AccountDTO(
+                            network: (string) 'FPS',
+                            identifier: (string) $accountIdentifier,
+                            customer_id: 0,
+                            networkAccountName: $networkAccountName,
+                            label: $label,
+                            currency_id: $currency->id,
+                            balance: 0
+                        )
+                    );
                 }
+
+                (new AccountSynchronizer())
+                    ->setDTOs(DTOs: $accountDTOs)
+                    ->createNewAccounts();
 
                 /**
                  * Build the payment DTO.
@@ -145,14 +137,9 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
                         ),
                     )
                 );
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                $error = sprintf(
-                    '[%s],[%d] ERROR:[%s]',
-                    __METHOD__,
-                    __LINE__,
-                    json_encode($e->getMessage(), true)
-                );
-                Log::error($error);
+            } catch (Exception $e) {
+                $this->error(__METHOD__ . ' [' . __LINE__ . ']');
+                Log::error(__METHOD__ . ' [' . __LINE__ . ']');
             }
         }
 

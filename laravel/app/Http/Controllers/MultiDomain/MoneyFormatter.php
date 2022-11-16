@@ -8,7 +8,7 @@ class MoneyFormatter
 {
     /**
      * Formats money from base units into
-     * its primary denomination.
+     * a string in its usual denomination.
      *
      * @param int $amount
      * @param Currency $currency

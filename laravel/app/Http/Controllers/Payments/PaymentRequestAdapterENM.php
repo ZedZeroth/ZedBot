@@ -3,57 +3,103 @@
 namespace App\Http\Controllers\Payments;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\RequestAdapters\PostAdapterENM;
 
 class PaymentRequestAdapterENM implements PaymentRequestAdapterInterface
 {
     /**
-     * The PaymentRequestAdapter constructor.
+     * Properties required to perform the request.
+     *
+     * @var int $numberOfPaymentsToFetch
+     * @var array $postParameters
+     * @var Http $response
+     * @var int $statusCode
+     * @var array $responseBody
+     */
+
+     /**
+     * Requests transacations (payments) from ENM
+     * and return the response.
      *
      * @param int $numberOfPaymentsToFetch
-    */
-    public function __construct(
-        private int $numberOfPaymentsToFetch,
-        private PostAdapterENM $postAdapter,
-        private PaymentResponseAdapterENM $paymentResponseAdapter
-    ) {
+     * @return array
+     */
+    public function request(
+        int $numberOfPaymentsToFetch
+    ): array {
+        $this->numberOfPaymentsToFetch = $numberOfPaymentsToFetch;
+
+        return $this
+            ->buildPostParameters()
+            ->fetchResponse()
+            ->parseResponse()
+            ->returnResponseBodyArray();
     }
 
     /**
-     * Requests transacations (payments) from ENM.
+     * Build the post parameters.
      *
-     * @return array
+     * @return PaymentRequestAdapterInterface
      */
-    public function request(): array
+    public function buildPostParameters(): PaymentRequestAdapterInterface
     {
-        // Build post parameters
-        $postParameters = [
+        $this->postParameters = [
             'accountCode' => env('ZED_ENM_ACCOUNT_CODE'),
             'take' => $this->numberOfPaymentsToFetch
         ];
+        return $this;
+    }
 
-        // Fetch the response
-        $response = ($this->postAdapter)
+    /**
+     * Fetch the response.
+     *
+     * @return PaymentRequestAdapterInterface
+     */
+    public function fetchResponse(): PaymentRequestAdapterInterface
+    {
+        /**
+         * Adapter instantiation is required as
+         * some providers use POST and others
+         * use GET.
+         *
+         */
+        $this->response = (new PostAdapterENM())
             ->post(
                 endpoint: env('ZED_ENM_TRANSACTIONS_ENDPOINT'),
-                postParameters: $postParameters
+                postParameters: $this->postParameters
             );
+        return $this;
+    }
 
-        // Parse the response
-        $statusCode = $response->status();
-        $responseBody = json_decode(
-            $response->getBody(),
+     /**
+     * Parse the response.
+     *
+     * @return PaymentRequestAdapterInterface
+     */
+    public function parseResponse(): PaymentRequestAdapterInterface
+    {
+        $this->statusCode = $this->response->status();
+        $this->responseBody = json_decode(
+            $this->response->getBody(),
             true
         );
+        return $this;
+    }
 
-        // Return the responseBody if successful
-        if ($statusCode == 200) {
-            return ($this->paymentResponseAdapter)
-                ->respond(responseBody: $responseBody);
+    /**
+     * Return the responseBody array.
+     *
+     * @return array
+     */
+    public function returnResponseBodyArray(): array
+    {
+        if ($this->statusCode == 200) {
+            return $this->responseBody;
         } else {
-            Log::error('Status code: ' . $statusCode);
-            if (!empty($responseBody['responseStatus']['message'])) {
-                Log::error($responseBody['responseStatus']['message']);
+            Log::error('Status code: ' . $this->statusCode);
+            if (!empty($this->responseBody['responseStatus']['message'])) {
+                Log::error($this->responseBody['responseStatus']['message']);
             }
             return [];
         }

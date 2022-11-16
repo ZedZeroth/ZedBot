@@ -22,11 +22,11 @@ class CommandInformer
      * before and after running a command.
      *
      * @param Command $command
-     * @return Command
+     * @return void
      */
     public function run(
         Command $command
-    ): Command {
+    ): void {
         // Assign command property
         $this->command = $command;
 
@@ -92,7 +92,7 @@ class CommandInformer
         $this->output(
             '... DONE in '
             . number_format($latency, 0, '.', ',')
-            . 'ms'
+            . ' ms'
         );
 
         /**
@@ -105,7 +105,7 @@ class CommandInformer
             $new = $modelWithPath::all()->count() - $number;
             if ($new) {
                 $nothingToUpdate = false;
-                $this->output($name . ' created: ' . $new);
+                $this->output($name . '(s) created: ' . $new);
             }
         }
         if ($nothingToUpdate) {
@@ -123,7 +123,7 @@ class CommandInformer
          * Return the command.
          *
          */
-        return $this->command;
+        return;
     }
 
     /**

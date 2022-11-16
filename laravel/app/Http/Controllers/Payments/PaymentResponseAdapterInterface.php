@@ -11,7 +11,7 @@ interface PaymentResponseAdapterInterface
      * @param array $responseBody
      * @return array
      */
-    public function respond(
+    public function adapt(
         array $responseBody
     ): array;
 }

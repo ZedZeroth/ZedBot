@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\View\View;
 use App\Http\Controllers\Accounts\AccountViewer;
-use App\Http\Controllers\Accounts\AccountSynchroniser;
+use App\Http\Controllers\Accounts\AccountSynchronizer;
 
 class AccountController extends Controller
 {
@@ -68,7 +68,7 @@ class AccountController extends Controller
      */
     public function sync($provider, $numberOfAccounts)
     {
-        return (new AccountSynchroniser())
+        return (new AccountSynchronizer())
             ->sync(
                 provider: $provider,
                 numberOfAccounts: $numberOfAccounts,

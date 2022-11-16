@@ -38,13 +38,13 @@ class AccountResponseAdapterLCS implements AccountResponseAdapterInterface
                             if ($currencyCode == 'BTC') {
                                 $network = 'Bitcoin';
                             } else if (
-                                $currencyCode == 'ETH' OR
+                                $currencyCode == 'ETH' or
                                 str_contains($currencyCode, 'ERC20')
-                                ) {
+                            ) {
                                 $network = 'Ethereum';
                             } else if (
                                 str_contains($currencyCode, 'BEP20')
-                                ) {
+                            ) {
                                 $network = 'BSC';
                             } else {
                                 $network = 'XXX';
@@ -103,7 +103,7 @@ class AccountResponseAdapterLCS implements AccountResponseAdapterInterface
                         . '::' . $wallet['address'],
                     customer_id: (int) 0,
                     networkAccountName: (string) '',
-                    assumedAccountName: (string) 'LCS ' . $wallet['currencyCode'] . ' wallet',
+                    label: (string) 'LCS ' . $wallet['currencyCode'] . ' wallet',
                     currency_id: (int) $wallet['currency_id'],
                     balance: (int) $wallet['balance'],
                 ),

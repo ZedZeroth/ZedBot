@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\PaymentController;
+use Exception;
 
 class SyncPaymentsCommand extends Command
 {
@@ -31,12 +32,15 @@ class SyncPaymentsCommand extends Command
      */
     public function handle(): void
     {
+        (new CommandInformer())->run(command: $this);
+        /*
         try {
             (new CommandInformer())->run(command: $this);
         } catch (Exception $e) {
-            $this->error(__METHOD__ . ' [' . __LINE__ . ']');
-            Log::error(__METHOD__ . ' [' . __LINE__ . ']');
+            $this->error(__METHOD__ . ' [' . __LINE__ . '] ' . $e->getMessage());
+            Log::error(__METHOD__ . ' [' . __LINE__ . '] ' . $e->getMessage());
         }
+        */
     }
 
     /**
@@ -58,5 +62,7 @@ class SyncPaymentsCommand extends Command
         // Inject the DTO into the relevant controller method
         (new PaymentController())
             ->sync($dto);
+
+        return;
     }
 }

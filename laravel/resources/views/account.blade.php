@@ -28,7 +28,7 @@
         <h3>Holder: - </h3>
 
         <p>Network account name: {{ $account->networkAccountName }}</p>
-        <p>Assumed account name: {{ $account->assumedAccountName }}</p>
+        <p>Assumed account name: {{ $account->label }}</p>
         <p>Database ID: {{ $account->id }}</p>
 
         <span style="color: red;">

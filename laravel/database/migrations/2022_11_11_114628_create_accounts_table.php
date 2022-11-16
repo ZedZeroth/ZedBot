@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('identifier');
             $table->integer('customer_id');
             $table->string('networkAccountName');
-            $table->string('assumedAccountName');
+            $table->string('label');
             $table->integer('currency_id');
             $table->bigInteger('balance');
             $table->timestamps();
