@@ -18,10 +18,12 @@ class PostAdapterENM implements PostAdapterInterface
         string $endpoint,
         array $postParameters
     ) {
+        // Build the URL
         $url = env('ZED_ENM_DOMAIN')
             . env('ZED_ENM_PATH')
             . $endpoint;
 
+        // Build the headers
         $headers = [
             'Authorization' => 'Bearer '
                 . DB::table('keys')
@@ -29,6 +31,7 @@ class PostAdapterENM implements PostAdapterInterface
                     ->first()->key
         ];
 
+        // Execute the request and return the response
         return Http::withHeaders($headers)
             ->connectTimeout(30)
             ->retry(3, 100)

@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\Currencies\CurrencyPopulator;
 use App\Models\Currency;
 
 class PopulateCurrenciesCommand extends Command
@@ -15,8 +16,8 @@ class PopulateCurrenciesCommand extends Command
      *
      * @var string
      */
-    protected /* Do not define */ $signature =
-        'currencies:populate';
+    public /* Do not define */ $signature =
+        'currencies:populate {source}';
 
     /**
      * The console command description.
@@ -27,83 +28,26 @@ class PopulateCurrenciesCommand extends Command
         'Creates all required currencies.';
 
     /**
-     * Initial output message
-     *
-     * @param int $initialCurrencies
-     */
-    public function start(int $initialCurrencies): void
-    {
-        $outputs = [
-            'Current number of currencies:      ' . $initialCurrencies,
-            '... Populating ...',
-        ];
-
-        $formattedOutputs = (new OutputFormatter())->format(
-            commandName: $this->signature,
-            startOrEnd: 'start',
-            textArray: $outputs
-        );
-
-        foreach ($formattedOutputs as $output) {
-            $this->info($output);
-            Log::info($output);
-        }
-    }
-
-    /**
-     * Execute the console command.
+     * Execute the command via the CommandInformer.
      *
      */
     public function handle(): void
     {
-        $initialCurrencies = Currency::all()->count();
-
-        // Initialize
-        $this->start(
-            initialCurrencies: $initialCurrencies,
-        );
-
-        // Run the commanded action
-        $currenciesPopulated = count(
-            (new CurrencyController())->populate()
-        );
-
-        // Finalize
-        $this->finish(
-            initialCurrencies: $initialCurrencies,
-            currenciesPopulated: $currenciesPopulated,
-        );
+        try {
+            (new CommandInformer())->run(command: $this);
+        } catch (Exception $e) {
+            $this->error(__METHOD__ . ' [' . __LINE__ . ']');
+            Log::error(__METHOD__ . ' [' . __LINE__ . ']');
+        }
     }
 
     /**
-     * Final output message
+     * Execute the command itself.
      *
-     * @param int $initialCurrencies
-     * @param int $paymentsFetched
+     * @return CurrencyPopulator
      */
-    public function finish(
-        int $initialCurrencies,
-        int $currenciesPopulated
-    ): void {
-        $numberOfCurrenciesPopulated = $currenciesPopulated;
-        $finalCurrencies = Currency::all()->count();
-
-        $outputs = [
-            '... [ DONE ] ...',
-            'Currencies successfully populated: ' . $numberOfCurrenciesPopulated,
-            'New total number of currencies:    ' . $finalCurrencies,
-            'New currencies created:            ' . ($finalCurrencies - $initialCurrencies),
-        ];
-
-        $formattedOutputs = (new OutputFormatter())->format(
-            commandName: $this->signature,
-            startOrEnd: 'end',
-            textArray: $outputs
-        );
-
-        foreach ($formattedOutputs as $output) {
-            $this->info($output);
-            Log::info($output);
-        }
+    public function runThisCommand(): CurrencyPopulator
+    {
+        return (new CurrencyController())->populate();
     }
 }

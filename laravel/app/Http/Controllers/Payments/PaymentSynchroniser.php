@@ -3,32 +3,48 @@
 namespace App\Http\Controllers\Payments;
 
 use App\Models\Payment;
-use App\Http\Livewire\PaymentSynchronizerComponent;
 
 class PaymentSynchroniser
 {
     /**
-     * Fetches recent payments from external providers
-     * and creates any new ones that do not exist.
+     * DTOs are stored as an array property.
      *
-     * @param string $provider
-     * @param int $numberOfPayments
-     * @return array
+     * @var array $DTOs
      */
-    public function sync($provider, $numberOfPayments)
+    private array $DTOs;
+
+    /**
+     * The PaymentSynchroniser constructor.
+     *
+     * @param PaymentRequestAdapterInterface $paymentRequestAdapter
+    */
+    public function __construct(
+        private PaymentRequestAdapterInterface $paymentRequestAdapter
+    ) {
+    }
+
+    /**
+     * Fetches recent payments from
+     * an external provider.
+     *
+     * @return PaymentSynchroniser
+     */
+    public function fetchPayments(): PaymentSynchroniser
     {
-        // Fetch the payment data
-        $requestAdapterClass =
-            'App\Http\Controllers\Payments\PaymentRequestAdapter'
-            . $provider;
+        $this->DTOs = $this->paymentRequestAdapter->request();
 
-        $recentPaymentDTOs = (new PaymentFetcher())
-            ->fetch(
-                requestAdapter: new $requestAdapterClass(),
-                numberOfPayments: $numberOfPayments,
-            );
+        return $this;
+    }
 
-        foreach ($recentPaymentDTOs as $dto) {
+    /**
+     * Uses the DTOs to create payments for
+     * any that do not already exist.
+     *
+     * @return PaymentSynchroniser
+     */
+    public function createNewPayments(): PaymentSynchroniser
+    {
+        foreach ($this->DTOs as $dto) {
             Payment::firstOrCreate(
                 ['identifier' => $dto->identifier],
                 [
@@ -43,9 +59,6 @@ class PaymentSynchroniser
             );
         }
 
-        // Refresh view component payment count.
-        (new PaymentSynchronizerComponent())->render();
-
-        return $recentPaymentDTOs;
+        return $this;
     }
 }

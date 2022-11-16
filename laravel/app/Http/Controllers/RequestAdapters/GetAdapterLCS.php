@@ -16,10 +16,12 @@ class GetAdapterLCS implements GetAdapterInterface
     public function get(
         string $endpoint,
     ) {
+        // Build the URL
         $url = env('ZED_LCS_DOMAIN')
             . env('ZED_LCS_PATH')
             . $endpoint;
 
+        // Build the headers
         $headers = [
             'Authorization' => 'Token '
                 . DB::table('keys')
@@ -28,6 +30,7 @@ class GetAdapterLCS implements GetAdapterInterface
             'Content-Type' => 'application/json'
         ];
 
+        // Execute the request and return the response
         return Http::withHeaders($headers)
             ->connectTimeout(30)
             ->retry(3, 100)

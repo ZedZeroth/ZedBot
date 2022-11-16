@@ -35,9 +35,9 @@ class CurrencyController extends Controller
     /**
      * Creates all required currencies.
      *
-     * @return array
+     * @return CurrencyPopulator
      */
-    public function populate(): array
+    public function populate(): CurrencyPopulator
     {
         return (new CurrencyPopulator())->populate();
     }

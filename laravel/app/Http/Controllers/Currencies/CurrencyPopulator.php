@@ -10,9 +10,9 @@ class CurrencyPopulator
     /**
      * Creates all required currencies.
      *
-     * @return array
+     * @return CurrencyPopulator
      */
-    public function populate(): array
+    public function populate(): CurrencyPopulator
     {
         $currenciesPopulated = [];
 
@@ -28,9 +28,6 @@ class CurrencyPopulator
                 'decimalPlaces' => 2,
             ]
         );
-        if ($currency->wasRecentlyCreated) {
-            array_push($currenciesPopulated, $currency);
-        }
 
         /* GBP */
         $currency = Currency::firstOrCreate(
@@ -44,9 +41,6 @@ class CurrencyPopulator
                 'decimalPlaces' => 2,
             ]
         );
-        if ($currency->wasRecentlyCreated) {
-            array_push($currenciesPopulated, $currency);
-        }
 
         /* EUR */
         $currency = Currency::firstOrCreate(
@@ -60,9 +54,6 @@ class CurrencyPopulator
                 'decimalPlaces' => 2,
             ]
         );
-        if ($currency->wasRecentlyCreated) {
-            array_push($currenciesPopulated, $currency);
-        }
 
         /* CAD */
         $currency = Currency::firstOrCreate(
@@ -76,9 +67,6 @@ class CurrencyPopulator
                 'decimalPlaces' => 2,
             ]
         );
-        if ($currency->wasRecentlyCreated) {
-            array_push($currenciesPopulated, $currency);
-        }
 
         /* AUD */
         $currency = Currency::firstOrCreate(
@@ -92,9 +80,6 @@ class CurrencyPopulator
                 'decimalPlaces' => 2,
             ]
         );
-        if ($currency->wasRecentlyCreated) {
-            array_push($currenciesPopulated, $currency);
-        }
 
         /* JPY */
         $currency = Currency::firstOrCreate(
@@ -108,9 +93,6 @@ class CurrencyPopulator
                 'decimalPlaces' => 0,
             ]
         );
-        if ($currency->wasRecentlyCreated) {
-            array_push($currenciesPopulated, $currency);
-        }
 
         /* CNY */
         $currency = Currency::firstOrCreate(
@@ -124,9 +106,6 @@ class CurrencyPopulator
                 'decimalPlaces' => 2,
             ]
         );
-        if ($currency->wasRecentlyCreated) {
-            array_push($currenciesPopulated, $currency);
-        }
 
         /* BTC */
         $currency = Currency::firstOrCreate(
@@ -140,9 +119,6 @@ class CurrencyPopulator
                 'decimalPlaces' => 8,
             ]
         );
-        if ($currency->wasRecentlyCreated) {
-            array_push($currenciesPopulated, $currency);
-        }
 
         /* ETH */
         $currency = Currency::firstOrCreate(
@@ -156,9 +132,6 @@ class CurrencyPopulator
                 'decimalPlaces' => 18,
             ]
         );
-        if ($currency->wasRecentlyCreated) {
-            array_push($currenciesPopulated, $currency);
-        }
 
         /* USDT-ERC20 */
         $currency = Currency::firstOrCreate(
@@ -172,9 +145,6 @@ class CurrencyPopulator
                 'decimalPlaces' => 6,
             ]
         );
-        if ($currency->wasRecentlyCreated) {
-            array_push($currenciesPopulated, $currency);
-        }
 
         /* USDT-TRC20 */
         $currency = Currency::firstOrCreate(
@@ -188,9 +158,6 @@ class CurrencyPopulator
                 'decimalPlaces' => 6,
             ]
         );
-        if ($currency->wasRecentlyCreated) {
-            array_push($currenciesPopulated, $currency);
-        }
 
         /* TRX */
         $currency = Currency::firstOrCreate(
@@ -204,9 +171,6 @@ class CurrencyPopulator
                 'decimalPlaces' => 6,
             ]
         );
-        if ($currency->wasRecentlyCreated) {
-            array_push($currenciesPopulated, $currency);
-        }
 
         /* BNB-BSC */
         $currency = Currency::firstOrCreate(
@@ -220,13 +184,10 @@ class CurrencyPopulator
                 'decimalPlaces' => 16,
             ]
         );
-        if ($currency->wasRecentlyCreated) {
-            array_push($currenciesPopulated, $currency);
-        }
 
         // Refresh the web component
         (new CurrencyPopulatorComponent())->render();
 
-        return $currenciesPopulated;
+        return $this;
     }
 }

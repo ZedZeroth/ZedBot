@@ -28,15 +28,9 @@ class AccountResponseAdapterENM implements AccountResponseAdapterInterface
             */
 
             try {
-                $currency = Currency::where('code','GBP')->firstOrFail();
+                $currency = Currency::where('code', 'GBP')->firstOrFail();
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                $error = sprintf(
-                    '[%s],[%d] ERROR:[%s]',
-                    __METHOD__,
-                    __LINE__,
-                    json_encode($e->getMessage(), true)
-                );
-                Log::error($error);
+                Log::error(__METHOD__ . ' [' . __LINE__ . '] ' . $e->getMessage());
             }
 
             /*💬*/ //Log::warning($currency->id);

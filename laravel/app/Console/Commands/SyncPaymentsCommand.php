@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\PaymentController;
-use App\Models\Payment;
 
 class SyncPaymentsCommand extends Command
 {
@@ -16,7 +15,7 @@ class SyncPaymentsCommand extends Command
      * @var string
      */
     protected /* Do not define */ $signature =
-        'payments:sync {number}';
+        'payments:sync {source} {Provider} {Number to fetch}';
 
     /**
      * The console command description.
@@ -27,99 +26,37 @@ class SyncPaymentsCommand extends Command
         'Synchronizes the payment table with new payments from payment providers.';
 
     /**
-     * Initial output message
-     *
-     * @param int $numberOfPaymentsToFetch
-     * @param int $initialPayments
-     */
-    public function start(
-        int $numberOfPaymentsToFetch,
-        int $initialPayments
-    ): void {
-        $outputs = [
-            'Current number of payments:         ' . $initialPayments,
-            'Number of recent payments to fetch: ' . $numberOfPaymentsToFetch,
-            '... Fetching ...',
-        ];
-
-        $formattedOutputs = (new OutputFormatter())->format(
-            commandName: $this->signature,
-            startOrEnd: 'start',
-            textArray: $outputs
-        );
-
-        foreach ($formattedOutputs as $output) {
-            $this->info($output);
-            Log::info($output);
-        }
-    }
-
-    /**
-     * Execute the console command.
+     * Execute the command via the CommandInformer.
      *
      */
     public function handle(): void
     {
-        $numberOfPaymentsToFetch = $this->argument('number');
-        $initialPayments = Payment::all()->count();
-
-        // Initialize
-        $this->start(
-            numberOfPaymentsToFetch: $numberOfPaymentsToFetch,
-            initialPayments: $initialPayments,
-        );
-
-        // Run the commanded action
-        $paymentsFetched = (new PaymentController())
-            ->sync(
-                provider: 'ENM',
-                numberOfPayments: $numberOfPaymentsToFetch
-            );
-
-        // Finalize
-        $this->finish(
-            numberOfPaymentsToFetch: $numberOfPaymentsToFetch,
-            initialPayments: $initialPayments,
-            paymentsFetched: $paymentsFetched,
-        );
+        try {
+            (new CommandInformer())->run(command: $this);
+        } catch (Exception $e) {
+            $this->error(__METHOD__ . ' [' . __LINE__ . ']');
+            Log::error(__METHOD__ . ' [' . __LINE__ . ']');
+        }
     }
 
     /**
-     * Final output message
+     * Execute the command itself.
      *
-     * @param int $numberOfPaymentsToFetch
-     * @param int $initialPayments
-     * @param array $paymentsFetched
      */
-    public function finish(
-        int $numberOfPaymentsToFetch,
-        int $initialPayments,
-        array $paymentsFetched
-    ): void {
-        $numberOfPaymentsFetched = count($paymentsFetched);
-        $finalPayments = Payment::all()->count();
-
-        $outputs = [
-            '... [ DONE ] ...',
-            'Payments successfully fetched: ' . $numberOfPaymentsFetched,
-            'New total number of payments:  ' . $finalPayments,
-            'New payments created:          ' . ($finalPayments - $initialPayments),
-        ];
-
-        $formattedOutputs = (new OutputFormatter())->format(
-            commandName: $this->signature,
-            startOrEnd: 'end',
-            textArray: $outputs
+    public function runThisCommand(): void
+    {
+        // Build the DTO
+        $dto = new CommandDTO(
+            data: [
+                'provider'
+                    => $this->argument('Provider'),
+                'numberOfPaymentsToFetch'
+                    => $this->argument('Number to fetch')
+            ]
         );
 
-        foreach ($formattedOutputs as $output) {
-            if ($numberOfPaymentsFetched) {
-                $this->info($output);
-                Log::info($output);
-            } else {
-                $this->warn($output);
-                Log::warning($output);
-            }
-        }
+        // Inject the DTO into the relevant controller method
+        (new PaymentController())
+            ->sync($dto);
     }
 }

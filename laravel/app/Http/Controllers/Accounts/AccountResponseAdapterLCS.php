@@ -24,16 +24,16 @@ class AccountResponseAdapterLCS implements AccountResponseAdapterInterface
          *
          */
         $walletsWithBalance = [];
-        /*💬*/ print_r($responseBody);
+        /*💬*/ //print_r($responseBody);
         foreach ($responseBody['currencies'] as $currencyCode => $currencyArray) {
             /*💬*/ //echo $currency . PHP_EOL;
             foreach ($currencyArray as $key => $value) {
                 if (is_array($value)) {
                     if (array_key_exists('balance', $value)) {
                         if ($value['balance'] > 0) {
-                            /*💬*/ echo $currencyCode . PHP_EOL;
-                            /*💬*/ echo $key . PHP_EOL;
-                            /*💬*/ echo 'Balance: ' . $value['balance'] . PHP_EOL . PHP_EOL;
+                            /*💬*/ //echo $currencyCode . PHP_EOL;
+                            /*💬*/ //echo $key . PHP_EOL;
+                            /*💬*/ //echo 'Balance: ' . $value['balance'] . PHP_EOL . PHP_EOL;
 
                             if ($currencyCode == 'BTC') {
                                 $network = 'Bitcoin';

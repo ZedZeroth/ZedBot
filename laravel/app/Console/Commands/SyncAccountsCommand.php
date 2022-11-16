@@ -16,7 +16,7 @@ class SyncAccountsCommand extends Command
      * @var string
      */
     protected /* Do not define */ $signature =
-        'accounts:sync {number}';
+        'accounts:sync {source} {Provider} {Number to fetch}';
 
     /**
      * The console command description.
@@ -27,101 +27,24 @@ class SyncAccountsCommand extends Command
         'Synchronizes the account table with accounts from account providers.';
 
     /**
-     * Initial output message
-     *
-     * @param int $numberOfAccountsToFetch
-     * @param int $initialAccounts
-     */
-    public function start(
-        int $numberOfAccountsToFetch,
-        int $initialAccounts
-    ): void {
-        $outputs = [
-            'Current number of accounts:         ' . $initialAccounts,
-            'Number of recent accounts to fetch: ' . $numberOfAccountsToFetch,
-            '... Fetching ...',
-        ];
-
-        $formattedOutputs = (new OutputFormatter())->format(
-            commandName: $this->signature,
-            startOrEnd: 'start',
-            textArray: $outputs
-        );
-
-        foreach ($formattedOutputs as $output) {
-            $this->info($output);
-            Log::info($output);
-        }
-    }
-
-    /**
-     * Execute the console command.
+     * Execute the command via the CommandInformer.
      *
      */
     public function handle(): void
     {
-        foreach(['ENM', 'LCS'] as $provider) {
-            $numberOfAccountsToFetch = $this->argument('number');
-            $initialAccounts = Account::all()->count();
-
-            // Initialize
-            $this->start(
-                numberOfAccountsToFetch: $numberOfAccountsToFetch,
-                initialAccounts: $initialAccounts,
-            );
-
-            // Run the commanded action
-            $accountsFetched = (new AccountController())
-                ->sync(
-                    provider: $provider,
-                    numberOfAccounts: $numberOfAccountsToFetch
-                );
-
-            // Finalize
-            $this->finish(
-                numberOfAccountsToFetch: $numberOfAccountsToFetch,
-                initialAccounts: $initialAccounts,
-                accountsFetched: $accountsFetched,
-            );
-        }
+        (new CommandInformer())->run(command: $this);
     }
 
     /**
-     * Final output message
+     * Execute the command itself.
      *
-     * @param int $numberOfAccountsToFetch
-     * @param int $initialAccounts
-     * @param array $accountsFetched
      */
-    public function finish(
-        int $numberOfAccountsToFetch,
-        int $initialAccounts,
-        array $accountsFetched
-    ): void {
-        $numberOfAccountsToFetch = count($accountsFetched);
-        $finalAccounts = Account::all()->count();
-
-        $outputs = [
-            '... [ DONE ] ...',
-            'Accounts successfully fetched: ' . $numberOfAccountsToFetch,
-            'New total number of accounts:  ' . $finalAccounts,
-            'New accounts created:          ' . ($finalAccounts - $initialAccounts),
-        ];
-
-        $formattedOutputs = (new OutputFormatter())->format(
-            commandName: $this->signature,
-            startOrEnd: 'end',
-            textArray: $outputs
-        );
-
-        foreach ($formattedOutputs as $output) {
-            if ($numberOfAccountsToFetch) {
-                $this->info($output);
-                Log::info($output);
-            } else {
-                $this->warn($output);
-                Log::warning($output);
-            }
-        }
+    public function runThisCommand(): void
+    {
+        (new AccountController())
+            ->sync(
+                provider: strtoupper($this->argument('Provider')),
+                numberOfAccounts: $this->argument('Number to fetch')
+            );
     }
 }

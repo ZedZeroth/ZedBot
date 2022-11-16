@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\View\View;
 use App\Http\Controllers\Payments\PaymentViewer;
+use App\Console\Commands\CommandDTO;
 use App\Http\Controllers\Payments\PaymentSynchroniser;
+use App\Http\Controllers\Payments\PaymentFetcher;
 
 class PaymentController extends Controller
 {
@@ -62,16 +64,29 @@ class PaymentController extends Controller
      * Fetches recent payments from external providers
      * and creates any new ones that do not exist.
      *
-     * @param string $provider
-     * @param int $numberOfPayments
-     * @return array
+     * @param CommandDTO $dto
+     * @return PaymentController
      */
-    public function sync($provider, $numberOfPayments)
-    {
-        return (new PaymentSynchroniser())
-            ->sync(
-                provider: $provider,
-                numberOfPayments: $numberOfPayments,
-            );
+    public function sync(
+        CommandDTO $dto
+    ): PaymentController {
+
+        // Build the adapter
+        $paymentRequestAdapterClass =
+            'App\Http\Controllers\Payments\PaymentRequestAdapter'
+            . strtoupper($dto->data['provider']);
+
+        $paymentRequestAdapter = new $paymentRequestAdapterClass(
+            numberOfPaymentsToFetch: $dto->data['numberOfPaymentsToFetch']
+        );
+
+        // Synchronize payments
+        (new PaymentSynchroniser(
+            paymentRequestAdapter: $paymentRequestAdapter
+        ))
+            ->fetchPayments()
+            ->createNewPayments();
+
+        return $this;
     }
 }
