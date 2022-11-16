@@ -41,10 +41,20 @@ class SyncAccountsCommand extends Command
      */
     public function runThisCommand(): void
     {
+        // Build the DTO
+        $dto = new CommandDTO(
+            data: [
+                'provider'
+                    => $this->argument('Provider'),
+                'numberOfAccountsToFetch'
+                    => $this->argument('Number to fetch')
+            ]
+        );
+
+        // Inject the DTO into the relevant controller method
         (new AccountController())
-            ->sync(
-                provider: strtoupper($this->argument('Provider')),
-                numberOfAccounts: $this->argument('Number to fetch')
-            );
+            ->sync($dto);
+
+        return;
     }
 }

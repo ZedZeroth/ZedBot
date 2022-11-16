@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\View\View;
+use App\Console\Commands\CommandDTO;
 use App\Http\Controllers\Accounts\AccountViewer;
 use App\Http\Controllers\Accounts\AccountSynchronizer;
 
@@ -59,19 +60,20 @@ class AccountController extends Controller
     }
 
     /**
-     * Fetches recent accounts from external providers
+     * Fetches accounts from external providers
      * and creates any new ones that do not exist.
      *
-     * @param string $provider
-     * @param int $numberOfAccounts
-     * @return array
+     * @param CommandDTO $dto
+     * @return void
      */
-    public function sync($provider, $numberOfAccounts)
-    {
-        return (new AccountSynchronizer())
-            ->sync(
-                provider: $provider,
-                numberOfAccounts: $numberOfAccounts,
-            );
+    public function sync(
+        CommandDTO $dto
+    ): void {
+        (new AccountSynchronizer())
+            ->selectAdapters($dto->data['provider'])
+            ->requestAccounts($dto->data['numberOfAccountsToFetch'])
+            ->adaptResponse()
+            ->createNewAccounts();
+        return;
     }
 }

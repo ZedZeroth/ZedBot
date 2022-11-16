@@ -90,9 +90,9 @@ class CommandInformer
          */
         $latency = now()->diffInMilliseconds($startTime);
         $this->output(
-            '... DONE in '
+            '... '
             . number_format($latency, 0, '.', ',')
-            . ' ms'
+            . 'ms DONE'
         );
 
         /**

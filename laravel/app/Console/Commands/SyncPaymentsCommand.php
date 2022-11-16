@@ -33,14 +33,6 @@ class SyncPaymentsCommand extends Command
     public function handle(): void
     {
         (new CommandInformer())->run(command: $this);
-        /*
-        try {
-            (new CommandInformer())->run(command: $this);
-        } catch (Exception $e) {
-            $this->error(__METHOD__ . ' [' . __LINE__ . '] ' . $e->getMessage());
-            Log::error(__METHOD__ . ' [' . __LINE__ . '] ' . $e->getMessage());
-        }
-        */
     }
 
     /**

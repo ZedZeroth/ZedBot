@@ -56,7 +56,7 @@ class PaymentRequestAdapterENM implements PaymentRequestAdapterInterface
      *
      * @return PaymentRequestAdapterInterface
      */
-    private function fetchResponse(): PaymentRequestAdapterInterface
+    public function fetchResponse(): PaymentRequestAdapterInterface
     {
         /**
          * Adapter instantiation is required as
@@ -77,7 +77,7 @@ class PaymentRequestAdapterENM implements PaymentRequestAdapterInterface
      *
      * @return PaymentRequestAdapterInterface
      */
-    private function parseResponse(): PaymentRequestAdapterInterface
+    public function parseResponse(): PaymentRequestAdapterInterface
     {
         $this->statusCode = $this->response->status();
         $this->responseBody = json_decode(
@@ -92,7 +92,7 @@ class PaymentRequestAdapterENM implements PaymentRequestAdapterInterface
      *
      * @return array
      */
-    private function returnResponseBodyArray(): array
+    public function returnResponseBodyArray(): array
     {
         if ($this->statusCode == 200) {
             return $this->responseBody;

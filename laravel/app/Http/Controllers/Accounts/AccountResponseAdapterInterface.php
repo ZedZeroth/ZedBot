@@ -6,12 +6,20 @@ interface AccountResponseAdapterInterface
 {
     /**
      * Converts an account request response into
-     * an array of account DTOs for the synchronizer.
+     * an array of account DTOs to be
+     * synchronized.
      *
      * @param array $responseBody
      * @return array
      */
-    public function respond(
+    public function adapt(
         array $responseBody
     ): array;
+
+    /**
+     * Build the account DTOs.
+     *
+     * @return AccountResponseAdapterInterface
+     */
+    public function buildAccountDTOs(): AccountResponseAdapterInterface;
 }

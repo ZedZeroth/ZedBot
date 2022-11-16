@@ -8,33 +8,79 @@ use App\Http\Controllers\RequestAdapters\GetAdapterLCS;
 class AccountRequestAdapterLCS implements AccountRequestAdapterInterface
 {
     /**
+     * Properties required to perform the request.
+     *
+     * @var int $numberOfAccountsToFetch
+     * @var Http $response
+     * @var int $statusCode
+     * @var array $responseBody
+     */
+
+     /**
      * Requests blockchain addresses from LCS.
      *
-     * @param int $numberOfAccounts
+     * @param int $numberOfAccountsToFetch
      * @return array
      */
     public function request(
-        int $numberOfAccounts
+        int $numberOfAccountsToFetch
     ): array {
-        $response = (new GetAdapterLCS())
+        $this->numberOfAccountsToFetch = $numberOfAccountsToFetch;
+
+        return $this
+            ->fetchResponse()
+            ->parseResponse()
+            ->returnResponseBodyArray();
+    }
+
+    /**
+     * Fetch the response.
+     *
+     * @return AccountRequestAdapterInterface
+     */
+    public function fetchResponse(): AccountRequestAdapterInterface
+    {
+        /**
+         * Adapter instantiation is required as
+         * some providers use POST and others
+         * use GET.
+         *
+         */
+        $this->response = (new GetAdapterLCS())
             ->get(
-                endpoint: env('ZED_LCS_WALLETS_ENDPOINT'),
+                endpoint: env('ZED_LCS_WALLETS_ENDPOINT')
             );
+        return $this;
+    }
 
-        $statusCode = $response->status();
-
-        $responseBody = json_decode(
-            $response->getBody(),
+    /**
+     * Parse the response.
+     *
+     * @return AccountRequestAdapterInterface
+     */
+    public function parseResponse(): AccountRequestAdapterInterface
+    {
+        $this->statusCode = $this->response->status();
+        $this->responseBody = json_decode(
+            $this->response->getBody(),
             true
         );
+        return $this;
+    }
 
-        if ($statusCode == 200) {
-            return (new AccountResponseAdapterLCS())
-                ->respond(responseBody: $responseBody);
+    /**
+     * Return the responseBody array.
+     *
+     * @return array
+     */
+    public function returnResponseBodyArray(): array
+    {
+        if ($this->statusCode == 200) {
+            return $this->responseBody;
         } else {
-            Log::error('Status code: ' . $statusCode);
-            if (!empty($responseBody['responseStatus']['message'])) {
-                Log::error($responseBody['responseStatus']['message']);
+            Log::error('Status code: ' . $this->statusCode);
+            if (!empty($this->responseBody['responseStatus']['message'])) {
+                Log::error($this->responseBody['responseStatus']['message']);
             }
             return [];
         }

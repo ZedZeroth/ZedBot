@@ -17,10 +17,15 @@ class PaymentSynchronizerComponent extends Component
      *
      * @param string $provider
      */
-    public function sync(string $provider)
+    public function sync(string $provider): void
     {
         try {
-            Artisan::call('payments:sync browser ' . $provider . ' ' . $this->numberToFetch);
+            Artisan::call(
+                'payments:sync browser '
+                . $provider
+                . ' '
+                . $this->numberToFetch
+            );
         } catch (\Symfony\Component\Console\Exception\RuntimeException $e) {
             Log::error(__METHOD__ . ' [' . __LINE__ . '] ' . $e->getMessage());
         }

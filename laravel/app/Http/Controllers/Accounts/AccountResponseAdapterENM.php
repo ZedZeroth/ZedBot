@@ -9,34 +9,52 @@ use App\Models\Currency;
 class AccountResponseAdapterENM implements AccountResponseAdapterInterface
 {
     /**
+     * Properties required by the adapter.
+     *
+     * @var array $responseBody
+     * @var array $accountDTOs
+     */
+    private array $responseBody;
+    private array $accountDTOs = [];
+
+    /**
      * Converts an ENM account request response into
-     * an array of account DTOs for the synchronizer.
+     * an array of account DTOs to be
+     * synchronized.
      *
      * @param array $responseBody
      * @return array
      */
-    public function respond(
+    public function adapt(
         array $responseBody
     ): array {
-        $DTOs = [];
-        foreach ($responseBody['results'] as $result) {
+        $this->responseBody = $responseBody;
+
+        return $this
+            ->buildAccountDTOs()
+            ->returnAccountDTOs();
+    }
+
+    /**
+     * Build the account DTOs.
+     *
+     * @return AccountResponseAdapterInterface
+     */
+    public function buildAccountDTOs(): AccountResponseAdapterInterface
+    {
+        foreach ($this->responseBody['results'] as $result) {
             /*💬*/ //print_r($result);
 
-            /**
-             * Build the account DTO.
-             *
-            */
+            // Determine the currency
+            $currency = Currency::
+                    where(
+                        'code',
+                        'GBP'
+                    )->firstOrFail();
 
-            try {
-                $currency = Currency::where('code', 'GBP')->firstOrFail();
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                Log::error(__METHOD__ . ' [' . __LINE__ . '] ' . $e->getMessage());
-            }
-
-            /*💬*/ //Log::warning($currency->id);
-
+            // Create the DTO
             array_push(
-                $DTOs,
+                $this->accountDTOs,
                 new AccountDTO(
                     network: (string) 'FPS',
                     identifier: (string) 'fps'
@@ -52,6 +70,16 @@ class AccountResponseAdapterENM implements AccountResponseAdapterInterface
             );
         }
 
-        return $DTOs;
+        return $this;
+    }
+
+    /**
+     * Return the account DTOs.
+     *
+     * @return array
+     */
+    public function returnAccountDTOs(): array
+    {
+        return $this->accountDTOs;
     }
 }

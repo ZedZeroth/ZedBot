@@ -25,7 +25,7 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
     /**
      * Converts an ENM payment request response into
      * an array of account and payment DTOs to be
-     * sunchronized.
+     * synchronized.
      *
      * @param array $responseBody
      * @return array
@@ -39,7 +39,7 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
             ->buildAccountDTOs()
             ->syncAccountDTOs()
             ->buildPaymentDTOs()
-            ->returnAccountDTOs();
+            ->returnPaymentDTOs();
     }
 
     /**
@@ -47,7 +47,7 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
      *
      * @return PaymentResponseAdapterInterface
      */
-    private function buildAccountDTOs(): PaymentResponseAdapterInterface
+    public function buildAccountDTOs(): PaymentResponseAdapterInterface
     {
         foreach ($this->responseBody['results'] as $result) {
             /*💬*/ //print_r($result);
@@ -75,15 +75,28 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
              * if they don't already exist.
              *
              */
-            foreach ($identifiers as $accountIdentifier) {
-                // Debits use labels (assumed account names)
-                if ($result['DebitCreditCode'] == 'Debit') {
+            foreach ($identifiers as $originatorOrBeneficiary => $accountIdentifier) {
+                $label = '';
+                $networkAccountName = '';
+                /**
+                 * Debits use labels (assumed account names)
+                 * for the beneficiary.
+                 */
+                if (
+                    $result['DebitCreditCode'] == 'Debit'
+                    and $originatorOrBeneficiary = 'beneficiary'
+                ) {
                     $label = $result['CounterpartAccount_TransactionOwnerName'];
-                    $networkAccountName = '';
-                // Credits provide confirmed network account names
-                } else {
-                    $label = '';
-                    $networkAccountName = $result['CounterpartAccount_TransactionOwnerName'];
+                }
+                /**
+                 * Credits provide confirmed network account names
+                 * for the originator.
+                 */
+                if (
+                    $result['DebitCreditCode'] == 'Credit'
+                    and $originatorOrBeneficiary = 'originator'
+                ) {
+                    $labnetworkAccountNameel = $result['CounterpartAccount_TransactionOwnerName'];
                 }
 
                 // Create the DTO
@@ -110,7 +123,7 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
      *
      * @return PaymentResponseAdapterInterface
      */
-    private function syncAccountDTOs(): PaymentResponseAdapterInterface
+    public function syncAccountDTOs(): PaymentResponseAdapterInterface
     {
         (new AccountSynchronizer())
                     ->setDTOs(DTOs: $this->accountDTOs)
@@ -123,7 +136,7 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
      *
      * @return PaymentResponseAdapterInterface
      */
-    private function buildPaymentDTOs(): PaymentResponseAdapterInterface
+    public function buildPaymentDTOs(): PaymentResponseAdapterInterface
     {
         foreach ($this->responseBody['results'] as $result) {
             /*💬*/ //print_r($result);
@@ -184,7 +197,7 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
      *
      * @return array
      */
-    private function returnAccountDTOs(): array
+    public function returnPaymentDTOs(): array
     {
         return $this->paymentDTOs;
     }

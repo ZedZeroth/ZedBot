@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Accounts;
 
 use App\Models\Account;
-use App\Http\Livewire\AccountSynchronizerComponent;
 
 class AccountSynchronizer
 {
@@ -15,48 +14,80 @@ class AccountSynchronizer
     private array $DTOs;
 
     /**
-     * Fetches recent accounts from external providers
-     * and creates any new ones that do not exist.
+     * The response returned by the request.
      *
-     * @param string $provider
-     * @param int $numberOfAccounts
-     * @return array
+     * @var array $responseBody
      */
-    public function sync($provider, $numberOfAccounts)
-    {
-        // Fetch the payment data
-        $requestAdapterClass =
+    private array $responseBody;
+
+    /**
+     * The account request adapter.
+     *
+     * @var AccountRequestAdapterInterface $accountRequestAdapter
+     */
+    private AccountRequestAdapterInterface $accountRequestAdapter;
+
+    /**
+     * The account response adapter.
+     *
+     * @var AccountResponseAdapterInterface $accountResponseAdapter
+     */
+    private AccountResponseAdapterInterface $accountResponseAdapter;
+
+    /**
+     * Builds the correct adapters for
+     * the specified account provider.
+     *
+     * @param string $accountProvider
+     * @return AccountSynchronizer
+     */
+    public function selectAdapters(
+        string $accountProvider
+    ): AccountSynchronizer {
+
+        // Build the request adaper
+        $accountRequestAdapterClass =
             'App\Http\Controllers\Accounts\AccountRequestAdapter'
-            . $provider;
+            . strtoupper($accountProvider);
+        $this->accountRequestAdapter = new $accountRequestAdapterClass();
 
-        $accountDTOs = (new AccountFetcher())
-            ->fetch(
-                requestAdapter: new $requestAdapterClass(),
-                numberOfAccounts: $numberOfAccounts,
-            );
+        // Build the response adaper
+        $accountResponseAdapterClass =
+            'App\Http\Controllers\Accounts\AccountResponseAdapter'
+            . strtoupper($accountProvider);
+        $this->accountResponseAdapter = new $accountResponseAdapterClass();
 
-        foreach ($accountDTOs as $dto) {
-            // This will not overrride any pre-existing networkAccountName
-            Account::firstOrCreate(
-                ['identifier' => $dto->identifier],
-                [
-                    'network' => $dto->network,
-                    'customer_id' => $dto->customer_id,
-                    'label' => $dto->label,
-                    'currency_id' => $dto->currency_id,
-                    'balance' => $dto->balance,
-                ]
-            );
-        }
-
-        // Refresh view component account count.
-        (new AccountSynchronizerComponent())->render();
-
-        return $accountDTOs;
+        return $this;
     }
 
-    /////////////////////////////////////////////////////////
-    ////////////////////////REFACTORED//////////////////////
+    /**
+     * Requests a response from the provider
+     * and returns the reponseBody array.
+     *
+     * @param int $numberOfAccountsToFetch
+     * @return AccountSynchronizer
+     */
+    public function requestAccounts(
+        int $numberOfAccountsToFetch
+    ): AccountSynchronizer {
+        $this->responseBody =
+            $this->accountRequestAdapter
+                ->request($numberOfAccountsToFetch);
+        return $this;
+    }
+
+    /**
+     * Adapts the responseBody array into
+     * an array of DTOs.
+     *
+     * @return AccountSynchronizer
+     */
+    public function adaptResponse(): AccountSynchronizer
+    {
+        $this->DTOs = $this->accountResponseAdapter
+            ->adapt(responseBody: $this->responseBody);
+        return $this;
+    }
 
     /**
      * Set DTOs.
