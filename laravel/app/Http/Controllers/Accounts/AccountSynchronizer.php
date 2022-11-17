@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Accounts;
 
 use App\Models\Account;
+use App\Http\Controllers\Accounts\Synchronizer\accountSyncRequestAdapterInterface;
+use App\Http\Controllers\Accounts\Synchronizer\accountSyncResponseAdapterInterface;
 
 class AccountSynchronizer
 {
@@ -23,16 +25,16 @@ class AccountSynchronizer
     /**
      * The account request adapter.
      *
-     * @var AccountRequestAdapterInterface $accountRequestAdapter
+     * @var accountSyncRequestAdapterInterface $accountSyncRequestAdapter
      */
-    private AccountRequestAdapterInterface $accountRequestAdapter;
+    private accountSyncRequestAdapterInterface $accountSyncRequestAdapter;
 
     /**
      * The account response adapter.
      *
-     * @var AccountResponseAdapterInterface $accountResponseAdapter
+     * @var accountSyncResponseAdapterInterface $accountSyncResponseAdapter
      */
-    private AccountResponseAdapterInterface $accountResponseAdapter;
+    private accountSyncResponseAdapterInterface $accountSyncResponseAdapter;
 
     /**
      * Builds the correct adapters for
@@ -46,16 +48,18 @@ class AccountSynchronizer
     ): AccountSynchronizer {
 
         // Build the request adaper
-        $accountRequestAdapterClass =
-            'App\Http\Controllers\Accounts\AccountRequestAdapter'
+        $accountSyncRequestAdapterClass =
+            'App\Http\Controllers\Accounts\Synchronizer'
+            . '\AccountSyncRequestAdapterFor'
             . strtoupper($accountProvider);
-        $this->accountRequestAdapter = new $accountRequestAdapterClass();
+        $this->accountSyncRequestAdapter = new $accountSyncRequestAdapterClass();
 
         // Build the response adaper
-        $accountResponseAdapterClass =
-            'App\Http\Controllers\Accounts\AccountResponseAdapter'
+        $accountSyncResponseAdapterClass =
+            'App\Http\Controllers\Accounts\Synchronizer'
+            . '\AccountSyncResponseAdapterFor'
             . strtoupper($accountProvider);
-        $this->accountResponseAdapter = new $accountResponseAdapterClass();
+        $this->accountSyncResponseAdapter = new $accountSyncResponseAdapterClass();
 
         return $this;
     }
@@ -71,8 +75,12 @@ class AccountSynchronizer
         int $numberOfAccountsToFetch
     ): AccountSynchronizer {
         $this->responseBody =
-            $this->accountRequestAdapter
-                ->request($numberOfAccountsToFetch);
+            $this->accountSyncRequestAdapter
+                ->setNumberOfAccountsToFetch(numberOfAccountsToFetch: $numberOfAccountsToFetch)
+                ->buildPostParameters()
+                ->fetchResponse()
+                ->parseResponse()
+                ->returnResponseBodyArray();
         return $this;
     }
 
@@ -84,8 +92,10 @@ class AccountSynchronizer
      */
     public function adaptResponse(): AccountSynchronizer
     {
-        $this->DTOs = $this->accountResponseAdapter
-            ->adapt(responseBody: $this->responseBody);
+        $this->DTOs = $this->accountSyncResponseAdapter
+            ->setResponseBody(responseBody: $this->responseBody)
+            ->buildAccountDTOs()
+            ->returnAccountDTOs();
         return $this;
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Payments;
+namespace App\Http\Controllers\Payments\Synchronizer;
 
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\MultiDomain\MoneyConverter;
@@ -8,8 +8,9 @@ use App\Http\Controllers\Accounts\AccountDTO;
 use App\Http\Controllers\Accounts\AccountSynchronizer;
 use App\Models\Account;
 use App\Models\Currency;
+use App\Http\Controllers\Payments\PaymentDTO;
 
-class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
+class PaymentSyncResponseAdapterForENM implements PaymentSyncResponseAdapterInterface
 {
     /**
      * Properties required by the adapter.
@@ -23,31 +24,24 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
     private array $paymentDTOs = [];
 
     /**
-     * Converts an ENM payment request response into
-     * an array of account and payment DTOs to be
-     * synchronized.
+     * Set the response body.
      *
      * @param array $responseBody
-     * @return array
+     * @return PaymentSyncResponseAdapterInterface
      */
-    public function adapt(
+    public function setResponseBody(
         array $responseBody
-    ): array {
+    ): PaymentSyncResponseAdapterInterface {
         $this->responseBody = $responseBody;
-
-        return $this
-            ->buildAccountDTOs()
-            ->syncAccountDTOs()
-            ->buildPaymentDTOs()
-            ->returnPaymentDTOs();
+        return $this;
     }
 
     /**
      * Build the account DTOs.
      *
-     * @return PaymentResponseAdapterInterface
+     * @return PaymentSyncResponseAdapterInterface
      */
-    public function buildAccountDTOs(): PaymentResponseAdapterInterface
+    public function buildAccountDTOs(): PaymentSyncResponseAdapterInterface
     {
         foreach ($this->responseBody['results'] as $result) {
             /*💬*/ //print_r($result);
@@ -121,9 +115,9 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
     /**
      * Sync the account DTOs.
      *
-     * @return PaymentResponseAdapterInterface
+     * @return PaymentSyncResponseAdapterInterface
      */
-    public function syncAccountDTOs(): PaymentResponseAdapterInterface
+    public function syncAccountDTOs(): PaymentSyncResponseAdapterInterface
     {
         (new AccountSynchronizer())
                     ->setDTOs(DTOs: $this->accountDTOs)
@@ -134,9 +128,9 @@ class PaymentResponseAdapterENM implements PaymentResponseAdapterInterface
     /**
      * Build the payment DTOs.
      *
-     * @return PaymentResponseAdapterInterface
+     * @return PaymentSyncResponseAdapterInterface
      */
-    public function buildPaymentDTOs(): PaymentResponseAdapterInterface
+    public function buildPaymentDTOs(): PaymentSyncResponseAdapterInterface
     {
         foreach ($this->responseBody['results'] as $result) {
             /*💬*/ //print_r($result);

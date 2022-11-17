@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Accounts;
+namespace App\Http\Controllers\Accounts\Synchronizer;
 
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\MultiDomain\MoneyConverter;
 use App\Models\Account;
 use App\Models\Currency;
+use App\Http\Controllers\Accounts\AccountDTO;
 
-class AccountResponseAdapterLCS implements AccountResponseAdapterInterface
+class AccountSyncResponseAdapterForLCS implements AccountSyncResponseAdapterInterface
 {
     /**
      * Properties required by the adapter.
@@ -19,29 +20,24 @@ class AccountResponseAdapterLCS implements AccountResponseAdapterInterface
     private array $accountDTOs = [];
 
     /**
-     * Converts an LCS wallet request response into
-     * an array of account DTOs to be
-     * synchronized.
+     * Sets the response body.
      *
      * @param array $responseBody
-     * @return array
+     * @return accountSyncResponseAdapterInterface
      */
-    public function adapt(
+    public function setResponseBody(
         array $responseBody
-    ): array {
+    ): accountSyncResponseAdapterInterface {
         $this->responseBody = $responseBody;
-
-        return $this
-            ->buildAccountDTOs()
-            ->returnAccountDTOs();
+        return $this;
     }
 
     /**
      * Build the account DTOs.
      *
-     * @return AccountResponseAdapterInterface
+     * @return accountSyncResponseAdapterInterface
      */
-    public function buildAccountDTOs(): AccountResponseAdapterInterface
+    public function buildAccountDTOs(): accountSyncResponseAdapterInterface
     {
         //Extract relevant data from the response
         $walletsWithBalance = [];

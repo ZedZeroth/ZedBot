@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Payments;
 
 use App\Models\Payment;
+use App\Http\Controllers\Payments\Synchronizer\PaymentSyncRequestAdapterInterface;
+use App\Http\Controllers\Payments\Synchronizer\PaymentSyncResponseAdapterInterface;
 
 class PaymentSynchronizer
 {
@@ -23,16 +25,16 @@ class PaymentSynchronizer
     /**
      * The payment request adapter.
      *
-     * @var PaymentRequestAdapterInterface $paymentRequestAdapter
+     * @var PaymentSyncRequestAdapterInterface $paymentSyncRequestAdapter
      */
-    private PaymentRequestAdapterInterface $paymentRequestAdapter;
+    private PaymentSyncRequestAdapterInterface $paymentSyncRequestAdapter;
 
     /**
      * The payment response adapter.
      *
-     * @var PaymentResponseAdapterInterface $paymentResponseAdapter
+     * @var PaymentSyncResponseAdapterInterface $paymentSyncResponseAdapter
      */
-    private PaymentResponseAdapterInterface $paymentResponseAdapter;
+    private PaymentSyncResponseAdapterInterface $paymentSyncResponseAdapter;
 
     /**
      * Builds the correct adapters for
@@ -46,16 +48,20 @@ class PaymentSynchronizer
     ): PaymentSynchronizer {
 
         // Build the request adaper
-        $paymentRequestAdapterClass =
-            'App\Http\Controllers\Payments\PaymentRequestAdapter'
+        $paymentSyncRequestAdapterClass =
+            'App\Http\Controllers\Payments\Synchronizer'
+            . '\PaymentSyncRequestAdapterFor'
             . strtoupper($paymentProvider);
-        $this->paymentRequestAdapter = new $paymentRequestAdapterClass();
+        $this->paymentSyncRequestAdapter =
+            new $paymentSyncRequestAdapterClass();
 
         // Build the response adaper
-        $paymentResponseAdapterClass =
-            'App\Http\Controllers\Payments\PaymentResponseAdapter'
+        $paymentSyncResponseAdapterClass =
+            'App\Http\Controllers\Payments\Synchronizer'
+            . '\PaymentSyncResponseAdapterFor'
             . strtoupper($paymentProvider);
-        $this->paymentResponseAdapter = new $paymentResponseAdapterClass();
+        $this->paymentSyncResponseAdapter =
+            new $paymentSyncResponseAdapterClass();
 
         return $this;
     }
@@ -71,8 +77,12 @@ class PaymentSynchronizer
         int $numberOfPaymentsToFetch
     ): PaymentSynchronizer {
         $this->responseBody =
-            $this->paymentRequestAdapter
-                ->request($numberOfPaymentsToFetch);
+            $this->paymentSyncRequestAdapter
+                ->setNumberOfPaymentsToFetch(numberOfPaymentsToFetch: $numberOfPaymentsToFetch)
+                ->buildPostParameters()
+                ->fetchResponse()
+                ->parseResponse()
+                ->returnResponseBodyArray();
         return $this;
     }
 
@@ -84,8 +94,12 @@ class PaymentSynchronizer
      */
     public function adaptResponse(): PaymentSynchronizer
     {
-        $this->DTOs = $this->paymentResponseAdapter
-            ->adapt(responseBody: $this->responseBody);
+        $this->DTOs = $this->paymentSyncResponseAdapter
+            ->setResponseBody(responseBody: $this->responseBody)
+            ->buildAccountDTOs()
+            ->syncAccountDTOs()
+            ->buildPaymentDTOs()
+            ->returnPaymentDTOs();
         return $this;
     }
 

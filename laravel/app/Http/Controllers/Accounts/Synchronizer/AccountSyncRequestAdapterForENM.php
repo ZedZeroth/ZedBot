@@ -1,44 +1,56 @@
 <?php
 
-namespace App\Http\Controllers\Accounts;
+namespace App\Http\Controllers\Accounts\Synchronizer;
 
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\RequestAdapters\GetAdapterLCS;
+use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\RequestAdapters\PostAdapterENM;
 
-class AccountRequestAdapterLCS implements AccountRequestAdapterInterface
+class AccountSyncRequestAdapterForENM implements AccountSyncRequestAdapterInterface
 {
     /**
      * Properties required to perform the request.
      *
      * @var int $numberOfAccountsToFetch
+     * @var array $postParameters
      * @var Http $response
      * @var int $statusCode
      * @var array $responseBody
      */
 
      /**
-     * Requests blockchain addresses from LCS.
+     * Set the number of accounts to fetch.
      *
      * @param int $numberOfAccountsToFetch
-     * @return array
+     * @return accountSyncRequestAdapterInterface
      */
-    public function request(
+    public function setNumberOfAccountsToFetch(
         int $numberOfAccountsToFetch
-    ): array {
+    ): accountSyncRequestAdapterInterface {
         $this->numberOfAccountsToFetch = $numberOfAccountsToFetch;
+        return $this;
+    }
 
-        return $this
-            ->fetchResponse()
-            ->parseResponse()
-            ->returnResponseBodyArray();
+    /**
+     * Build the post parameters.
+     *
+     * @return accountSyncRequestAdapterInterface
+     */
+    public function buildPostParameters(): accountSyncRequestAdapterInterface
+    {
+        $this->postParameters = [
+            'accountERN' => env('ZED_ENM_ACCOUNT_ERN'),
+            'take' => $this->numberOfAccountsToFetch
+        ];
+        return $this;
     }
 
     /**
      * Fetch the response.
      *
-     * @return AccountRequestAdapterInterface
+     * @return accountSyncRequestAdapterInterface
      */
-    public function fetchResponse(): AccountRequestAdapterInterface
+    public function fetchResponse(): accountSyncRequestAdapterInterface
     {
         /**
          * Adapter instantiation is required as
@@ -46,9 +58,10 @@ class AccountRequestAdapterLCS implements AccountRequestAdapterInterface
          * use GET.
          *
          */
-        $this->response = (new GetAdapterLCS())
-            ->get(
-                endpoint: env('ZED_LCS_WALLETS_ENDPOINT')
+        $this->response = (new PostAdapterENM())
+            ->post(
+                endpoint: env('ZED_ENM_BENEFICIARIES_ENDPOINT'),
+                postParameters: $this->postParameters
             );
         return $this;
     }
@@ -56,9 +69,9 @@ class AccountRequestAdapterLCS implements AccountRequestAdapterInterface
     /**
      * Parse the response.
      *
-     * @return AccountRequestAdapterInterface
+     * @return accountSyncRequestAdapterInterface
      */
-    public function parseResponse(): AccountRequestAdapterInterface
+    public function parseResponse(): accountSyncRequestAdapterInterface
     {
         $this->statusCode = $this->response->status();
         $this->responseBody = json_decode(

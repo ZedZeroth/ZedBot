@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Payments;
+namespace App\Http\Controllers\Payments\Synchronizer;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\RequestAdapters\PostAdapterENM;
 
-class PaymentRequestAdapterENM implements PaymentRequestAdapterInterface
+class PaymentSyncRequestAdapterForENM implements PaymentSyncRequestAdapterInterface
 {
     /**
      * Properties required to perform the request.
@@ -19,30 +19,25 @@ class PaymentRequestAdapterENM implements PaymentRequestAdapterInterface
      */
 
      /**
-     * Requests transacations (payments) from ENM
-     * and return the response.
+     * Set the number of payments to fetch.
      *
      * @param int $numberOfPaymentsToFetch
-     * @return array
+     * @return PaymentSyncRequestAdapterInterface
      */
-    public function request(
+    public function setNumberOfPaymentsToFetch(
         int $numberOfPaymentsToFetch
-    ): array {
+    ): PaymentSyncRequestAdapterInterface
+    {
         $this->numberOfPaymentsToFetch = $numberOfPaymentsToFetch;
-
-        return $this
-            ->buildPostParameters()
-            ->fetchResponse()
-            ->parseResponse()
-            ->returnResponseBodyArray();
+        return $this;
     }
 
     /**
      * Build the post parameters.
      *
-     * @return PaymentRequestAdapterInterface
+     * @return PaymentSyncRequestAdapterInterface
      */
-    private function buildPostParameters(): PaymentRequestAdapterInterface
+    public function buildPostParameters(): PaymentSyncRequestAdapterInterface
     {
         $this->postParameters = [
             'accountCode' => env('ZED_ENM_ACCOUNT_CODE'),
@@ -54,9 +49,9 @@ class PaymentRequestAdapterENM implements PaymentRequestAdapterInterface
     /**
      * Fetch the response.
      *
-     * @return PaymentRequestAdapterInterface
+     * @return PaymentSyncRequestAdapterInterface
      */
-    public function fetchResponse(): PaymentRequestAdapterInterface
+    public function fetchResponse(): PaymentSyncRequestAdapterInterface
     {
         /**
          * Adapter instantiation is required as
@@ -75,9 +70,9 @@ class PaymentRequestAdapterENM implements PaymentRequestAdapterInterface
      /**
      * Parse the response.
      *
-     * @return PaymentRequestAdapterInterface
+     * @return PaymentSyncRequestAdapterInterface
      */
-    public function parseResponse(): PaymentRequestAdapterInterface
+    public function parseResponse(): PaymentSyncRequestAdapterInterface
     {
         $this->statusCode = $this->response->status();
         $this->responseBody = json_decode(
