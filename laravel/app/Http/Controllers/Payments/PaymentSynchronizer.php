@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Payments;
 use App\Models\Payment;
 use App\Http\Controllers\Payments\Synchronizer\PaymentSyncRequestAdapterInterface;
 use App\Http\Controllers\Payments\Synchronizer\PaymentSyncResponseAdapterInterface;
+use App\Http\Controllers\MultiDomain\ResponseDecoder;
 
 class PaymentSynchronizer
 {
@@ -14,13 +15,6 @@ class PaymentSynchronizer
      * @var array $DTOs
      */
     private array $DTOs;
-
-    /**
-     * The response returned by the request.
-     *
-     * @var array $responseBody
-     */
-    private array $responseBody;
 
     /**
      * The payment request adapter.
@@ -71,35 +65,31 @@ class PaymentSynchronizer
      * and returns the reponseBody array.
      *
      * @param int $numberOfPaymentsToFetch
+     * @param ResponseDecoder $responseDecoder
      * @return PaymentSynchronizer
      */
-    public function requestPayments(
-        int $numberOfPaymentsToFetch
+    public function requestPaymentsAndAdaptResponse(
+        int $numberOfPaymentsToFetch,
+        ResponseDecoder $responseDecoder
     ): PaymentSynchronizer {
-        $this->responseBody =
-            $this->paymentSyncRequestAdapter
-                ->setNumberOfPaymentsToFetch(numberOfPaymentsToFetch: $numberOfPaymentsToFetch)
-                ->buildPostParameters()
-                ->fetchResponse()
-                ->parseResponse()
-                ->returnResponseBodyArray();
-        return $this;
-    }
 
-    /**
-     * Adapts the responseBody array into
-     * an array of DTOs.
-     *
-     * @return PaymentSynchronizer
-     */
-    public function adaptResponse(): PaymentSynchronizer
-    {
+        //Fetch the response
+        $response =
+            $this->paymentSyncRequestAdapter
+                ->buildPostParameters(
+                    numberOfPaymentsToFetch: $numberOfPaymentsToFetch
+                )
+                ->fetchResponse();
+
+        // Decode the response
+        $responseBody =
+            $responseDecoder->decode($response);
+
+        // Adapt the response
         $this->DTOs = $this->paymentSyncResponseAdapter
-            ->setResponseBody(responseBody: $this->responseBody)
-            ->buildAccountDTOs()
-            ->syncAccountDTOs()
-            ->buildPaymentDTOs()
-            ->returnPaymentDTOs();
+            ->setResponseBody(responseBody: $responseBody)
+            ->buildAndSyncAccountDTOs()
+            ->buildPaymentDTOs();
         return $this;
     }
 

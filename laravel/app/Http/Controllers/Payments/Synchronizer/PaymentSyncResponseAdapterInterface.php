@@ -19,26 +19,12 @@ interface PaymentSyncResponseAdapterInterface
      *
      * @return PaymentSyncResponseAdapterInterface
      */
-    public function buildAccountDTOs(): PaymentSyncResponseAdapterInterface;
-
-    /**
-     * Sync the account DTOs.
-     *
-     * @return PaymentSyncResponseAdapterInterface
-     */
-    public function syncAccountDTOs(): PaymentSyncResponseAdapterInterface;
+    public function buildAndSyncAccountDTOs(): PaymentSyncResponseAdapterInterface;
 
     /**
      * Build the payment DTOs.
      *
-     * @return PaymentSyncResponseAdapterInterface
-     */
-    public function buildPaymentDTOs(): PaymentSyncResponseAdapterInterface;
-
-    /**
-     * Return the payment DTOs.
-     *
      * @return array
      */
-    public function returnPaymentDTOs(): array;
+    public function buildPaymentDTOs(): array;
 }

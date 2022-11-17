@@ -2,43 +2,24 @@
 
 namespace App\Http\Controllers\Payments\Synchronizer;
 
+use Illuminate\Http\Client\Response;
+
 interface PaymentSyncRequestAdapterInterface
 {
     /**
-     * Set the number of payments to fetch.
+     * Build the post parameters.
      *
      * @param int $numberOfPaymentsToFetch
      * @return PaymentSyncRequestAdapterInterface
      */
-    public function setNumberOfPaymentsToFetch(
+    public function buildPostParameters(
         int $numberOfPaymentsToFetch
     ): PaymentSyncRequestAdapterInterface;
 
     /**
-     * Build the post parameters.
-     *
-     * @return PaymentSyncRequestAdapterInterface
-     */
-    public function buildPostParameters(): PaymentSyncRequestAdapterInterface;
-
-    /**
      * Fetch the response.
      *
-     * @return PaymentSyncRequestAdapterInterface
+     * @return Response
      */
-    public function fetchResponse(): PaymentSyncRequestAdapterInterface;
-
-    /**
-     * Parse the response.
-     *
-     * @return PaymentSyncRequestAdapterInterface
-     */
-    public function parseResponse(): PaymentSyncRequestAdapterInterface;
-
-    /**
-     * Return the responseBody array.
-     *
-     * @return array
-     */
-    public function returnResponseBodyArray(): array;
+    public function fetchResponse(): Response;
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Payments\PaymentViewer;
 use App\Console\Commands\CommandDTO;
 use App\Http\Controllers\Payments\PaymentSynchronizer;
 use App\Http\Controllers\Payments\PaymentFetcher;
+use App\Http\Controllers\MultiDomain\ResponseDecoder;
 
 class PaymentController extends Controller
 {
@@ -71,9 +72,11 @@ class PaymentController extends Controller
         CommandDTO $dto
     ): void {
         (new PaymentSynchronizer())
-            ->selectAdapters($dto->data['provider'])
-            ->requestPayments($dto->data['numberOfPaymentsToFetch'])
-            ->adaptResponse()
+            ->selectAdapters(paymentProvider: $dto->data['paymentProvider'])
+            ->requestPaymentsAndAdaptResponse(
+                numberOfPaymentsToFetch: $dto->data['numberOfPaymentsToFetch'],
+                responseDecoder: new ResponseDecoder()
+            )
             ->createNewPayments();
         return;
     }

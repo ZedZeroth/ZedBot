@@ -16,12 +16,8 @@ class PaymentSyncResponseAdapterForENM implements PaymentSyncResponseAdapterInte
      * Properties required by the adapter.
      *
      * @var array $responseBody
-     * @var array $accountDTOs
-     * @var array $paymentDTOs
      */
     private array $responseBody;
-    private array $accountDTOs = [];
-    private array $paymentDTOs = [];
 
     /**
      * Set the response body.
@@ -41,159 +37,151 @@ class PaymentSyncResponseAdapterForENM implements PaymentSyncResponseAdapterInte
      *
      * @return PaymentSyncResponseAdapterInterface
      */
-    public function buildAccountDTOs(): PaymentSyncResponseAdapterInterface
+    public function buildAndSyncAccountDTOs(): PaymentSyncResponseAdapterInterface
     {
-        foreach ($this->responseBody['results'] as $result) {
+        $accountDTOs = [];
+        /*💬*/ //print_r($this->responseBody);
+        foreach (
+            $this->responseBody['results'][env('ZED_ENM_ACCOUNT_CODE')]['results']
+            as $result
+        ) {
             /*💬*/ //print_r($result);
-
-            // Shift focus to the payload array
-            $result = $result['payload'];
 
             // Determine the currency
             $currency = Currency::
                     where(
                         'code',
-                        $result['CurrencyCode']
+                        $result['transactionCurrency']
                     )->firstOrFail();
 
-            //Determine originator / beneficiary
-            $identifiers = $this
-                ->originatorOrBeneficiary(
-                    Account_Iban: $result['Account_Iban'],
-                    CounterpartAccount_Iban: $result['CounterpartAccount_Iban'],
-                    DebitCreditCode: $result['DebitCreditCode']
-                );
+            // Determine beneficiary / originator
+            $beneficiary = explode(', ', $result['beneficiary']);
+            $beneficiarylabel = $beneficiary[0];
+            $beneficiaryAccountIdentifier =
+                $this->convertIbanToIdentifier($beneficiary[1]);
 
-            /**
-             * Create originator/beneficiary accounts
-             * if they don't already exist.
-             *
-             */
-            foreach ($identifiers as $originatorOrBeneficiary => $accountIdentifier) {
-                $label = '';
-                $networkAccountName = '';
-                /**
-                 * Debits use labels (assumed account names)
-                 * for the beneficiary.
-                 */
-                if (
-                    $result['DebitCreditCode'] == 'Debit'
-                    and $originatorOrBeneficiary = 'beneficiary'
-                ) {
-                    $label = $result['CounterpartAccount_TransactionOwnerName'];
-                }
-                /**
-                 * Credits provide confirmed network account names
-                 * for the originator.
-                 */
-                if (
-                    $result['DebitCreditCode'] == 'Credit'
-                    and $originatorOrBeneficiary = 'originator'
-                ) {
-                    $labnetworkAccountNameel = $result['CounterpartAccount_TransactionOwnerName'];
-                }
-
-                // Create the DTO
-                array_push(
-                    $this->accountDTOs,
-                    new AccountDTO(
-                        network: (string) 'FPS',
-                        identifier: (string) $accountIdentifier,
-                        customer_id: 0,
-                        networkAccountName: $networkAccountName,
-                        label: $label,
-                        currency_id: $currency->id,
-                        balance: 0
-                    )
-                );
+            if ($beneficiarylabel == env('ZED_ENM_ACCOUNT_NAME')) {
+                $originator = explode(', ', $result['counterparty']);
+                $originatorNetworkAccountName = $originator[0];
+                $originatorLabel = '';
+                $originatorAccountIdentifier =
+                    $this->convertIbanToIdentifier($originator[1]);
+            } else {
+                $originatorNetworkAccountName = '';
+                $originatorLabel = env('ZED_ENM_ACCOUNT_NAME');
+                $originatorAccountIdentifier =
+                    $this->convertIbanToIdentifier($result['accno']);
             }
+
+            // Create the originator DTO
+            array_push(
+                $accountDTOs,
+                new AccountDTO(
+                    network: (string) 'FPS',
+                    identifier: (string) $originatorAccountIdentifier,
+                    customer_id: 0,
+                    networkAccountName: $originatorNetworkAccountName,
+                    label: $originatorLabel,
+                    currency_id: $currency->id,
+                    balance: 0
+                )
+            );
+
+            // Create the beneficiary DTO
+            array_push(
+                $accountDTOs,
+                new AccountDTO(
+                    network: (string) 'FPS',
+                    identifier: (string) $beneficiaryAccountIdentifier,
+                    customer_id: 0,
+                    networkAccountName: '',
+                    label: $beneficiarylabel,
+                    currency_id: $currency->id,
+                    balance: 0
+                )
+            );
         }
 
-        return $this;
-    }
-
-    /**
-     * Sync the account DTOs.
-     *
-     * @return PaymentSyncResponseAdapterInterface
-     */
-    public function syncAccountDTOs(): PaymentSyncResponseAdapterInterface
-    {
         (new AccountSynchronizer())
-                    ->setDTOs(DTOs: $this->accountDTOs)
+                    ->setDTOs(DTOs: $accountDTOs)
                     ->createNewAccounts();
+        return $this;
+
         return $this;
     }
 
     /**
      * Build the payment DTOs.
      *
-     * @return PaymentSyncResponseAdapterInterface
+     * @return array
      */
-    public function buildPaymentDTOs(): PaymentSyncResponseAdapterInterface
+    public function buildPaymentDTOs(): array
     {
-        foreach ($this->responseBody['results'] as $result) {
+        $paymentDTOs = [];
+        /*💬*/ //print_r($this->responseBody);
+        foreach (
+            $this->responseBody['results'][env('ZED_ENM_ACCOUNT_CODE')]['results']
+            as $result
+        ) {
             /*💬*/ //print_r($result);
-
-            // Shift focus to the payload array
-            $result = $result['payload'];
 
             // Determine the currency
             $currency = Currency::
                     where(
                         'code',
-                        $result['CurrencyCode']
+                        $result['transactionCurrency']
                     )->firstOrFail();
 
             // Convert amount to base units
             $amount = (new MoneyConverter())
             ->convert(
-                amount: $result['Amount'],
+                amount: $result['transactionAmount'],
                 currency: $currency
             );
 
-            //Determine originator / beneficiary
-            $identifiers = $this
-                ->originatorOrBeneficiary(
-                    Account_Iban: $result['Account_Iban'],
-                    CounterpartAccount_Iban: $result['CounterpartAccount_Iban'],
-                    DebitCreditCode: $result['DebitCreditCode']
-                );
+            // Determine beneficiary / originator
+            $beneficiary = explode(', ', $result['beneficiary']);
+            $beneficiarylabel = $beneficiary[0];
+            $beneficiaryAccountIdentifier =
+                $this->convertIbanToIdentifier($beneficiary[1]);
+
+            if ($beneficiarylabel == env('ZED_ENM_ACCOUNT_NAME')) {
+                $originator = explode(', ', $result['counterparty']);
+                $originatorNetworkAccountName = $originator[0];
+                $originatorLabel = '';
+                $originatorAccountIdentifier =
+                    $this->convertIbanToIdentifier($originator[1]);
+            } else {
+                $originatorNetworkAccountName = '';
+                $originatorLabel = env('ZED_ENM_ACCOUNT_NAME');
+                $originatorAccountIdentifier =
+                    $this->convertIbanToIdentifier($result['accno']);
+            }
 
             array_push(
-                $this->paymentDTOs,
+                $paymentDTOs,
                 new PaymentDTO(
                     network: (string) 'FPS',
                     identifier: (string) 'enm::'
-                        . $result['EndToEndTransactionId'],
+                        . $result['id'],
                     amount: (int) $amount,
                     currency_id: (int) $currency->id,
                     originator_id: (int) Account::
-                        where('identifier', $identifiers['originator'])
+                        where('identifier', $originatorAccountIdentifier)
                         ->first()->id,
                     beneficiary_id: (int) Account::
-                        where('identifier', $identifiers['beneficiary'])
+                        where('identifier', $beneficiaryAccountIdentifier)
                         ->first()->id,
-                    memo: (string) $result['Reference'],
+                    memo: (string) $result['paymentReference'],
                     timestamp: (string) date(
                         'Y-m-d H:i:s',
-                        strtotime($result['SettledTime'])
+                        strtotime($result['transactionTimeLocal'])
                     ),
                 )
             );
         }
 
-        return $this;
-    }
-
-    /**
-     * Return the payment DTOs.
-     *
-     * @return array
-     */
-    public function returnPaymentDTOs(): array
-    {
-        return $this->paymentDTOs;
+        return $paymentDTOs;
     }
 
     /**
@@ -203,39 +191,12 @@ class PaymentSyncResponseAdapterForENM implements PaymentSyncResponseAdapterInte
      * @param string $iban
      * @return string
      */
-    public function convertIban(
+    public function convertIbanToIdentifier(
         string $iban
     ): string {
         return 'fps'
             . '::' . 'gbp'
             . '::' . substr($iban, -14, 6) // Sort code
             . '::' . substr($iban, -8); // Account number
-    }
-
-    /**
-     * Determine the originator / beneficiary.
-     *
-     * @param string $Account_Iban
-     * @param string $CounterpartAccount_Iban
-     * @param string $DebitCreditCode
-     * @return array
-     */
-    public function originatorOrBeneficiary(
-        string $Account_Iban,
-        string $CounterpartAccount_Iban,
-        string $DebitCreditCode
-    ): array {
-        if ($DebitCreditCode == 'Debit') {
-            $dataArray = [
-                'originator' => $this->convertIban(iban: $Account_Iban),
-                'beneficiary' => $this->convertIban(iban: $CounterpartAccount_Iban)
-            ];
-        } else {
-            $dataArray = [
-                'originator' => $this->convertIban(iban: $CounterpartAccount_Iban),
-                'beneficiary' => $this->convertIban(iban: $Account_Iban)
-            ];
-        }
-        return $dataArray;
     }
 }

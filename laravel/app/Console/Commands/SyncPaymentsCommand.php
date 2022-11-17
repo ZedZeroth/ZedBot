@@ -44,7 +44,7 @@ class SyncPaymentsCommand extends Command
         // Build the DTO
         $dto = new CommandDTO(
             data: [
-                'provider'
+                'paymentProvider'
                     => $this->argument('Provider'),
                 'numberOfPaymentsToFetch'
                     => $this->argument('Number to fetch')

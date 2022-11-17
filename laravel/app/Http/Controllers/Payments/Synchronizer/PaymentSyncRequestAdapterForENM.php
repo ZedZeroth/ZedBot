@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Payments\Synchronizer;
 
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\Response;
 use App\Http\Controllers\RequestAdapters\PostAdapterENM;
 
 class PaymentSyncRequestAdapterForENM implements PaymentSyncRequestAdapterInterface
@@ -11,37 +11,24 @@ class PaymentSyncRequestAdapterForENM implements PaymentSyncRequestAdapterInterf
     /**
      * Properties required to perform the request.
      *
-     * @var int $numberOfPaymentsToFetch
      * @var array $postParameters
-     * @var Http $response
      * @var int $statusCode
      * @var array $responseBody
      */
 
-     /**
-     * Set the number of payments to fetch.
+    /**
+     * Build the post parameters.
      *
      * @param int $numberOfPaymentsToFetch
      * @return PaymentSyncRequestAdapterInterface
      */
-    public function setNumberOfPaymentsToFetch(
+    public function buildPostParameters(
         int $numberOfPaymentsToFetch
-    ): PaymentSyncRequestAdapterInterface
-    {
-        $this->numberOfPaymentsToFetch = $numberOfPaymentsToFetch;
-        return $this;
-    }
-
-    /**
-     * Build the post parameters.
-     *
-     * @return PaymentSyncRequestAdapterInterface
-     */
-    public function buildPostParameters(): PaymentSyncRequestAdapterInterface
-    {
+    ): PaymentSyncRequestAdapterInterface {
         $this->postParameters = [
-            'accountCode' => env('ZED_ENM_ACCOUNT_CODE'),
-            'take' => $this->numberOfPaymentsToFetch
+            'accountCodes' => env('ZED_ENM_ACCOUNT_CODE'),
+            'take' => $numberOfPaymentsToFetch,
+            'goFast' => true
         ];
         return $this;
     }
@@ -49,9 +36,9 @@ class PaymentSyncRequestAdapterForENM implements PaymentSyncRequestAdapterInterf
     /**
      * Fetch the response.
      *
-     * @return PaymentSyncRequestAdapterInterface
+     * @return Response
      */
-    public function fetchResponse(): PaymentSyncRequestAdapterInterface
+    public function fetchResponse(): Response
     {
         /**
          * Adapter instantiation is required as
@@ -59,44 +46,10 @@ class PaymentSyncRequestAdapterForENM implements PaymentSyncRequestAdapterInterf
          * use GET.
          *
          */
-        $this->response = (new PostAdapterENM())
+        return (new PostAdapterENM())
             ->post(
                 endpoint: env('ZED_ENM_TRANSACTIONS_ENDPOINT'),
                 postParameters: $this->postParameters
             );
-        return $this;
-    }
-
-     /**
-     * Parse the response.
-     *
-     * @return PaymentSyncRequestAdapterInterface
-     */
-    public function parseResponse(): PaymentSyncRequestAdapterInterface
-    {
-        $this->statusCode = $this->response->status();
-        $this->responseBody = json_decode(
-            $this->response->getBody(),
-            true
-        );
-        return $this;
-    }
-
-    /**
-     * Return the responseBody array.
-     *
-     * @return array
-     */
-    public function returnResponseBodyArray(): array
-    {
-        if ($this->statusCode == 200) {
-            return $this->responseBody;
-        } else {
-            Log::error('Status code: ' . $this->statusCode);
-            if (!empty($this->responseBody['responseStatus']['message'])) {
-                Log::error($this->responseBody['responseStatus']['message']);
-            }
-            return [];
-        }
     }
 }
