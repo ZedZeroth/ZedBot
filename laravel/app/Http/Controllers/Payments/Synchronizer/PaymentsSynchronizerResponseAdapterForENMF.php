@@ -9,8 +9,11 @@ use App\Http\Controllers\Accounts\AccountSynchronizer;
 use App\Http\Controllers\Payments\PaymentDTO;
 use App\Models\Currency;
 use App\Http\Controllers\MultiDomain\MoneyConverter;
+use App\Http\Controllers\RequestAdapters\GeneralAdapterInterface;
 
-class PaymentSyncResponseAdapterForENMF implements PaymentSyncResponseAdapterInterface
+class PaymentsSynchronizerResponseAdapterForENMF implements
+    PaymentsSynchronizerResponseAdapterInterface,
+    GeneralAdapterInterface
 {
     /**
      * Iterate through the payment data.
@@ -20,7 +23,7 @@ class PaymentSyncResponseAdapterForENMF implements PaymentSyncResponseAdapterInt
      * @param array $responseBody
      * @return array
      */
-    public function buildDTOsSyncAccountsReturnPayments(
+    public function buildDTOs(
         array $responseBody
     ): array {
         $paymentDTOs = [];
@@ -88,8 +91,7 @@ class PaymentSyncResponseAdapterForENMF implements PaymentSyncResponseAdapterInt
 
             // Sync accounts
             (new AccountSynchronizer())
-                ->setDTOs(DTOs: $accountDTOs)
-                ->createNewAccounts();
+                ->createNewAccounts(DTOs: $accountDTOs);
 
             // Convert amount to base units
             $amount = (new MoneyConverter())

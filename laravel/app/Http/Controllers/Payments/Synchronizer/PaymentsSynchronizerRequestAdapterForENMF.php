@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Payments\Synchronizer;
 
 use Illuminate\Http\Client\Response;
-use App\Http\Controllers\RequestAdapters\GeneralRequestAdapterInterface;
+use App\Http\Controllers\RequestAdapters\GeneralAdapterInterface;
 use App\Http\Controllers\RequestAdapters\PostAdapterENM;
 
-class PaymentSyncRequestAdapterForENM implements PaymentSyncRequestAdapterInterface
+class PaymentsSynchronizerRequestAdapterForENMF implements
+    PaymentsSynchronizerRequestAdapterInterface,
+    GeneralAdapterInterface
 {
     /**
      * Properties required to perform the request.
@@ -17,15 +19,16 @@ class PaymentSyncRequestAdapterForENM implements PaymentSyncRequestAdapterInterf
     /**
      * Build the post parameters.
      *
-     * @param int $numberOfPaymentsToFetch
-     * @return PaymentSyncRequestAdapterInterface
+     * @param int $numberToFetch
+     * @return PaymentsSynchronizerRequestAdapterInterface
      */
     public function buildPostParameters(
-        int $numberOfPaymentsToFetch
-    ): PaymentSyncRequestAdapterInterface {
+        int $numberToFetch
+    ): PaymentsSynchronizerRequestAdapterInterface {
         $this->postParameters = [
             'accountCode' => env('ZED_ENM_ACCOUNT_CODE'),
-            'take' => $numberOfPaymentsToFetch
+            'take' => $numberToFetch,
+            'goFast' => true
         ];
         return $this;
     }
@@ -33,11 +36,11 @@ class PaymentSyncRequestAdapterForENM implements PaymentSyncRequestAdapterInterf
     /**
      * Fetch the response.
      * 
-     * @param GeneralRequestAdapterInterface $getOrPostAdapter
+     * @param GeneralAdapterInterface $getOrPostAdapter
      * @return Response
      */
     public function fetchResponse(
-        GeneralRequestAdapterInterface $getOrPostAdapter
+        GeneralAdapterInterface $getOrPostAdapter
     ): Response {
         return ($getOrPostAdapter)
             ->post(

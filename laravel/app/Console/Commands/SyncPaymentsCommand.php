@@ -42,9 +42,9 @@ class SyncPaymentsCommand extends Command
     public function runThisCommand(): void
     {
         // Build the DTO
-        $dto = new CommandDTO(
+        $commandDTO = new CommandDTO(
             data: [
-                'paymentProvider'
+                'provider'
                     => $this->argument('Provider'),
                 'numberOfPaymentsToFetch'
                     => $this->argument('Number to fetch')
@@ -53,7 +53,7 @@ class SyncPaymentsCommand extends Command
 
         // Inject the DTO into the relevant controller method
         (new PaymentController())
-            ->sync($dto);
+            ->sync(commandDTO: $commandDTO);
 
         return;
     }

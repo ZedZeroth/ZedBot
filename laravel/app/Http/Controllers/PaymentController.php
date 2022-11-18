@@ -6,8 +6,9 @@ use Illuminate\View\View;
 use App\Http\Controllers\Payments\PaymentViewer;
 use App\Console\Commands\CommandDTO;
 use App\Http\Controllers\Payments\PaymentSynchronizer;
-use App\Http\Controllers\Payments\PaymentFetcher;
 use App\Http\Controllers\MultiDomain\ResponseDecoder;
+use App\Http\Controllers\MultiDomain\AdapterBuilder;
+use App\Http\Controllers\MultiDomain\Requester;
 
 class PaymentController extends Controller
 {
@@ -69,15 +70,21 @@ class PaymentController extends Controller
      * @return void
      */
     public function sync(
-        CommandDTO $dto
+        CommandDTO $commandDTO
     ): void {
         (new PaymentSynchronizer())
-            ->selectAdapters(paymentProvider: $dto->data['paymentProvider'])
-            ->requestPaymentsAndAdaptResponse(
-                numberOfPaymentsToFetch: $dto->data['numberOfPaymentsToFetch'],
-                responseDecoder: new ResponseDecoder()
-            )
-            ->createNewPayments();
+            ->createNewPayments(
+                (new Requester())->request(
+                    adapterDTO:
+                        (new AdapterBuilder())->build(
+                            models: 'Payments',
+                            action: 'Synchronizer',
+                            provider: $commandDTO->data['provider']
+                        ),
+                    numberToFetch: $commandDTO->data['numberOfPaymentsToFetch'],
+                    responseDecoder: new ResponseDecoder()
+                )
+            ); 
         return;
     }
 }

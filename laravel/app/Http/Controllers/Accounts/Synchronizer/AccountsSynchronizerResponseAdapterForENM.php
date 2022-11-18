@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Accounts\Synchronizer;
 
 use App\Models\Currency;
 use App\Http\Controllers\Accounts\AccountDTO;
+use App\Http\Controllers\RequestAdapters\GeneralAdapterInterface;
 
-class AccountSyncResponseAdapterForENM implements AccountSyncResponseAdapterInterface
+class AccountsSynchronizerResponseAdapterForENM implements
+    AccountsSynchronizerResponseAdapterInterface,
+    GeneralAdapterInterface
 {
     /**
      * Build the account DTOs.
@@ -13,7 +16,7 @@ class AccountSyncResponseAdapterForENM implements AccountSyncResponseAdapterInte
      * @param array $responseBody
      * @return array
      */
-    public function buildAccountDTOs(
+    public function buildDTOs(
         array $responseBody
     ): array {
         $accountDTOs = [];

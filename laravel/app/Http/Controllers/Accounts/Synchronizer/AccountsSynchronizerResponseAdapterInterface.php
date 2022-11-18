@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Accounts\Synchronizer;
 
-interface AccountSyncResponseAdapterInterface
+interface AccountsSynchronizerResponseAdapterInterface
 {
     /**
      * Build the account DTOs.
@@ -10,7 +10,7 @@ interface AccountSyncResponseAdapterInterface
      * @param array $responseBody
      * @return array
      */
-    public function buildAccountDTOs(
+    public function buildDTOs(
         array $responseBody
     ): array;
 }

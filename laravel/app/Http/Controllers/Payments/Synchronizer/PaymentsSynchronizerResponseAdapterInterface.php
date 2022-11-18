@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Payments\Synchronizer;
 
-interface PaymentSyncResponseAdapterInterface
+interface PaymentsSynchronizerResponseAdapterInterface
 {
      /**
      * Iterate through the payment data.
@@ -12,7 +12,7 @@ interface PaymentSyncResponseAdapterInterface
      * @param array $responseBody
      * @return array
      */
-    public function buildDTOsSyncAccountsReturnPayments(
+    public function buildDTOs(
         array $responseBody
     ): array;
 }

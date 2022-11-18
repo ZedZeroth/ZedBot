@@ -42,7 +42,7 @@ class SyncAccountsCommand extends Command
     public function runThisCommand(): void
     {
         // Build the DTO
-        $dto = new CommandDTO(
+        $commandDTO = new CommandDTO(
             data: [
                 'provider'
                     => $this->argument('Provider'),
@@ -53,7 +53,7 @@ class SyncAccountsCommand extends Command
 
         // Inject the DTO into the relevant controller method
         (new AccountController())
-            ->sync($dto);
+            ->sync(commandDTO: $commandDTO);
 
         return;
     }

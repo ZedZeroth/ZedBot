@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Accounts\Synchronizer;
 
 use Illuminate\Http\Client\Response;
-use App\Http\Controllers\RequestAdapters\GeneralRequestAdapterInterface;
+use App\Http\Controllers\RequestAdapters\GeneralAdapterInterface;
 use App\Http\Controllers\RequestAdapters\PostAdapterInterface;
 
-class AccountSyncRequestAdapterForENM implements AccountSyncRequestAdapterInterface
+class AccountsSynchronizerRequestAdapterForENM implements
+    AccountsSynchronizerRequestAdapterInterface,
+    GeneralAdapterInterface
 {
     /**
      * Properties required to perform the request.
@@ -17,15 +19,15 @@ class AccountSyncRequestAdapterForENM implements AccountSyncRequestAdapterInterf
     /**
      * Build the post parameters.
      *
-     * @param int $numberOfAccountsToFetch
-     * @return AccountSyncRequestAdapterInterface
+     * @param int $numberToFetch
+     * @return AccountsSynchronizerRequestAdapterInterface
      */
     public function buildPostParameters(
-        int $numberOfAccountsToFetch
-    ): AccountSyncRequestAdapterInterface {
+        int $numberToFetch
+    ): AccountsSynchronizerRequestAdapterInterface {
         $this->postParameters = [
             'accountERN' => env('ZED_ENM_ACCOUNT_ERN'),
-            'take' => $numberOfAccountsToFetch
+            'take' => $numberToFetch
         ];
         return $this;
     }
@@ -33,11 +35,11 @@ class AccountSyncRequestAdapterForENM implements AccountSyncRequestAdapterInterf
     /**
      * Fetch the response.
      * 
-     * @param GeneralRequestAdapterInterface $getOrPostAdapter
+     * @param GeneralAdapterInterface $getOrPostAdapter
      * @return Response
      */
     public function fetchResponse(
-        GeneralRequestAdapterInterface $getOrPostAdapter
+        GeneralAdapterInterface $getOrPostAdapter
     ): Response {
         return ($getOrPostAdapter)
             ->post(

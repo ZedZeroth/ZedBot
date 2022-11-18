@@ -3,20 +3,22 @@
 namespace App\Http\Controllers\Accounts\Synchronizer;
 
 use Illuminate\Http\Client\Response;
-use App\Http\Controllers\RequestAdapters\GeneralRequestAdapterInterface;
+use App\Http\Controllers\RequestAdapters\GeneralAdapterInterface;
 use App\Http\Controllers\RequestAdapters\GetAdapterLCS;
 
-class AccountSyncRequestAdapterForLCS implements AccountSyncRequestAdapterInterface
+class AccountsSynchronizerRequestAdapterForLCS implements
+    AccountsSynchronizerRequestAdapterInterface,
+    GeneralAdapterInterface
 {
      /**
      * Build the post parameters.
      *
-     * @param int $numberOfAccountsToFetch
-     * @return AccountSyncRequestAdapterInterface
+     * @param int $numberToFetch
+     * @return AccountsSynchronizerRequestAdapterInterface
      */
     public function buildPostParameters(
-        int $numberOfAccountsToFetch
-        ): AccountSyncRequestAdapterInterface
+        int $numberToFetch
+        ): AccountsSynchronizerRequestAdapterInterface
     {
         // No post parameters for LCS
         return $this;
@@ -25,11 +27,11 @@ class AccountSyncRequestAdapterForLCS implements AccountSyncRequestAdapterInterf
     /**
      * Fetch the response.
      * 
-     * @param GeneralRequestAdapterInterface $getOrPostAdapter
+     * @param GeneralAdapterInterface $getOrPostAdapter
      * @return Response
      */
     public function fetchResponse(
-        GeneralRequestAdapterInterface $getOrPostAdapter
+        GeneralAdapterInterface $getOrPostAdapter
     ): Response {
         return (new $getOrPostAdapter)
             ->get(

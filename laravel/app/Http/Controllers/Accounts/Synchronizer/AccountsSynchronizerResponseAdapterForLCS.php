@@ -6,8 +6,11 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\MultiDomain\MoneyConverter;
 use App\Models\Currency;
 use App\Http\Controllers\Accounts\AccountDTO;
+use App\Http\Controllers\RequestAdapters\GeneralAdapterInterface;
 
-class AccountSyncResponseAdapterForLCS implements AccountSyncResponseAdapterInterface
+class AccountsSynchronizerResponseAdapterForLCS implements
+    AccountsSynchronizerResponseAdapterInterface,
+    GeneralAdapterInterface
 {
     /**
      * Build the account DTOs.
@@ -15,7 +18,7 @@ class AccountSyncResponseAdapterForLCS implements AccountSyncResponseAdapterInte
      * @param array $responseBody
      * @return array
      */
-    public function buildAccountDTOs(
+    public function buildDTOs(
         array $responseBody
     ): array {
         $accountDTOs = [];
