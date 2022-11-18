@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\PaymentController;
-use Exception;
+use Illuminate\Http\Client\ConnectionException;
 
 class SyncPaymentsCommand extends Command
 {
@@ -32,7 +32,37 @@ class SyncPaymentsCommand extends Command
      */
     public function handle(): void
     {
-        (new CommandInformer())->run(command: $this);
+        try {
+            try {
+                try {
+                    (new CommandInformer())->run(command: $this);
+                } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                    (new ExceptionInformer())->warn(
+                        command: $this,
+                        e: $e,
+                        class: __CLASS__,
+                        function: __FUNCTION__,
+                        line: __LINE__
+                    );
+                }
+            } catch (\Illuminate\Http\Client\RequestException $e) {
+                (new ExceptionInformer())->warn(
+                    command: $this,
+                    e: $e,
+                    class: __CLASS__,
+                    function: __FUNCTION__,
+                    line: __LINE__
+                );
+            }
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            (new ExceptionInformer())->warn(
+                command: $this,
+                e: $e,
+                class: __CLASS__,
+                function: __FUNCTION__,
+                line: __LINE__
+            );
+        }
     }
 
     /**

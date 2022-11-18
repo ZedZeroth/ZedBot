@@ -3,11 +3,6 @@
 namespace App\Http\Controllers\Payments;
 
 use App\Models\Payment;
-use App\Http\Controllers\Payments\Synchronizer\PaymentSyncRequestAdapterInterface;
-use App\Http\Controllers\Payments\Synchronizer\PaymentSyncResponseAdapterInterface;
-use App\Http\Controllers\MultiDomain\ResponseDecoder;
-use App\Http\Controllers\MultiDomain\AdapterDTO;
-use App\Http\Controllers\RequestAdapters\GeneralRequestAdapterInterface;
 
 class PaymentSynchronizer
 {

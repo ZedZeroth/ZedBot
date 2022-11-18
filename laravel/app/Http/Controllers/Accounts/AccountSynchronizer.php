@@ -3,11 +3,6 @@
 namespace App\Http\Controllers\Accounts;
 
 use App\Models\Account;
-use App\Http\Controllers\Accounts\Synchronizer\accountSyncRequestAdapterInterface;
-use App\Http\Controllers\Accounts\Synchronizer\accountSyncResponseAdapterInterface;
-use App\Http\Controllers\MultiDomain\ResponseDecoder;
-use App\Http\Controllers\MultiDomain\AdapterDTO;
-use App\Http\Controllers\RequestAdapters\GeneralRequestAdapterInterface;
 
 class AccountSynchronizer
 {

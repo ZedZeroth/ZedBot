@@ -6,7 +6,6 @@ use Illuminate\View\View;
 use App\Http\Controllers\Accounts\AccountViewer;
 use App\Console\Commands\CommandDTO;
 use App\Http\Controllers\Accounts\AccountSynchronizer;
-use App\Http\Controllers\MultiDomain\ResponseDecoder;
 use App\Http\Controllers\MultiDomain\AdapterBuilder;
 use App\Http\Controllers\MultiDomain\Requester;
 
@@ -82,7 +81,6 @@ class AccountController extends Controller
                             provider: $commandDTO->data['provider']
                         ),
                     numberToFetch: $commandDTO->data['numberOfAccountsToFetch'],
-                    responseDecoder: new ResponseDecoder()
                 )
             ); 
         return;

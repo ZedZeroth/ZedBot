@@ -32,7 +32,37 @@ class SyncAccountsCommand extends Command
      */
     public function handle(): void
     {
-        (new CommandInformer())->run(command: $this);
+        try {
+            try {
+                try {
+                    (new CommandInformer())->run(command: $this);
+                } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                    (new ExceptionInformer())->warn(
+                        command: $this,
+                        e: $e,
+                        class: __CLASS__,
+                        function: __FUNCTION__,
+                        line: __LINE__
+                    );
+                }
+            } catch (\Illuminate\Http\Client\RequestException $e) {
+                (new ExceptionInformer())->warn(
+                    command: $this,
+                    e: $e,
+                    class: __CLASS__,
+                    function: __FUNCTION__,
+                    line: __LINE__
+                );
+            }
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            (new ExceptionInformer())->warn(
+                command: $this,
+                e: $e,
+                class: __CLASS__,
+                function: __FUNCTION__,
+                line: __LINE__
+            );
+        }
     }
 
     /**

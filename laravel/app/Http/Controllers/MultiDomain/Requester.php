@@ -11,13 +11,11 @@ class Requester
      *
      * @param AdapterDTO $adapterDTO
      * @param int $numberToFetch
-     * @param ResponseDecoder $responseDecoder
      * @return array
      */
     public function request(
         AdapterDTO $adapterDTO,
         int $numberToFetch,
-        ResponseDecoder $responseDecoder
     ): array {
 
         //Fetch the response
@@ -30,14 +28,35 @@ class Requester
                     getOrPostAdapter: $adapterDTO->getOrPostAdapter
                 );
 
-        // Decode the response
-        $responseBody =
-            $responseDecoder->decode($response);
+        /*💬*/ //var_dump($response);
 
-        // Adapt the response and return the DTOs
-        return $adapterDTO->responseAdapter
-            ->buildDTOs(
-                responseBody: $responseBody
-            );
+        // Decode the response
+        $statusCode = $response->status();
+        $responseBody = json_decode(
+            $response->getBody(),
+            true
+        );
+
+        /*💬*/ //print_r($responseBody);
+
+        //Adapt a valid response and return the DTOs
+        if ($statusCode == 200) {
+            return $adapterDTO->responseAdapter
+                ->buildDTOs(
+                    responseBody: $responseBody
+                );
+
+        // Throw an exception for an invalid response
+        } else {
+            /*💬*/ //print_r($responseBody);
+            /*
+            if (!empty($responseBody['responseStatus']['message'])) {
+                throw new Exception($responseBody['responseStatus']['message'], $statusCode);
+            } else {
+                throw new Exception('$responseBody[responseStatus][message] is empty!', $statusCode);
+            }
+            */
+            return [];
+        }
     }
 }

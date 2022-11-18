@@ -34,7 +34,7 @@ class GetAdapterForLCS implements
 
         // Execute the request and return the response
         return Http::withHeaders($headers)
-            ->connectTimeout(30)
+            ->connectTimeout(10)
             ->retry(3, 100)
             ->get($url);
     }

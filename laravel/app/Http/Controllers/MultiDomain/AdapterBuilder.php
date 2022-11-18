@@ -28,6 +28,7 @@ class AdapterBuilder
         $requestAdapterClass = $modelActionPath
             . '\\' . $models . $action . 'RequestAdapterFor'
             . strtoupper($provider);
+
         $requestAdapter = new $requestAdapterClass();
 
         // Build the response adaper

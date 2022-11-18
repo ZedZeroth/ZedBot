@@ -50,7 +50,7 @@ class CommandInformer
             '[' . $sourceEmoji . '] '
             . $this->command->argument('command')
         );
-        $this->output('----------------------------------');
+        $this->output('---------------------------------');
 
         /**
          * Output other arguments.
@@ -116,7 +116,7 @@ class CommandInformer
          * Final output
          *
          */
-        $this->output('----------------------------------');
+        $this->output('---------------------------------');
         $this->output('');
 
         /**
