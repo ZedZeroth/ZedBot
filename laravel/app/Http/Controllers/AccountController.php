@@ -6,6 +6,7 @@ use Illuminate\View\View;
 use App\Console\Commands\CommandDTO;
 use App\Http\Controllers\Accounts\AccountViewer;
 use App\Http\Controllers\Accounts\AccountSynchronizer;
+use App\Http\Controllers\MultiDomain\ResponseDecoder;
 
 class AccountController extends Controller
 {
@@ -71,8 +72,10 @@ class AccountController extends Controller
     ): void {
         (new AccountSynchronizer())
             ->selectAdapters($dto->data['provider'])
-            ->requestAccounts($dto->data['numberOfAccountsToFetch'])
-            ->adaptResponse()
+            ->requestAccountsAndAdaptResponse(
+                $dto->data['numberOfAccountsToFetch'],
+                responseDecoder: new ResponseDecoder()
+            )
             ->createNewAccounts();
         return;
     }

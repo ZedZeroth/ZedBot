@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Payments\Synchronizer;
 
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Client\Response;
+use App\Http\Controllers\RequestAdapters\GeneralRequestAdapterInterface;
 use App\Http\Controllers\RequestAdapters\PostAdapterENM;
 
 class PaymentSyncRequestAdapterForENM implements PaymentSyncRequestAdapterInterface
@@ -12,8 +12,6 @@ class PaymentSyncRequestAdapterForENM implements PaymentSyncRequestAdapterInterf
      * Properties required to perform the request.
      *
      * @var array $postParameters
-     * @var int $statusCode
-     * @var array $responseBody
      */
 
     /**
@@ -26,27 +24,22 @@ class PaymentSyncRequestAdapterForENM implements PaymentSyncRequestAdapterInterf
         int $numberOfPaymentsToFetch
     ): PaymentSyncRequestAdapterInterface {
         $this->postParameters = [
-            'accountCodes' => env('ZED_ENM_ACCOUNT_CODE'),
-            'take' => $numberOfPaymentsToFetch,
-            'goFast' => true
+            'accountCode' => env('ZED_ENM_ACCOUNT_CODE'),
+            'take' => $numberOfPaymentsToFetch
         ];
         return $this;
     }
 
     /**
      * Fetch the response.
-     *
+     * 
+     * @param GeneralRequestAdapterInterface $getOrPostAdapter
      * @return Response
      */
-    public function fetchResponse(): Response
-    {
-        /**
-         * Adapter instantiation is required as
-         * some providers use POST and others
-         * use GET.
-         *
-         */
-        return (new PostAdapterENM())
+    public function fetchResponse(
+        GeneralRequestAdapterInterface $getOrPostAdapter
+    ): Response {
+        return ($getOrPostAdapter)
             ->post(
                 endpoint: env('ZED_ENM_TRANSACTIONS_ENDPOINT'),
                 postParameters: $this->postParameters

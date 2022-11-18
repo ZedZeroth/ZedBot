@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Http\Controllers\Payments\Synchronizer\PaymentSyncRequestAdapterInterface;
 use App\Http\Controllers\Payments\Synchronizer\PaymentSyncResponseAdapterInterface;
 use App\Http\Controllers\MultiDomain\ResponseDecoder;
+use App\Http\Controllers\RequestAdapters\GeneralRequestAdapterInterface;
 
 class PaymentSynchronizer
 {
@@ -29,6 +30,13 @@ class PaymentSynchronizer
      * @var PaymentSyncResponseAdapterInterface $paymentSyncResponseAdapter
      */
     private PaymentSyncResponseAdapterInterface $paymentSyncResponseAdapter;
+
+    /**
+     * The general get/post adapter.
+     *
+     * @var GeneralRequestAdapterInterface $GetOrPostAdapter
+     */
+    private GeneralRequestAdapterInterface $GetOrPostAdapter;
 
     /**
      * Builds the correct adapters for
@@ -57,12 +65,28 @@ class PaymentSynchronizer
         $this->paymentSyncResponseAdapter =
             new $paymentSyncResponseAdapterClass();
 
+        // Build the general get/post adapter
+        $requestAdapterPath = 'App\Http\Controllers\RequestAdapters';
+        if (in_array(
+            $paymentProvider,
+            explode(',', env('USES_POST_TO_GET'))
+        )) {
+            $getOrPostAdapterClass = $requestAdapterPath
+                . '\PostAdapterFor'
+                . strtoupper($paymentProvider);
+        } else {
+            $getOrPostAdapterClass = $requestAdapterPath
+                . '\GetAdapterFor'
+                . strtoupper($paymentProvider);
+        }
+        $this->GetOrPostAdapter = new $getOrPostAdapterClass();
+
         return $this;
     }
 
     /**
-     * Requests a response from the provider
-     * and returns the reponseBody array.
+     * Requests a response from the provider,
+     * decodes it, and adapts it into DTOs.
      *
      * @param int $numberOfPaymentsToFetch
      * @param ResponseDecoder $responseDecoder
@@ -79,7 +103,9 @@ class PaymentSynchronizer
                 ->buildPostParameters(
                     numberOfPaymentsToFetch: $numberOfPaymentsToFetch
                 )
-                ->fetchResponse();
+                ->fetchResponse(
+                    getOrPostAdapter: $this->GetOrPostAdapter
+                );
 
         // Decode the response
         $responseBody =
@@ -87,9 +113,9 @@ class PaymentSynchronizer
 
         // Adapt the response
         $this->DTOs = $this->paymentSyncResponseAdapter
-            ->setResponseBody(responseBody: $responseBody)
-            ->buildAndSyncAccountDTOs()
-            ->buildPaymentDTOs();
+            ->buildDTOsSyncAccountsReturnPayments(
+                responseBody: $responseBody
+            );
         return $this;
     }
 

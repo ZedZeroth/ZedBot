@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\RequestAdapters;
 
+use App\Http\Controllers\RequestAdapters\GeneralRequestAdapterInterface;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 
-class GetAdapterLCS implements GetAdapterInterface
+class GetAdapterForLCS implements
+    GetAdapterInterface,
+    GeneralRequestAdapterInterface
 {
     /**
      * Makes a GET request to the LCS API

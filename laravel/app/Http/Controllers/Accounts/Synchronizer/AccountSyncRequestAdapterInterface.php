@@ -2,43 +2,28 @@
 
 namespace App\Http\Controllers\Accounts\Synchronizer;
 
+use Illuminate\Http\Client\Response;
+use App\Http\Controllers\RequestAdapters\GeneralRequestAdapterInterface;
+
 interface AccountSyncRequestAdapterInterface
 {
     /**
-     * Set the number of accounts to fetch.
-     *
-     * @param int $numberOfAccountsToFetch
-     * @return accountSyncRequestAdapterInterface
-     */
-    public function setNumberOfAccountsToFetch(
-        int $numberOfAccountsToFetch
-    ): accountSyncRequestAdapterInterface;
-
-    /**
      * Build the post parameters.
      *
-     * @return accountSyncRequestAdapterInterface
+     * @param int $numberOfAccountsToFetch
+     * @return AccountSyncRequestAdapterInterface
      */
-    public function buildPostParameters(): accountSyncRequestAdapterInterface;
+    public function buildPostParameters(
+        int $numberOfAccountsToFetch
+        ): AccountSyncRequestAdapterInterface;
 
     /**
      * Fetch the response.
-     *
-     * @return accountSyncRequestAdapterInterface
+     * 
+     * @param GeneralRequestAdapterInterface $getOrPostAdapter
+     * @return Response
      */
-    public function fetchResponse(): accountSyncRequestAdapterInterface;
-
-    /**
-     * Parse the response.
-     *
-     * @return accountSyncRequestAdapterInterface
-     */
-    public function parseResponse(): accountSyncRequestAdapterInterface;
-
-    /**
-     * Return the responseBody array.
-     *
-     * @return array
-     */
-    public function returnResponseBodyArray(): array;
+    public function fetchResponse(
+        GeneralRequestAdapterInterface $getOrPostAdapter
+    ): Response;
 }

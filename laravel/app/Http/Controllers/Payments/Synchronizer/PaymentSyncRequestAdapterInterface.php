@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Payments\Synchronizer;
 
+use App\Http\Controllers\RequestAdapters\GeneralRequestAdapterInterface;
 use Illuminate\Http\Client\Response;
 
 interface PaymentSyncRequestAdapterInterface
@@ -18,8 +19,11 @@ interface PaymentSyncRequestAdapterInterface
 
     /**
      * Fetch the response.
-     *
+     * 
+     * @param GeneralRequestAdapterInterface $getOrPostAdapter
      * @return Response
      */
-    public function fetchResponse(): Response;
+    public function fetchResponse(
+        GeneralRequestAdapterInterface $getOrPostAdapter
+    ): Response;
 }

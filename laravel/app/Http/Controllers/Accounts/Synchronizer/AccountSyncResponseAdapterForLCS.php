@@ -4,47 +4,26 @@ namespace App\Http\Controllers\Accounts\Synchronizer;
 
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\MultiDomain\MoneyConverter;
-use App\Models\Account;
 use App\Models\Currency;
 use App\Http\Controllers\Accounts\AccountDTO;
 
 class AccountSyncResponseAdapterForLCS implements AccountSyncResponseAdapterInterface
 {
     /**
-     * Properties required by the adapter.
-     *
-     * @var array $responseBody
-     * @var array $accountDTOs
-     */
-    private array $responseBody;
-    private array $accountDTOs = [];
-
-    /**
-     * Sets the response body.
-     *
-     * @param array $responseBody
-     * @return accountSyncResponseAdapterInterface
-     */
-    public function setResponseBody(
-        array $responseBody
-    ): accountSyncResponseAdapterInterface {
-        $this->responseBody = $responseBody;
-        return $this;
-    }
-
-    /**
      * Build the account DTOs.
      *
-     * @return accountSyncResponseAdapterInterface
+     * @param array $responseBody
+     * @return array
      */
-    public function buildAccountDTOs(): accountSyncResponseAdapterInterface
-    {
+    public function buildAccountDTOs(
+        array $responseBody
+    ): array {
+        $accountDTOs = [];
         //Extract relevant data from the response
         $walletsWithBalance = [];
         /*💬*/ //print_r($responseBody);
         foreach (
-            $this->
-                responseBody['currencies'] as $currencyCode => $currencyArray
+            $responseBody['currencies'] as $currencyCode => $currencyArray
         ) {
             /*💬*/ //echo $currency . PHP_EOL;
             foreach ($currencyArray as $address => $element) {
@@ -68,7 +47,7 @@ class AccountSyncResponseAdapterForLCS implements AccountSyncResponseAdapterInte
                                 $network = 'BSC';
                             } else {
                                 $network = 'XXX';
-                                log::warn("{$currencyCode} has no assigned network!");
+                                Log::warn("{$currencyCode} has no assigned network!");
                             }
 
                             // Determine the currency
@@ -88,7 +67,7 @@ class AccountSyncResponseAdapterForLCS implements AccountSyncResponseAdapterInte
                             // ADAPT CURRENCY FOR SECOND BTC WALLET!
 
                             array_push(
-                                $this->accountDTOs,
+                                $accountDTOs,
                                 new AccountDTO(
                                     network: (string) $network,
                                     identifier: (string) 'fps'
@@ -107,16 +86,6 @@ class AccountSyncResponseAdapterForLCS implements AccountSyncResponseAdapterInte
             }
         }
 
-        return $this;
-    }
-
-    /**
-     * Return the account DTOs.
-     *
-     * @return array
-     */
-    public function returnAccountDTOs(): array
-    {
-        return $this->accountDTOs;
+        return $accountDTOs;
     }
 }

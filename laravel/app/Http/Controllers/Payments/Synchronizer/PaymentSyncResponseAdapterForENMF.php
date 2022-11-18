@@ -10,7 +10,7 @@ use App\Http\Controllers\Payments\PaymentDTO;
 use App\Models\Currency;
 use App\Http\Controllers\MultiDomain\MoneyConverter;
 
-class PaymentSyncResponseAdapterForENM implements PaymentSyncResponseAdapterInterface
+class PaymentSyncResponseAdapterForENMF implements PaymentSyncResponseAdapterInterface
 {
     /**
      * Iterate through the payment data.
@@ -31,56 +31,30 @@ class PaymentSyncResponseAdapterForENM implements PaymentSyncResponseAdapterInte
         ) {
             /*💬*/ //print_r($result);
 
-            // Shift focus to 'payload' element
-            $result = $result['payload'];
-
             // Determine the currency
             $currency = Currency::
                     where(
                         'code',
-                        $result['CurrencyCode']
+                        $result['transactionCurrency']
                     )->firstOrFail();
 
-            // Determine beneficiary / originator details
-            if ($result['DebitCreditCode'] == 'Credit') {
-                // Originator
-                $originatorAccountIdentifier =
-                    $this->convertIbanToAccountIdentifier(
-                        $result['CounterpartAccount_Iban']
-                    );
-                $originatorNetworkAccountName =
-                    $result['CounterpartAccount_TransactionOwnerName'];
+            // Determine beneficiary / originator
+            $beneficiary = explode(', ', $result['beneficiary']);
+            $beneficiarylabel = $beneficiary[0];
+            $beneficiaryAccountIdentifier =
+                $this->convertIbanToAccountIdentifier($beneficiary[1]);
+
+            if ($beneficiarylabel == env('ZED_ENM_ACCOUNT_NAME')) {
+                $originator = explode(', ', $result['counterparty']);
+                $originatorNetworkAccountName = $originator[0];
                 $originatorLabel = '';
-
-                //Beneficiary
-                $beneficiaryAccountIdentifier =
-                    $this->convertIbanToAccountIdentifier(
-                        $result['Account_Iban']
-                    );
-                $beneficiaryNetworkAccountName = '';
-                $beneficiaryLabel =
-                    $result['Account_OwnerName'];
-                
-            } elseif ($result['DebitCreditCode'] == 'Debit') {
-                // Originator
                 $originatorAccountIdentifier =
-                    $this->convertIbanToAccountIdentifier(
-                        $result['Account_Iban']
-                    );
-                $originatorNetworkAccountName = '';
-                $originatorLabel =
-                    $result['Account_OwnerName'];
-
-                //Beneficiary
-                $beneficiaryAccountIdentifier =
-                    $this->convertIbanToAccountIdentifier(
-                        $result['CounterpartAccount_Iban']
-                    );
-                $beneficiaryNetworkAccountName = '';
-                $beneficiaryLabel =
-                    $result['CounterpartAccount_TransactionOwnerName'];
+                    $this->convertIbanToAccountIdentifier($originator[1]);
             } else {
-                // Throw unexpected response error
+                $originatorNetworkAccountName = '';
+                $originatorLabel = env('ZED_ENM_ACCOUNT_NAME');
+                $originatorAccountIdentifier =
+                    $this->convertIbanToAccountIdentifier($result['accno']);
             }
 
             $accountDTOs = [];
@@ -106,13 +80,13 @@ class PaymentSyncResponseAdapterForENM implements PaymentSyncResponseAdapterInte
                     identifier: (string) $beneficiaryAccountIdentifier,
                     customer_id: 0,
                     networkAccountName: '',
-                    label: $beneficiaryLabel,
+                    label: $beneficiarylabel,
                     currency_id: $currency->id,
                     balance: 0
                 )
             );
 
-            // Sync the account DTOs
+            // Sync accounts
             (new AccountSynchronizer())
                 ->setDTOs(DTOs: $accountDTOs)
                 ->createNewAccounts();
@@ -120,16 +94,16 @@ class PaymentSyncResponseAdapterForENM implements PaymentSyncResponseAdapterInte
             // Convert amount to base units
             $amount = (new MoneyConverter())
             ->convert(
-                amount: $result['Amount'],
+                amount: abs($result['transactionAmount']),
                 currency: $currency
             );
-
+            
             array_push(
                 $paymentDTOs,
                 new PaymentDTO(
                     network: (string) 'FPS',
                     identifier: (string) 'enm::'
-                        . $result['Id'],
+                        . $result['id'],
                     amount: (int) $amount,
                     currency_id: (int) $currency->id,
                     originator_id: (int) Account::
@@ -138,10 +112,10 @@ class PaymentSyncResponseAdapterForENM implements PaymentSyncResponseAdapterInte
                     beneficiary_id: (int) Account::
                         where('identifier', $beneficiaryAccountIdentifier)
                         ->first()->id,
-                    memo: (string) $result['Reference'],
+                    memo: (string) $result['paymentReference'],
                     timestamp: (string) date(
                         'Y-m-d H:i:s',
-                        strtotime($result['SettledTime'])
+                        strtotime($result['transactionTimeLocal'])
                     ),
                 )
             );

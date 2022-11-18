@@ -4,27 +4,15 @@ namespace App\Http\Controllers\Payments\Synchronizer;
 
 interface PaymentSyncResponseAdapterInterface
 {
-    /**
-     * Set the response body.
+     /**
+     * Iterate through the payment data.
+     * Build each account DTO and sync with accounts.
+     * Build and return all payment DTOs.
      *
      * @param array $responseBody
-     * @return PaymentSyncResponseAdapterInterface
-     */
-    public function setResponseBody(
-        array $responseBody
-    ): PaymentSyncResponseAdapterInterface;
-
-    /**
-     * Build the account DTOs.
-     *
-     * @return PaymentSyncResponseAdapterInterface
-     */
-    public function buildAndSyncAccountDTOs(): PaymentSyncResponseAdapterInterface;
-
-    /**
-     * Build the payment DTOs.
-     *
      * @return array
      */
-    public function buildPaymentDTOs(): array;
+    public function buildDTOsSyncAccountsReturnPayments(
+        array $responseBody
+    ): array;
 }
