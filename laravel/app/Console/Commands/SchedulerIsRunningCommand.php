@@ -22,7 +22,7 @@ class SchedulerIsRunningCommand extends Command
      * @var string
      */
     protected /* Do not define */ $description =
-        'Messages the console that the scheduler is running.';
+        'Tells the CLI/log that the scheduler is running.';
 
     /**
      * Execute the console command.

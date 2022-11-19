@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\MultiDomain;
+namespace App\Http\Controllers\MultiDomain\Money;
 
 use App\Models\Currency;
 

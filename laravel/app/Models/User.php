@@ -8,6 +8,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * NOTE: Stock Laravel class.
+ * Not implemented.
+ *
+ */
 class User extends Authenticatable
 {
     use HasApiTokens;

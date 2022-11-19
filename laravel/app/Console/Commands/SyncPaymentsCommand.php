@@ -3,10 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\PaymentController;
-use Illuminate\Http\Client\ConnectionException;
 
 class SyncPaymentsCommand extends Command
 {
@@ -35,7 +32,8 @@ class SyncPaymentsCommand extends Command
         try {
             try {
                 try {
-                    (new CommandInformer())->run(command: $this);
+                    (new CommandInformer())
+                        ->run(command: $this);
                 } catch (\Illuminate\Http\Client\ConnectionException $e) {
                     (new ExceptionInformer())->warn(
                         command: $this,

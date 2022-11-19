@@ -6,6 +6,7 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Database\Eloquent\Collection;
 use App\Models\Payment;
+use Illuminate\View\View;
 
 class PaymentSynchronizerComponent extends Component
 {
@@ -16,6 +17,7 @@ class PaymentSynchronizerComponent extends Component
      * Calls the 'payments:sync' command.
      *
      * @param string $provider
+     * @return void
      */
     public function sync(string $provider): void
     {
@@ -33,8 +35,10 @@ class PaymentSynchronizerComponent extends Component
 
     /**
      * Renders the view component.
+     * 
+     * @return View
      */
-    public function render()
+    public function render(): View
     {
         $this->payments = Payment::all();
         return view('livewire.payment-synchronizer-component');

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Http\Controllers\MultiDomain\MoneyFormatter;
+use App\Http\Controllers\MultiDomain\Money\MoneyFormatter;
 
 class Payment extends Model
 {
@@ -44,7 +44,7 @@ class Payment extends Model
      *
      * @return string
      */
-    public function formatAmount()
+    public function formatAmount(): string
     {
         return (new MoneyFormatter())->format(
             amount: $this->amount,

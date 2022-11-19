@@ -6,10 +6,13 @@ use Illuminate\View\View;
 use App\Http\Controllers\Payments\PaymentViewer;
 use App\Console\Commands\CommandDTO;
 use App\Http\Controllers\Payments\PaymentSynchronizer;
-use App\Http\Controllers\MultiDomain\AdapterBuilder;
-use App\Http\Controllers\MultiDomain\Requester;
+use App\Http\Controllers\MultiDomain\Adapters\AdapterBuilder;
+use App\Http\Controllers\MultiDomain\Adapters\Requester;
+use App\Http\Controllers\MultiDomain\Interfaces\ControllerInterface;
 
-class PaymentController extends Controller
+class PaymentController
+    extends Controller
+        implements ControllerInterface
 {
     /**
      * Show all payments (on every network).
@@ -41,9 +44,9 @@ class PaymentController extends Controller
      *
      * @return View
      */
-    public function showPaymentNetworks(): View
+    public function showNetworks(): View
     {
-        return (new PaymentViewer())->showPaymentNetworks();
+        return (new PaymentViewer())->showNetworks();
     }
 
     /**
@@ -52,11 +55,11 @@ class PaymentController extends Controller
      * @param string $network
      * @return View
      */
-    public function showPaymentsOnNetwork(
+    public function showOnNetwork(
         string $network
     ): View {
         return (new PaymentViewer())
-            ->showPaymentsOnNetwork(
+            ->showOnNetwork(
                 network: $network
             );
     }
@@ -73,7 +76,7 @@ class PaymentController extends Controller
     ): void {
         // ↖️ Creat payments from the DTOs
         (new PaymentSynchronizer())
-            ->createNewPayments(
+            ->sync(
                 // ↖️ Build DTOs from the request
                 (new Requester())->request(
                     adapterDTO:
@@ -83,7 +86,10 @@ class PaymentController extends Controller
                             action: 'Synchronizer',
                             provider: $commandDTO->data['provider']
                         ),
-                    numberToFetch: $commandDTO->data['numberOfPaymentsToFetch'],
+                    numberToFetch:
+                        $commandDTO->data[
+                            'numberOfPaymentsToFetch'
+                        ],
                 )
             );
         return;

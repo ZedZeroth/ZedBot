@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Accounts;
 
 use Illuminate\View\View;
-use App\Http\Controllers\MultiDomain\ViewerInterface;
+use App\Http\Controllers\MultiDomain\Interfaces\ViewerInterface;
 use App\Models\Account;
 
 class AccountViewer implements ViewerInterface
@@ -42,7 +42,7 @@ class AccountViewer implements ViewerInterface
      *
      * @return View
      */
-    public function showAccountNetworks(): View
+    public function showNetworks(): View
     {
         return view(
             'account-networks',
@@ -59,7 +59,7 @@ class AccountViewer implements ViewerInterface
      * @param string $network
      * @return View
      */
-    public function showAccountsOnNetwork(
+    public function showOnNetwork(
         string $network
     ): View {
         return view(

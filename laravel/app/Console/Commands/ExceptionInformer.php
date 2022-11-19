@@ -4,13 +4,12 @@ namespace App\Console\Commands;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Console\Command;
-use App\Console\Commands\Exception;
 
 class ExceptionInformer
 {
     /**
      * Outputs relevent exception information
-     * to the log and CLI.
+     * to the log and the CLI.
      *
      * @param Command $command
      * @param object $e
@@ -26,12 +25,18 @@ class ExceptionInformer
         string $function,
         string $line
     ): void {
+
+            // Explode file paths
             $exceptionPath = explode('\\', $e::class);
             $classPath = explode('\\', $class);
             
+            // Store the details in an array
             $errorDetails = [
                 '',
-                '[💀] ' . $exceptionPath[array_key_last($exceptionPath)],
+                '[💀] '
+                . $exceptionPath[
+                    array_key_last($exceptionPath)
+                ],
                 '---------------------------------',
                 '',
                 'Message:',
@@ -40,15 +45,16 @@ class ExceptionInformer
                 ''
             ];
 
+            // Add the exception file path
             foreach ($exceptionPath as $directory) {
                 array_push(
                     $errorDetails,
                     'Exception: ' . $directory
                 );
             }
-
             array_push($errorDetails,'');
 
+            // File path of where the exception was caught
             foreach ($classPath as $directory) {
                 array_push(
                     $errorDetails,
@@ -56,6 +62,7 @@ class ExceptionInformer
                 );
             }
 
+            // Add final details
             $errorDetails = array_merge(
                 $errorDetails, [
                     '',
@@ -66,6 +73,7 @@ class ExceptionInformer
                 ]
             );
             
+            // Push each detail to CLI/log
             foreach ($errorDetails as $detail) {
                 $command->warn($detail);
                 Log::error($detail);

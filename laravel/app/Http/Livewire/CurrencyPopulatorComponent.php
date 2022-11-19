@@ -4,24 +4,29 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Log;
 use App\Models\Currency;
+use Illuminate\View\View;
 
 class CurrencyPopulatorComponent extends Component
 {
     public $currencies;
 
-    public function populate()
+    /**
+     * Calls the 'currencies:populate' command.
+     *
+     * @return void
+     */
+    public function populate(): void
     {
-        try {
-            Artisan::call('currencies:populate browser');
-        } catch (\Symfony\Component\Console\Exception\RuntimeException $e) {
-            Log::error(__METHOD__ . ' [' . __LINE__ . '] ' . $e->getMessage());
-        }
-        $this->render();
+        Artisan::call('currencies:populate browser');
     }
 
-    public function render()
+    /**
+     * Renders the view component.
+     * 
+     * @return View
+     */
+    public function render(): View
     {
         $this->currencies = Currency::all();
         return view('livewire.currency-populator-component');

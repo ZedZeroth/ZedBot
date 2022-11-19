@@ -4,6 +4,10 @@ namespace App\Charts;
 
 use ConsoleTVs\Charts\Classes\Chartjs\Chart;
 
+/**
+ * NOTE: Charts are not functional yet.
+ *
+ */
 class ExchangeRateChart extends Chart
 {
     /**

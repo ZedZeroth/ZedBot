@@ -1,24 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\Accounts\Synchronizer;
+namespace App\Http\Controllers\Accounts\Synchronizer\Requests;
 
 use Illuminate\Http\Client\Response;
-use App\Http\Controllers\RequestAdapters\GeneralAdapterInterface;
-use App\Http\Controllers\RequestAdapters\GetAdapterLCS;
+use App\Http\Controllers\MultiDomain\Interfaces\RequestAdapterInterface;
+use App\Http\Controllers\MultiDomain\Adapters\GetAdapterLCS;
 
 class AccountsSynchronizerRequestAdapterForLCS implements
-    AccountsSynchronizerRequestAdapterInterface,
-    GeneralAdapterInterface
+    RequestAdapterInterface
 {
      /**
      * Build the post parameters.
      *
      * @param int $numberToFetch
-     * @return AccountsSynchronizerRequestAdapterInterface
+     * @return RequestAdapterInterface
      */
     public function buildPostParameters(
         int $numberToFetch
-        ): AccountsSynchronizerRequestAdapterInterface
+        ): RequestAdapterInterface
     {
         // No post parameters for LCS
         return $this;

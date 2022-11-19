@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Accounts\Synchronizer;
+namespace App\Http\Controllers\Accounts\Synchronizer\Responses;
 
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\MultiDomain\MoneyConverter;
+use App\Http\Controllers\MultiDomain\Money\MoneyConverter;
 use App\Models\Currency;
 use App\Http\Controllers\Accounts\AccountDTO;
-use App\Http\Controllers\RequestAdapters\GeneralAdapterInterface;
+use App\Http\Controllers\MultiDomain\Interfaces\ResponseAdapterInterface;
 
 class AccountsSynchronizerResponseAdapterForLCS implements
-    AccountsSynchronizerResponseAdapterInterface,
-    GeneralAdapterInterface
+    ResponseAdapterInterface
 {
     /**
-     * Build the account DTOs.
+     * Builds an array of model DTOs
+     * from the responseBody.
      *
      * @param array $responseBody
      * @return array

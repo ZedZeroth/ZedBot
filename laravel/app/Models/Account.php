@@ -3,21 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Http\Controllers\MultiDomain\MoneyFormatter;
-use App\Models\Currency;
+use App\Http\Controllers\MultiDomain\Money\MoneyFormatter;
 
 class Account extends Model
 {
-    /**
-     * The default attributes.
-     *
-     * @var array<int, string>
-     */
-    protected $attributes = [
-        'networkAccountName' => '',
-        'label' => ''
-    ];
-
     /**
      * The attributes that aren't mass assignable.
      *

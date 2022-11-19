@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\RequestAdapters;
+namespace App\Http\Controllers\MultiDomain\Adapters;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\MultiDomain\Interfaces\GeneralAdapterInterface;
+use App\Http\Controllers\MultiDomain\Interfaces\PostAdapterInterface;
 
-class PostAdapterForENM implements
-    PostAdapterInterface,
-    GeneralAdapterInterface
+class PostAdapterForENMF implements
+    GeneralAdapterInterfacePost,
+    AdapterInterface
 {
     /**
      * Makes a POST request to the ENM API

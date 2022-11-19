@@ -1,23 +1,26 @@
 <?php
 
-namespace App\Http\Controllers\RequestAdapters;
+namespace App\Http\Controllers\MultiDomain\Adapters;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Client\Response;
+use App\Http\Controllers\MultiDomain\Interfaces\GeneralAdapterInterface;
+use App\Http\Controllers\MultiDomain\Interfaces\GetAdapterInterface;
 
 class GetAdapterForLCS implements
-    GetAdapterInterface,
-    GeneralAdapterInterface
+    GeneralAdapterInterface,
+    GetAdapterInterface
 {
     /**
      * Makes a GET request to the LCS API
      *
      * @param string $endpoint
-     * @return Http
+     * @return Response
      */
     public function get(
         string $endpoint,
-    ) {
+    ):Response {
         // Build the URL
         $url = env('ZED_LCS_DOMAIN')
             . env('ZED_LCS_PATH')

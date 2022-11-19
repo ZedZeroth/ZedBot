@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\RequestAdapters;
+namespace App\Http\Controllers\MultiDomain\Adapters;
 
-use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\Response;
 
 interface GetAdapterInterface
 {
@@ -10,9 +10,9 @@ interface GetAdapterInterface
      * Makes a GET request to an API
      *
      * @param string $endpoint
-     * @return Http
+     * @return Response
      */
     public function get(
         string $endpoint,
-    );
+    ):Response;
 }

@@ -1,21 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Payments\Synchronizer;
+namespace App\Http\Controllers\MultiDomain\Adapters;
 
-use App\Http\Controllers\RequestAdapters\GeneralAdapterInterface;
 use Illuminate\Http\Client\Response;
 
-interface PaymentsSynchronizerRequestAdapterInterface
+interface RequestAdapterInterface
 {
     /**
      * Build the post parameters.
      *
      * @param int $numberToFetch
-     * @return PaymentsSynchronizerRequestAdapterInterface
+     * @return RequestAdapterInterface
      */
     public function buildPostParameters(
         int $numberToFetch
-    ): PaymentsSynchronizerRequestAdapterInterface;
+        ): RequestAdapterInterface;
 
     /**
      * Fetch the response.

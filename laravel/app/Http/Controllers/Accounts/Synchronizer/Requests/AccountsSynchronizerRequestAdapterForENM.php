@@ -1,34 +1,32 @@
 <?php
 
-namespace App\Http\Controllers\Payments\Synchronizer;
+namespace App\Http\Controllers\Accounts\Synchronizer\Requests;
 
 use Illuminate\Http\Client\Response;
-use App\Http\Controllers\RequestAdapters\GeneralAdapterInterface;
-use App\Http\Controllers\RequestAdapters\PostAdapterENM;
+use App\Http\Controllers\MultiDomain\Interfaces\RequestAdapterInterface;
 
-class PaymentsSynchronizerRequestAdapterForENMF implements
-    PaymentsSynchronizerRequestAdapterInterface,
-    GeneralAdapterInterface
+class AccountsSynchronizerRequestAdapterForENM implements
+    RequestAdapterInterface
 {
     /**
      * Properties required to perform the request.
      *
      * @var array $postParameters
      */
+    private array $postParameters;
 
     /**
      * Build the post parameters.
      *
      * @param int $numberToFetch
-     * @return PaymentsSynchronizerRequestAdapterInterface
+     * @return RequestAdapterInterface
      */
     public function buildPostParameters(
         int $numberToFetch
-    ): PaymentsSynchronizerRequestAdapterInterface {
+    ): RequestAdapterInterface {
         $this->postParameters = [
-            'accountCode' => env('ZED_ENM_ACCOUNT_CODE'),
-            'take' => $numberToFetch,
-            'goFast' => true
+            'accountERN' => env('ZED_ENM_ACCOUNT_ERN'),
+            'take' => $numberToFetch
         ];
         return $this;
     }
@@ -44,7 +42,7 @@ class PaymentsSynchronizerRequestAdapterForENMF implements
     ): Response {
         return ($getOrPostAdapter)
             ->post(
-                endpoint: env('ZED_ENM_TRANSACTIONS_ENDPOINT'),
+                endpoint: env('ZED_ENM_BENEFICIARIES_ENDPOINT'),
                 postParameters: $this->postParameters
             );
     }

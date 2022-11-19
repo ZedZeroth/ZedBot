@@ -3,11 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\Currencies\CurrencyPopulator;
-use App\Models\Currency;
 
 class PopulateCurrenciesCommand extends Command
 {
@@ -33,12 +30,7 @@ class PopulateCurrenciesCommand extends Command
      */
     public function handle(): void
     {
-        try {
-            (new CommandInformer())->run(command: $this);
-        } catch (Exception $e) {
-            $this->error(__METHOD__ . ' [' . __LINE__ . ']');
-            Log::error(__METHOD__ . ' [' . __LINE__ . ']');
-        }
+        (new CommandInformer())->run(command: $this);
     }
 
     /**

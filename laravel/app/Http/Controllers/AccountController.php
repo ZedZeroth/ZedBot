@@ -6,10 +6,13 @@ use Illuminate\View\View;
 use App\Http\Controllers\Accounts\AccountViewer;
 use App\Console\Commands\CommandDTO;
 use App\Http\Controllers\Accounts\AccountSynchronizer;
-use App\Http\Controllers\MultiDomain\AdapterBuilder;
-use App\Http\Controllers\MultiDomain\Requester;
+use App\Http\Controllers\MultiDomain\Adapters\AdapterBuilder;
+use App\Http\Controllers\MultiDomain\Adapters\Requester;
+use App\Http\Controllers\MultiDomain\Interfaces\ControllerInterface;
 
-class AccountController extends Controller
+class AccountController
+    extends Controller
+        implements ControllerInterface
 {
     /**
      * Show all accounts (on every network).
@@ -41,9 +44,9 @@ class AccountController extends Controller
      *
      * @return View
      */
-    public function showAccountNetworks(): View
+    public function showNetworks(): View
     {
-        return (new AccountViewer())->showAccountNetworks();
+        return (new AccountViewer())->showNetworks();
     }
 
     /**
@@ -52,11 +55,11 @@ class AccountController extends Controller
      * @param string $network
      * @return View
      */
-    public function showAccountsOnNetwork(
+    public function showOnNetwork(
         string $network
     ): View {
         return (new AccountViewer())
-            ->showAccountsOnNetwork(
+            ->showOnNetwork(
                 network: $network
             );
     }
@@ -72,7 +75,7 @@ class AccountController extends Controller
         CommandDTO $commandDTO
     ): void {
         (new AccountSynchronizer())
-            ->createNewAccounts(
+            ->sync(
                 (new Requester())->request(
                     adapterDTO:
                         (new AdapterBuilder())->build(
@@ -80,7 +83,10 @@ class AccountController extends Controller
                             action: 'Synchronizer',
                             provider: $commandDTO->data['provider']
                         ),
-                    numberToFetch: $commandDTO->data['numberOfAccountsToFetch'],
+                    numberToFetch:
+                        $commandDTO->data[
+                            'numberOfAccountsToFetch'
+                        ],
                 )
             ); 
         return;

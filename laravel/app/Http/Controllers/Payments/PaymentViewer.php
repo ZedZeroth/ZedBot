@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Payments;
 
 use Illuminate\View\View;
-use App\Http\Controllers\MultiDomain\ViewerInterface;
+use App\Http\Controllers\MultiDomain\Interfaces\ViewerInterface;
 use App\Models\Payment;
 
 class PaymentViewer implements ViewerInterface
@@ -42,7 +42,7 @@ class PaymentViewer implements ViewerInterface
      *
      * @return View
      */
-    public function showPaymentNetworks(): View
+    public function showNetworks(): View
     {
         return view(
             'payment-networks',
@@ -59,7 +59,7 @@ class PaymentViewer implements ViewerInterface
      * @param string $network
      * @return View
      */
-    public function showPaymentsOnNetwork(
+    public function showOnNetwork(
         string $network
     ): View {
         return view(

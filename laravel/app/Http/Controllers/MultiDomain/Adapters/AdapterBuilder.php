@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\MultiDomain;
+namespace App\Http\Controllers\MultiDomain\Adapters;
 
 class AdapterBuilder
 {
@@ -19,6 +19,7 @@ class AdapterBuilder
         string $provider
     ): AdapterDTO {
 
+        // Specific request/response path
         $modelActionPath =
             'App\Http\Controllers'
             . '\\' . $models
@@ -26,19 +27,25 @@ class AdapterBuilder
 
         // Build the request adaper
         $requestAdapterClass = $modelActionPath
-            . '\\' . $models . $action . 'RequestAdapterFor'
+            . '\\Requests\\'
+            . $models
+            . $action
+            . 'RequestAdapterFor'
             . strtoupper($provider);
 
         $requestAdapter = new $requestAdapterClass();
 
         // Build the response adaper
         $responseAdapterClass = $modelActionPath
-            . '\\' . $models . $action . 'ResponseAdapterFor'
+            . '\\Responses\\'
+            . $models
+            . $action
+            . 'ResponseAdapterFor'
             . strtoupper($provider);
         $responseAdapter = new $responseAdapterClass();
 
         // Build the general get/post adapter
-        $generalPath = 'App\Http\Controllers\RequestAdapters';
+        $generalPath = 'App\Http\Controllers\MultiDomain\Adapters';
         if (in_array(
             $provider,
             explode(',', env('USES_POST_TO_GET'))

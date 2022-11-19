@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Payments;
 
+use App\Http\Controllers\MultiDomain\Interfaces\SyncronizerInterface;
 use App\Models\Payment;
 
-class PaymentSynchronizer
+class PaymentSynchronizer implements SyncronizerInterface
 {
     /**
      * Uses the DTOs to create payments for
@@ -12,7 +13,7 @@ class PaymentSynchronizer
      *
      * @param array $DTOs
      */
-    public function createNewPayments(
+    public function sync(
         array $DTOs
     ): void {
         foreach ($DTOs as $dto) {

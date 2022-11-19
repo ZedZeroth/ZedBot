@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Charts\ExchangeRateChart;
 
+/**
+ * NOTE: Charts are not yet functional.
+ *
+ */
 class ChartController extends Controller
 {
     /**

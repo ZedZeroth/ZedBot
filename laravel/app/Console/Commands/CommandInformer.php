@@ -8,6 +8,11 @@ use App\Models\Account;
 use App\Models\Currency;
 use App\Models\Payment;
 
+/**
+ * When running a command this pushes
+ * useful information to the CLI and
+ * to the log file.
+ */
 class CommandInformer
 {
     /**
@@ -18,7 +23,7 @@ class CommandInformer
     private Command $command;
 
     /**
-     * Outputs relevent command information
+     * Outputs useful command information
      * before and after running a command.
      *
      * @param Command $command
@@ -30,10 +35,7 @@ class CommandInformer
         // Assign command property
         $this->command = $command;
 
-        /**
-         * Build and output title.
-         *
-         */
+        // Build and output the title
         if ($this->command->argument('source') == 'cli') {
             $sourceEmoji = '📟';
         } elseif ($this->command->argument('source') == 'browser') {
@@ -52,20 +54,23 @@ class CommandInformer
         );
         $this->output('---------------------------------');
 
-        /**
-         * Output other arguments.
-         *
-         */
-        foreach ($this->command->argument() as $argumentKey => $argument) {
-            if ($argumentKey != 'command' and $argumentKey != 'source') {
-                $this->output($argumentKey . ': ' . $argument);
+        //Output other arguments
+        foreach (
+            $this->command->argument()
+            as $argumentKey => $argument
+        ) {
+            if (
+                $argumentKey != 'command'
+                and $argumentKey != 'source'
+            ) {
+                $this->output(
+                    $argumentKey
+                    . ': '
+                    . $argument);
             }
         }
 
-        /**
-         * Count models and record time.
-         *
-         */
+        //Count models and record current time
         $models = [
             'Account' => Account::all()->count(),
             'Currency' => Currency::all()->count(),
@@ -73,10 +78,7 @@ class CommandInformer
         ];
         $startTime = now();
 
-        /**
-         * Output 'Running...' and run the command.
-         *
-         */
+        //Output 'Running...' and run the command
         $this->output(
             '... Running "'
             . $this->command->argument('command')
@@ -84,10 +86,7 @@ class CommandInformer
         );
         $this->command->runThisCommand();
 
-        /**
-         * Latency
-         *
-         */
+        // Determine latency
         $latency = now()->diffInMilliseconds($startTime);
         $this->output(
             '... '
@@ -95,40 +94,34 @@ class CommandInformer
             . 'ms DONE'
         );
 
-        /**
-         * Calculate new models.
-         *
-         */
+        //Determine the number of new models created
         $nothingToUpdate = true;
         foreach ($models as $name => $number) {
             $modelWithPath = '\App\Models\\' . $name;
             $new = $modelWithPath::all()->count() - $number;
             if ($new) {
                 $nothingToUpdate = false;
-                $this->output($name . '(s) created: ' . $new);
+                $this->output(
+                    $name
+                    . '(s) created: '
+                    . $new
+                );
             }
         }
         if ($nothingToUpdate) {
             $this->output('No new models created.');
         }
 
-        /**
-         * Final output
-         *
-         */
+        // Final output
         $this->output('---------------------------------');
         $this->output('');
 
-        /**
-         * Return the command.
-         *
-         */
         return;
     }
 
     /**
      * Outputs a string to the command line
-     * and the log.
+     * and to the log file.
      *
      * @param string $string
      */

@@ -6,6 +6,7 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Database\Eloquent\Collection;
 use App\Models\Account;
+use Illuminate\View\View;
 
 class AccountSynchronizerComponent extends Component
 {
@@ -28,8 +29,10 @@ class AccountSynchronizerComponent extends Component
 
     /**
      * Renders the view component.
+     * 
+     * @return View
      */
-    public function render()
+    public function render(): View
     {
         $this->accounts = Account::all();
         return view('livewire.account-synchronizer-component');

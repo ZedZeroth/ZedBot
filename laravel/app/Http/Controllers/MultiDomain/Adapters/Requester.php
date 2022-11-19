@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\MultiDomain;
+namespace App\Http\Controllers\MultiDomain\Adapters;
 
 class Requester
 {
     /**
      * Makes a request (via specific request adapters),
-     * adapts the response (via specific response adapters)
-     * returning the relevant DTOs.
+     * adapts the response (via specific response adapters),
+     * then returns an array of DTOs.
      *
      * @param AdapterDTO $adapterDTO
      * @param int $numberToFetch
@@ -46,16 +46,8 @@ class Requester
                     responseBody: $responseBody
                 );
 
-        // Throw an exception for an invalid response
+        // Return an empty array for an invalid response
         } else {
-            /*💬*/ //print_r($responseBody);
-            /*
-            if (!empty($responseBody['responseStatus']['message'])) {
-                throw new Exception($responseBody['responseStatus']['message'], $statusCode);
-            } else {
-                throw new Exception('$responseBody[responseStatus][message] is empty!', $statusCode);
-            }
-            */
             return [];
         }
     }

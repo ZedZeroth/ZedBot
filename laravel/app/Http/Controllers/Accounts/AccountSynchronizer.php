@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Accounts;
 
+use App\Http\Controllers\MultiDomain\Interfaces\SyncronizerInterface;
 use App\Models\Account;
 
-class AccountSynchronizer
+class AccountSynchronizer implements SyncronizerInterface
 {
     /**
      * Uses the DTOs to create accounts for
@@ -12,7 +13,7 @@ class AccountSynchronizer
      *
      * @param array $DTOs
      */
-    public function createNewAccounts(
+    public function sync(
         array $DTOs
     ): void {
         foreach ($DTOs as $dto) {
