@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Accounts\Synchronizer\Requests;
 
 use Illuminate\Http\Client\Response;
 use App\Http\Controllers\MultiDomain\Interfaces\RequestAdapterInterface;
-use App\Http\Controllers\MultiDomain\Adapters\GetAdapterLCS;
+use App\Http\Controllers\MultiDomain\Interfaces\GeneralAdapterInterface;
 
 class AccountsSynchronizerRequestAdapterForLCS implements
     RequestAdapterInterface

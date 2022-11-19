@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Accounts\Synchronizer\Requests;
 
 use Illuminate\Http\Client\Response;
 use App\Http\Controllers\MultiDomain\Interfaces\RequestAdapterInterface;
+use App\Http\Controllers\MultiDomain\Interfaces\GeneralAdapterInterface;
 
 class AccountsSynchronizerRequestAdapterForENM implements
     RequestAdapterInterface

@@ -89,7 +89,7 @@ class PaymentsSynchronizerResponseAdapterForENMF implements
 
             // Sync accounts
             (new AccountSynchronizer())
-                ->createNewAccounts(DTOs: $accountDTOs);
+                ->sync(DTOs: $accountDTOs);
 
             // Convert amount to base units
             $amount = (new MoneyConverter())

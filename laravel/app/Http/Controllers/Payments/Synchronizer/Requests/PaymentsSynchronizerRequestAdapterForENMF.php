@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Payments\Synchronizer\Requests;
 
 use Illuminate\Http\Client\Response;
 use App\Http\Controllers\MultiDomain\Interfaces\RequestAdapterInterface;
+use App\Http\Controllers\MultiDomain\Interfaces\GeneralAdapterInterface;
 
 class PaymentsSynchronizerRequestAdapterForENMF implements
     RequestAdapterInterface

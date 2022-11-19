@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\MultiDomain\Adapters;
+namespace App\Http\Controllers\MultiDomain\Interfaces;
 
 interface ResponseAdapterInterface
 {

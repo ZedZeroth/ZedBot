@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Payments;
 
-use App\Http\Controllers\MultiDomain\Interfaces\SyncronizerInterface;
+use App\Http\Controllers\MultiDomain\Interfaces\SynchronizerInterface;
 use App\Models\Payment;
 
-class PaymentSynchronizer implements SyncronizerInterface
+class PaymentSynchronizer implements SynchronizerInterface
 {
     /**
      * Uses the DTOs to create payments for

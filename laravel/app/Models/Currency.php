@@ -11,7 +11,7 @@ class Currency extends Model
      *
      * @var array
      */
-    protected $guarded = [];
+    protected /* Do not define */ $guarded = [];
 
     /**
     * Get the payments in this currency.

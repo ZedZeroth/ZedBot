@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Currencies;
 
 use Illuminate\View\View;
-use App\Http\Controllers\MultiDomain\ViewerInterface;
+use App\Http\Controllers\MultiDomain\Interfaces\ViewerInterface;
 use App\Models\Currency;
 
 class CurrencyViewer implements ViewerInterface

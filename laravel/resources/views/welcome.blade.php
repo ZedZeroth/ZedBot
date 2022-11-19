@@ -11,7 +11,7 @@
 
     <body>
 
-        <h1>ZedBot v1.0.0</h1>
+        <h1>ZedBot v1.0.1</h1>
 
         <table>
             <tr>

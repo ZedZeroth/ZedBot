@@ -12,7 +12,7 @@ class Payment extends Model
      *
      * @var array
      */
-    protected $guarded = [];
+    protected /* Do not define */ $guarded = [];
 
     /**
      * Defines the payment's currency.

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\MultiDomain\Adapters;
 
-use App\Http\Controllers\MultiDomain\Adapters\GeneralAdapterInterface;
-use App\Http\Controllers\MultiDomain\Adapters\RequestAdapterInterface;
-use App\Http\Controllers\MultiDomain\Adapters\ResponseAdapterInterface;
+use App\Http\Controllers\MultiDomain\Interfaces\RequestAdapterInterface;
+use App\Http\Controllers\MultiDomain\Interfaces\ResponseAdapterInterface;
+use App\Http\Controllers\MultiDomain\Interfaces\GeneralAdapterInterface;
 
 class AdapterDTO
 {
@@ -14,9 +14,9 @@ class AdapterDTO
      * adapter builder.
      */
     public function __construct(
-        public GeneralAdapterInterface $getOrPostAdapter,
         public RequestAdapterInterface $requestAdapter,
         public ResponseAdapterInterface $responseAdapter,
+        public GeneralAdapterInterface $getOrPostAdapter
     ) {
     }
 }

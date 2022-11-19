@@ -8,11 +8,21 @@ use App\Http\Controllers\MultiDomain\Money\MoneyFormatter;
 class Account extends Model
 {
     /**
+     * The default attributes.
+     *
+     * @var array<int, string>
+     */
+    protected /* Do not define */ $attributes = [
+        'networkAccountName' => '',
+        'label' => ''
+    ];
+
+    /**
      * The attributes that aren't mass assignable.
      *
      * @var array
      */
-    protected $guarded = [];
+    protected /* Do not define */ $guarded = [];
 
     /**
     * Get the incoming payments for this account.

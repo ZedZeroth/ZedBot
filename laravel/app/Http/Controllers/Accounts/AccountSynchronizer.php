@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Accounts;
 
-use App\Http\Controllers\MultiDomain\Interfaces\SyncronizerInterface;
+use App\Http\Controllers\MultiDomain\Interfaces\SynchronizerInterface;
 use App\Models\Account;
 
-class AccountSynchronizer implements SyncronizerInterface
+class AccountSynchronizer implements SynchronizerInterface
 {
     /**
      * Uses the DTOs to create accounts for

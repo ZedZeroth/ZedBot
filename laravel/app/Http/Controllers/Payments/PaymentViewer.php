@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Payments;
 
 use Illuminate\View\View;
 use App\Http\Controllers\MultiDomain\Interfaces\ViewerInterface;
+use App\Http\Controllers\MultiDomain\Interfaces\NetworkViewerInterface;
 use App\Models\Payment;
 
-class PaymentViewer implements ViewerInterface
+class PaymentViewer implements
+    ViewerInterface,
+    NetworkViewerInterface
 {
     /**
      * Show all payments (on every network).

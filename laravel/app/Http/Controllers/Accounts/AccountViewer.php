@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Accounts;
 
 use Illuminate\View\View;
 use App\Http\Controllers\MultiDomain\Interfaces\ViewerInterface;
+use App\Http\Controllers\MultiDomain\Interfaces\NetworkViewerInterface;
 use App\Models\Account;
 
-class AccountViewer implements ViewerInterface
+class AccountViewer implements
+    ViewerInterface,
+    NetworkViewerInterface
 {
     /**
      * Show all accounts (on every network).
