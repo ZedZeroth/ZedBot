@@ -10,9 +10,7 @@ use App\Http\Controllers\MultiDomain\Adapters\AdapterBuilder;
 use App\Http\Controllers\MultiDomain\Adapters\Requester;
 use App\Http\Controllers\MultiDomain\Interfaces\ControllerInterface;
 
-class PaymentController
-    extends Controller
-        implements ControllerInterface
+class PaymentController extends Controller implements ControllerInterface
 {
     /**
      * Show all payments (on every network).

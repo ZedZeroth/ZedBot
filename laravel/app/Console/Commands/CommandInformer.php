@@ -56,8 +56,7 @@ class CommandInformer
 
         //Output other arguments
         foreach (
-            $this->command->argument()
-            as $argumentKey => $argument
+            $this->command->argument() as $argumentKey => $argument
         ) {
             if (
                 $argumentKey != 'command'
@@ -66,7 +65,8 @@ class CommandInformer
                 $this->output(
                     $argumentKey
                     . ': '
-                    . $argument);
+                    . $argument
+                );
             }
         }
 
