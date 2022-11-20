@@ -10,9 +10,8 @@ use App\Http\Controllers\MultiDomain\Adapters\AdapterBuilder;
 use App\Http\Controllers\MultiDomain\Adapters\Requester;
 use App\Http\Controllers\MultiDomain\Interfaces\ControllerInterface;
 
-class AccountController
-    extends Controller
-        implements ControllerInterface
+class AccountController extends Controller implements
+    ControllerInterface
 {
     /**
      * Show all accounts (on every network).
@@ -88,7 +87,7 @@ class AccountController
                             'numberOfAccountsToFetch'
                         ],
                 )
-            ); 
+            );
         return;
     }
 }

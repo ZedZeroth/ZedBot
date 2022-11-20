@@ -26,9 +26,9 @@ class PaymentsSynchronizerResponseAdapterForENM implements
     ): array {
         $paymentDTOs = [];
         /*💬*/ //print_r($responseBody);
+
         foreach (
-            $responseBody['results']
-            as $result
+            $responseBody['results'] as $result
         ) {
             /*💬*/ //print_r($result);
 
@@ -61,7 +61,6 @@ class PaymentsSynchronizerResponseAdapterForENM implements
                 $beneficiaryNetworkAccountName = '';
                 $beneficiaryLabel =
                     $result['Account_OwnerName'];
-                
             } elseif ($result['DebitCreditCode'] == 'Debit') {
                 // Originator
                 $originatorAccountIdentifier =
@@ -146,7 +145,7 @@ class PaymentsSynchronizerResponseAdapterForENM implements
                 )
             );
         }
-        
+
         // Return the payment DTOs
         return $paymentDTOs;
     }

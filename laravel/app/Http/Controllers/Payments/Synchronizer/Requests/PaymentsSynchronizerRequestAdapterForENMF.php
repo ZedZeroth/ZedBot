@@ -35,7 +35,7 @@ class PaymentsSynchronizerRequestAdapterForENMF implements
 
     /**
      * Fetch the response.
-     * 
+     *
      * @param GeneralAdapterInterface $getOrPostAdapter
      * @return Response
      */

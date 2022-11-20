@@ -17,22 +17,21 @@ class AccountsSynchronizerRequestAdapterForLCS implements
      */
     public function buildPostParameters(
         int $numberToFetch
-        ): RequestAdapterInterface
-    {
+    ): RequestAdapterInterface {
         // No post parameters for LCS
         return $this;
     }
 
     /**
      * Fetch the response.
-     * 
+     *
      * @param GeneralAdapterInterface $getOrPostAdapter
      * @return Response
      */
     public function fetchResponse(
         GeneralAdapterInterface $getOrPostAdapter
     ): Response {
-        return (new $getOrPostAdapter)
+        return (new $getOrPostAdapter())
             ->get(
                 endpoint: env('ZED_LCS_WALLETS_ENDPOINT')
             );

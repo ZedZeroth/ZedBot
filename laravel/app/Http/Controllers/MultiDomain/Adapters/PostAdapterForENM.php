@@ -10,7 +10,7 @@ use App\Http\Controllers\MultiDomain\Interfaces\PostAdapterInterface;
 
 class PostAdapterForENM implements
     GeneralAdapterInterface,
-    PostAdapterInterface    
+    PostAdapterInterface
 {
     /**
      * Makes a POST request to the ENM API

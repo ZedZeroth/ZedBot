@@ -34,7 +34,7 @@ class AccountsSynchronizerRequestAdapterForENM implements
 
     /**
      * Fetch the response.
-     * 
+     *
      * @param GeneralAdapterInterface $getOrPostAdapter
      * @return Response
      */

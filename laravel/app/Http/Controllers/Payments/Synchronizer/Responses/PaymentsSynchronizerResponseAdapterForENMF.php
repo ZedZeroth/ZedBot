@@ -27,8 +27,7 @@ class PaymentsSynchronizerResponseAdapterForENMF implements
         $paymentDTOs = [];
         /*💬*/ //print_r($responseBody);
         foreach (
-            $responseBody['results']
-            as $result
+            $responseBody['results'] as $result
         ) {
             /*💬*/ //print_r($result);
 
@@ -97,7 +96,7 @@ class PaymentsSynchronizerResponseAdapterForENMF implements
                 amount: abs($result['transactionAmount']),
                 currency: $currency
             );
-            
+
             array_push(
                 $paymentDTOs,
                 new PaymentDTO(
@@ -120,7 +119,7 @@ class PaymentsSynchronizerResponseAdapterForENMF implements
                 )
             );
         }
-        
+
         // Return the payment DTOs
         return $paymentDTOs;
     }

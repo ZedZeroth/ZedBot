@@ -14,11 +14,11 @@ interface RequestAdapterInterface
      */
     public function buildPostParameters(
         int $numberToFetch
-        ): RequestAdapterInterface;
+    ): RequestAdapterInterface;
 
     /**
      * Fetch the response.
-     * 
+     *
      * @param GeneralAdapterInterface $getOrPostAdapter
      * @return Response
      */

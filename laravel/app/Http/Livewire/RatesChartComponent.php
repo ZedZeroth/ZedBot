@@ -8,7 +8,7 @@ use Illuminate\View\View;
 
 /**
  * NOTE: Charts are not yet functional.
- * 
+ *
  */
 class RatesChartComponent extends Component
 {
@@ -16,7 +16,7 @@ class RatesChartComponent extends Component
 
     /**
      * Renders the view component.
-     * 
+     *
      * @return View
      */
     public function render(): View

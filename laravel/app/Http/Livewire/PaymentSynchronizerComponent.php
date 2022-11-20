@@ -35,7 +35,7 @@ class PaymentSynchronizerComponent extends Component
 
     /**
      * Renders the view component.
-     * 
+     *
      * @return View
      */
     public function render(): View

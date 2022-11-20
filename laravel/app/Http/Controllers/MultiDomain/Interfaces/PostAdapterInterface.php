@@ -16,5 +16,5 @@ interface PostAdapterInterface
     public function post(
         string $endpoint,
         array $postParameters
-    ):Response;
+    ): Response;
 }

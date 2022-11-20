@@ -14,5 +14,5 @@ interface GetAdapterInterface
      */
     public function get(
         string $endpoint,
-    ):Response;
+    ): Response;
 }

@@ -20,7 +20,7 @@ class GetAdapterForLCS implements
      */
     public function get(
         string $endpoint,
-    ):Response {
+    ): Response {
         // Build the URL
         $url = env('ZED_LCS_DOMAIN')
             . env('ZED_LCS_PATH')

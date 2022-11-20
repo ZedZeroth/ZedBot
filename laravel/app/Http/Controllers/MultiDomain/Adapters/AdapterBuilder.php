@@ -46,10 +46,12 @@ class AdapterBuilder
 
         // Build the general get/post adapter
         $generalPath = 'App\Http\Controllers\MultiDomain\Adapters';
-        if (in_array(
-            $provider,
-            explode(',', env('USES_POST_TO_GET'))
-        )) {
+        if (
+            in_array(
+                $provider,
+                explode(',', env('USES_POST_TO_GET'))
+            )
+        ) {
             $getOrPostAdapterClass = $generalPath
                 . '\PostAdapterFor'
                 . strtoupper($provider);
