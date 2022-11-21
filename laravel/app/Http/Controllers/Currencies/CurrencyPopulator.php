@@ -137,7 +137,7 @@ class CurrencyPopulator
         $currency = Currency::firstOrCreate(
             ['code' => 'USDT-ERC20'],
             [
-                'symbol' => '₮(ERC)',
+                'symbol' => '₮ᴱᴿᶜ²⁰',
                 'nameSingular' => 'US-Tether (ERC20)',
                 'namePlural' => 'US-Tethers (ERC20)',
                 'baseUnitNameSingular' => 'micro-US-Tether (ERC20)',
@@ -150,7 +150,7 @@ class CurrencyPopulator
         $currency = Currency::firstOrCreate(
             ['code' => 'USDT-TRC20'],
             [
-                'symbol' => '₮(TRC)',
+                'symbol' => '₮ᵀᴿᶜ²⁰',
                 'nameSingular' => 'US-Tether (TRC20)',
                 'namePlural' => 'US-Tethers (TRC20)',
                 'baseUnitNameSingular' => 'micro-US-Tether (TRC20)',

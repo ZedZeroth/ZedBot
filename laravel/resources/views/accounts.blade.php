@@ -10,23 +10,13 @@
 
         <h1>Accounts on every network</h1>
 
+        <ul><li>
         <a href='/account/networks'>
-            View accounts by network
+            View accounts by network instead
         </a>
+        </li></ul>
 
-        <ul>
-        @foreach($accounts as $account)
-            <li>                
-                <a href="/account/{{ $account->identifier }}">
-                    {{ $account->identifier }}
-                </a>
-                <span style="font-weight: bold;">
-                    {{ $account->networkAccountName }}
-                </span>
-                ({{ $account->label }})
-            </li>
-        @endforeach
-        </ul>
+        {!! $accountsTable !!}
 
     </body>
 </html>

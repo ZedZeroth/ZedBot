@@ -11,35 +11,18 @@
 
         <a href="/">🏠</a> &bull; <a href="/payments">↩️</a>
 
-        <h1>Payment: {{ $payment->id }}</h1>
-        <h2>Network:
-            <a href="/{{ $payment->network }}/payments">
-                {{ $payment->network }}
-            </a>
-        </h2>
-        <p>Timestamp: {{ $payment->timestamp }}</p>
+        <h1 style="word-wrap: break-word;">Payment: {{ $payment->identifier }}</h1>
 
-        <h3>Memo: {{ $payment->memo }}</h3>
+        <ul>
+            <li><a href="#details">Details</a></li>
+            <li><a href="#model-data">Model data</a></li>
+        </ul>
 
-        <h3>
-            Money: {{ $payment->formatAmount() }}
-            <a href='/currency/{{ $payment->currency()->first()->code }}'>
-                {{ $payment->currency->code }}
-            </a>
-        </h3>
+        <h2><anchor id="details">Details</h2>
+        {!! $paymentTable !!}
 
-        <h3>
-            Accounts:<br>
-            <a href='/account/{{ $payment->originator->identifier }}'>
-                {{ $payment->originator->identifier }}
-            </a>
-            <br>&rarr;<br>
-            <a href='/account/{{ $payment->beneficiary->identifier }}'>
-            {{ $payment->beneficiary->identifier }}
-            </a>
-        </h3>
-
-        <p>Identifier: {{ $payment->identifier }}</p>
+        <h2><anchor id="model-data">Model data</h2>
+        {!! $modelTable !!}
 
     </body>
 </html>

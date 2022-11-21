@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Accounts;
 
 use Illuminate\View\View;
 use App\Http\Controllers\MultiDomain\Interfaces\ViewerInterface;
 use App\Http\Controllers\MultiDomain\Interfaces\NetworkViewerInterface;
 use App\Models\Account;
+use App\Http\Controllers\Html\HtmlModelTableBuilder;
+use App\Http\Controllers\Html\HtmlPaymentRowBuilder;
+use App\Http\Controllers\Html\HtmlAccountRowBuilder;
 
 class AccountViewer implements
     ViewerInterface,
@@ -18,9 +23,12 @@ class AccountViewer implements
      */
     public function showAll(): View
     {
+        $accounts = Account::all()->sortBy('identifier');
         return view('accounts', [
-            'accounts' => Account::all()
-                ->sortBy('identifier')
+            'accounts' => $accounts,
+            'accountsTable' =>
+                (new HtmlAccountRowBuilder())
+                    ->build($accounts)
         ]);
     }
 
@@ -33,10 +41,18 @@ class AccountViewer implements
     public function showByIdentifier(
         string $identifier
     ): View {
+        $account = Account::where('identifier', $identifier)->firstOrFail();
         return view('account', [
-            'account' =>
-                Account::where('identifier', $identifier)
-                    ->first()
+            'account' => $account,
+            'modelTable' =>
+            (new HtmlModelTableBuilder())
+                ->build($account),
+            'creditsTable' =>
+                (new HtmlPaymentRowBuilder())
+                    ->build($account->credits()->get()),
+            'debitsTable' =>
+                (new HtmlPaymentRowBuilder())
+                    ->build($account->debits()->get()),
         ]);
     }
 
@@ -65,13 +81,14 @@ class AccountViewer implements
     public function showOnNetwork(
         string $network
     ): View {
+        $accounts = Account::where('network', $network)->get();
         return view(
             'network-accounts',
             [
                 'network' => $network,
-                'accountsOnNetwork'
-                    => Account::where('network', $network)
-                        ->get()
+                'accountsTable' =>
+                    (new HtmlAccountRowBuilder())
+                        ->build($accounts)
             ]
         );
     }

@@ -11,7 +11,7 @@
         <h1>Account Networks</h1>
 
         <ul>
-        @foreach($accounts->sortByDesc('network') as $account)
+        @foreach($accounts->sortBy('network') as $account)
             <li>                
                 <a href='/{{ $account->network }}/accounts'>
                     {{ $account->network }}

@@ -22,7 +22,7 @@
                     <table>
                         <tr>
                             <td>
-                                <a href="currencies">Currencies</a>
+                                &bull; <a href="currencies">Currencies</a>
                             </td>
                             <td>
                                 <livewire:currency-populator-component />
@@ -30,18 +30,18 @@
                         </tr>
                         <tr>
                             <td>
-                            <a href="payments">Payments</a>
+                                &bull; <a href="payments">Payments</a>
                             </td>
                             <td>
-                            <livewire:payment-synchronizer-component />
+                                <livewire:payment-synchronizer-component />
                             </td>
                         </tr>
                         <tr>
                             <td>
-                            <a href="accounts">Accounts</a>
+                                &bull; <a href="accounts">Accounts</a>
                             </td>
                             <td>
-                            <livewire:account-synchronizer-component />
+                                <livewire:account-synchronizer-component />
                             </td>
                         </tr>
                     </table>

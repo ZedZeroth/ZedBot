@@ -10,16 +10,16 @@
 
         <h1>Currencies</h1>
 
-        <ol>
-            @foreach($currencies->sortBy('code') as $currency)
-                <li>
-                    <a href='currency/{{ $currency->code }}'>
-                        {{ $currency->code }}
-                        ({{ $currency->symbol }})
-                    </a>
-                </li>
-            @endforeach
-        </ol>
+        <ul>
+        @foreach($currencies->sortBy('code') as $currency)
+            <li>
+                <a href='currency/{{ $currency->code }}'>
+                    {{ $currency->code }}
+                    ({{ $currency->symbol }})
+                </a>
+            </li>
+        @endforeach
+</ul>
 
     </body>
 </html>

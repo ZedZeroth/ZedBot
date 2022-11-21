@@ -10,23 +10,13 @@
 
         <h1>Payments on every network</h1>
 
+        <ul><li>
         <a href='/payment/networks'>
-            View payments by network
+            View payments by network instead
         </a>
+        </li></ul>
 
-        <ul>
-        @foreach($payments as $payment)
-            <li>
-                {{ $payment->timestamp }}
-                [{{ $payment->network }}]
-                <a href='/payment/{{ $payment->id }}'>
-                    {{ $payment->memo }}:
-                    {{ $payment->formatAmount() }}
-                    {{ $payment->currency->code }}
-                </a>
-            </li>
-        @endforeach
-        </ul>
+        {!! $paymentsTable !!}
 
     </body>
 </html>
