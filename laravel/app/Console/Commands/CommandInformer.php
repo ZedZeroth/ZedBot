@@ -38,17 +38,9 @@ class CommandInformer
         $this->command = $command;
 
         // Build and output the title
-        if ($this->command->argument('source') == 'cli') {
-            $sourceEmoji = '📟';
-        } elseif ($this->command->argument('source') == 'browser') {
-            $sourceEmoji = '🖱️ ';
-        } elseif ($this->command->argument('source') == 'scheduler') {
-            $sourceEmoji = '🕑';
-        } elseif ($this->command->argument('source') == 'auto') {
-            $sourceEmoji = '🤖';
-        } else {
-            $sourceEmoji = '❓';
-        }
+        $sourceEmoji = $this->getEmojiFromCommandSource(
+            source: $this->command->argument('source')
+        );
 
         $this->output(
             '[' . $sourceEmoji . '] '
@@ -132,5 +124,22 @@ class CommandInformer
     ): void {
         $this->command->info($string);
         Log::info($string);
+    }
+
+    /**
+     * Converts the command's source input interface
+     * into a more concise emoji
+     *
+     * @param string $source
+     */
+    private function getEmojiFromCommandSource(string $source): string
+    {
+        return match ($source) {
+            'cli'       => '📟',
+            'browser'   => '🖱️ ',
+            'scheduler' => '🕑',
+            'auto'      => '🤖',
+            default     => '❓'
+        };
     }
 }

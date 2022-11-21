@@ -17,7 +17,7 @@ class ExceptionInformer
      * @param object $e
      * @param string $class
      * @param string $function
-     * @param string $line
+     * @param int $line
      * @return void
      */
     public function warn(
@@ -25,7 +25,7 @@ class ExceptionInformer
         object $e,
         string $class,
         string $function,
-        string $line
+        int $line
     ): void {
 
         // Explode file paths

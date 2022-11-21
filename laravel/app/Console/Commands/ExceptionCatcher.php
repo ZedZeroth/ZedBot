@@ -15,14 +15,14 @@ class ExceptionCatcher
      * @param Command $command
      * @param string $class
      * @param string $function
-     * @param string $line
+     * @param int $line
      * @return void
      */
     public function catch(
         Command $command,
         string $class,
         string $function,
-        string $line
+        int $line
     ): void {
         $exceptionCaught = null;
         try {
