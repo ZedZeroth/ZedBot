@@ -36,7 +36,7 @@ class AccountControllerTest extends TestCase
     {
         $this->assertInstanceOf(
             View::class,
-            (new AccountController())->showByIdentifier('GBP')
+            (new AccountController())->showByIdentifier('fps::gbp::400200::85845378')
         );
     }
 
