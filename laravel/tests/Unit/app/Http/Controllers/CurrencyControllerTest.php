@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature;
+namespace Tests\Unit\Http\Controllers;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -31,7 +31,7 @@ class CurrencyControllerTest extends TestCase
      *
      * @return void
      */
-    public function testShowByValidIdentifier(): void
+    public function testShowByIdentifierWithValidParameters(): void
     {
         $this->assertInstanceOf(
             View::class,
@@ -44,7 +44,7 @@ class CurrencyControllerTest extends TestCase
      *
      * @return void
      */
-    public function testShowByInvalidIdentifier(): void
+    public function testShowByIdentifierWithInvalidParameters(): void
     {
         $this->expectException(\TypeError::class);
 
