@@ -25,12 +25,18 @@ class PopulateCurrenciesCommand extends Command
         'Creates all required currencies.';
 
     /**
-     * Execute the command via the CommandInformer.
+     * Executes the command via the
+     * ExceptionCatcher and CommandInformer.
      *
      */
     public function handle(): void
     {
-        (new CommandInformer())->run(command: $this);
+        (new ExceptionCatcher())->catch(
+            command: $this,
+            class: __CLASS__,
+            function: __FUNCTION__,
+            line: __LINE__
+        );
     }
 
     /**

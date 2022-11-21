@@ -24,46 +24,22 @@ class SyncAccountsCommand extends Command
         'Synchronizes the account table with accounts from account providers.';
 
     /**
-     * Execute the command via the CommandInformer.
+     * Executes the command via the
+     * ExceptionCatcher and CommandInformer.
      *
      */
     public function handle(): void
     {
-        try {
-            try {
-                try {
-                    (new CommandInformer())
-                        ->run(command: $this);
-                } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                    (new ExceptionInformer())->warn(
-                        command: $this,
-                        e: $e,
-                        class: __CLASS__,
-                        function: __FUNCTION__,
-                        line: __LINE__
-                    );
-                }
-            } catch (\Illuminate\Http\Client\RequestException $e) {
-                (new ExceptionInformer())->warn(
-                    command: $this,
-                    e: $e,
-                    class: __CLASS__,
-                    function: __FUNCTION__,
-                    line: __LINE__
-                );
-            }
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            (new ExceptionInformer())->warn(
-                command: $this,
-                e: $e,
-                class: __CLASS__,
-                function: __FUNCTION__,
-                line: __LINE__
-            );
-        }
+        (new ExceptionCatcher())->catch(
+            command: $this,
+            class: __CLASS__,
+            function: __FUNCTION__,
+            line: __LINE__
+        );
     }
 
     /**
+     *
      * Execute the command itself.
      *
      */
