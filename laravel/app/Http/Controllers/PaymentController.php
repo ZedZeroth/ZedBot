@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\View\View;
 use App\Http\Controllers\Payments\PaymentViewer;
-use App\Console\Commands\CommandDTO;
+use App\Console\Commands\SyncCommandDTO;
 use App\Http\Controllers\Payments\PaymentSynchronizer;
 use App\Http\Controllers\MultiDomain\Adapters\AdapterBuilder;
 use App\Http\Controllers\MultiDomain\Adapters\Requester;
@@ -66,11 +66,11 @@ class PaymentController extends Controller implements ControllerInterface
      * Fetches recent payments from external providers
      * and creates any new ones that do not exist.
      *
-     * @param CommandDTO $dto
+     * @param SyncCommandDTO $commandDTO
      * @return void
      */
     public function sync(
-        CommandDTO $commandDTO
+        SyncCommandDTO $commandDTO
     ): void {
         // ↖️ Creat payments from the DTOs
         (new PaymentSynchronizer())
@@ -82,12 +82,9 @@ class PaymentController extends Controller implements ControllerInterface
                         (new AdapterBuilder())->build(
                             models: 'Payments',
                             action: 'Synchronizer',
-                            provider: $commandDTO->data['provider']
+                            provider: $commandDTO->provider
                         ),
-                    numberToFetch:
-                        $commandDTO->data[
-                            'numberOfPaymentsToFetch'
-                        ],
+                    numberToFetch: $commandDTO->numberToFetch
                 )
             );
         return;

@@ -7,12 +7,14 @@ namespace App\Console\Commands;
 /**
  * The command data transfer object
  * for moving command data between
- * commands and controllers.
+ * sycnhronizer commands and their
+ * controllers.
  */
-class CommandDTO
+class SyncCommandDTO implements CommandDTOInterface
 {
     public function __construct(
-        public array $data
+        public string $provider,
+        public int $numberToFetch
     ) {
     }
 }

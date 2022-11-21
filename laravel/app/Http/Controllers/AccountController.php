@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\View\View;
 use App\Http\Controllers\Accounts\AccountViewer;
-use App\Console\Commands\CommandDTO;
+use App\Console\Commands\SyncCommandDTO;
 use App\Http\Controllers\Accounts\AccountSynchronizer;
 use App\Http\Controllers\MultiDomain\Adapters\AdapterBuilder;
 use App\Http\Controllers\MultiDomain\Adapters\Requester;
@@ -67,11 +67,11 @@ class AccountController extends Controller implements
      * Fetches accounts from external providers
      * and creates any new ones that do not exist.
      *
-     * @param CommandDTO $dto
+     * @param SyncCommandDTO $commandDTO
      * @return void
      */
     public function sync(
-        CommandDTO $commandDTO
+        SyncCommandDTO $commandDTO
     ): void {
         // ↖️ Creat accounts from the DTOs
         (new AccountSynchronizer())
@@ -83,12 +83,9 @@ class AccountController extends Controller implements
                         (new AdapterBuilder())->build(
                             models: 'Accounts',
                             action: 'Synchronizer',
-                            provider: $commandDTO->data['provider']
+                            provider: $commandDTO->provider
                         ),
-                    numberToFetch:
-                        $commandDTO->data[
-                            'numberOfAccountsToFetch'
-                        ],
+                    numberToFetch: $commandDTO->numberToFetch
                 )
             );
         return;

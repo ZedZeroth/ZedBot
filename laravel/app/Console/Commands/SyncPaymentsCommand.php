@@ -47,13 +47,9 @@ class SyncPaymentsCommand extends Command
     public function runThisCommand(): void
     {
         // Build the DTO
-        $commandDTO = new CommandDTO(
-            data: [
-                'provider'
-                    => $this->argument('Provider'),
-                'numberOfPaymentsToFetch'
-                    => $this->argument('Number to fetch')
-            ]
+        $commandDTO = new SyncCommandDTO(
+            provider: $this->argument('Provider'),
+            numberToFetch: (int) $this->argument('Number to fetch')
         );
 
         // Inject the DTO into the relevant controller method

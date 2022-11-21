@@ -7,9 +7,9 @@ namespace Tests\Unit\App\Console\Commands;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use App\Console\Commands\CommandDTO;
+use App\Console\Commands\SyncCommandDTO;
 
-class CommandDTOTest extends TestCase
+class SyncCommandDTOTest extends TestCase
 {
     /**
      * TEST: The command data transfer object
@@ -19,8 +19,11 @@ class CommandDTOTest extends TestCase
     public function testConstructWithValidParameters(): void
     {
         $this->assertInstanceOf(
-            CommandDTO::class,
-            new CommandDTO([])
+            SyncCommandDTO::class,
+            new SyncCommandDTO(
+                provider: 'ENM',
+                numberToFetch: 0
+            )
         );
     }
 
@@ -34,8 +37,8 @@ class CommandDTOTest extends TestCase
         $this->expectException(\TypeError::class);
 
         $this->assertInstanceOf(
-            CommandDTO::class,
-            new CommandDTO()
+            SyncCommandDTO::class,
+            new SyncCommandDTO()
         );
     }
 }

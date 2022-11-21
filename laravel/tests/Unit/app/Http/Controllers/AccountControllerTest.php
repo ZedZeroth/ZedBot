@@ -10,7 +10,7 @@ use Tests\TestCase;
 use Illuminate\View\View;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Accounts\AccountSynchonizer;
-use App\Console\Commands\CommandDTO;
+use App\Console\Commands\SyncCommandDTO;
 
 class AccountControllerTest extends TestCase
 {
@@ -106,11 +106,9 @@ class AccountControllerTest extends TestCase
     {
         $this->assertNull(
             (new AccountController())->sync(
-                new CommandDTO(
-                    [
-                        'provider' => 'ENM',
-                        'numberOfAccountsToFetch' => 0
-                    ]
+                new SyncCommandDTO(
+                    provider: 'ENM',
+                    numberToFetch: 0
                 )
             )
         );

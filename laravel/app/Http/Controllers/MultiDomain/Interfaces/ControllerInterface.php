@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\MultiDomain\Interfaces;
 
 use Illuminate\View\View;
-use App\Console\Commands\CommandDTO;
+use App\Console\Commands\SyncCommandDTO;
 
 interface ControllerInterface
 {
@@ -45,10 +45,10 @@ interface ControllerInterface
      * Fetches models from external providers
      * and creates any new ones that do not exist.
      *
-     * @param CommandDTO $dto
+     * @param SyncCommandDTO $dto
      * @return void
      */
     public function sync(
-        CommandDTO $commandDTO
+        SyncCommandDTO $commandDTO
     ): void;
 }
