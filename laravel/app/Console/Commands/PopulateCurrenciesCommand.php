@@ -44,10 +44,11 @@ class PopulateCurrenciesCommand extends Command
     /**
      * Execute the command itself.
      *
-     * @return CurrencyPopulator
+     * @return void
      */
-    public function runThisCommand(): CurrencyPopulator
+    public function runThisCommand(): void
     {
-        return (new CurrencyController())->populate();
+        (new CurrencyController())->populate();
+        return;
     }
 }

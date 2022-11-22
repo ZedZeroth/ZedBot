@@ -2,130 +2,102 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Http\Controllers;
-
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-use Illuminate\View\View;
 use App\Http\Controllers\AccountController;
+use Illuminate\View\View;
 use App\Http\Controllers\Accounts\AccountSynchonizer;
 use App\Console\Commands\SyncCommandDTO;
 
-class AccountControllerTest extends TestCase
-{
-    /**
-     * TEST: Show all accounts.
-     *
-     * @return void
-     */
-    public function testShowAll(): void
-    {
-        $this->assertInstanceOf(
-            View::class,
-            (new AccountController())->showAll()
-        );
-    }
+// construct
+test('new --> AccountController')
+    ->expect(fn() => new AccountController())
+    ->toBeInstanceOf(AccountController::class);
 
-    /**
-     * TEST: Show the details of a given account.
-     *
-     * @return void
-     */
-    public function testShowByIdentifierWithValidParameters(): void
-    {
-        $this->assertInstanceOf(
-            View::class,
-            (new AccountController())->showByIdentifier('fps::gbp::400200::85845378')
-        );
-    }
+// showAll
+test('showAll --> View')
+    ->expect(fn() => (new AccountController())->showAll())
+    ->toBeInstanceOf(View::class);
 
-    /**
-     * TEST: Show the details of a given account.
-     *
-     * @return void
-     */
-    public function testShowByIdentifierWithInvalidParameters(): void
-    {
-        $this->expectException(\TypeError::class);
+// showByIdentifier
+test('showByIdentifier --> correct parameters --> View')
+    ->expect(fn() => (new AccountController())->showByIdentifier(env('ZED_TEST_ACCOUNT_IDENTIFIER')))
+    ->toBeInstanceOf(View::class);
 
-        $this->assertInstanceOf(
-            View::class,
-            (new AccountController())->showByIdentifier(0)
-        );
-    }
+test('showByIdentifier --> no parameters --> TypeError')
+    ->expectException(ArgumentCountError::class)
+    ->expect(fn() => (new AccountController())->showByIdentifier())
+    ->toBeInstanceOf(View::class);
 
-    /**
-     * TEST: Show all account networks.
-     *
-     * @return void
-     */
-    public function testShowNetworks(): void
-    {
-        $this->assertInstanceOf(
-            View::class,
-            (new AccountController())->showNetworks()
-        );
-    }
+test('showByIdentifier --> incorrect parameter type --> TypeError')
+    ->expectException(TypeError::class)
+    ->expect(fn() => (new AccountController())->showByIdentifier(0))
+    ->toBeInstanceOf(View::class);
 
-    /**
-     * TEST: Show all accounts on one account network.
-     *
-     * @return void
-     */
-    public function testShowOnNetworkWithValidParameters(): void
-    {
-        $this->assertInstanceOf(
-            View::class,
-            (new AccountController())->showOnNetwork('GBP')
-        );
-    }
+test('showByIdentifier --> incorrect identifier --> ModelNotFoundException')
+    ->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class)
+    ->expect(fn() => (new AccountController())->showByIdentifier('0'))
+    ->toBeInstanceOf(View::class);
 
-    /**
-     * TEST: Show all accounts on one account network.
-     *
-     * @return void
-     */
-    public function testShowOnNetworkWithInvalidParameters(): void
-    {
-        $this->expectException(\TypeError::class);
+// showNetworks
+test('showNetworks --> View')
+    ->expect(fn() => (new AccountController())->showNetworks())
+    ->toBeInstanceOf(View::class);
 
-        $this->assertInstanceOf(
-            View::class,
-            (new AccountController())->showOnNetwork(0)
-        );
-    }
+// showOnNetwork
+test('showOnNetwork --> correct parameters --> View')
+    ->expect(fn() => (new AccountController())->showOnNetwork('FPS'))
+    ->toBeInstanceOf(View::class);
 
-    /**
-     * TEST: Fetches accounts from external providers
-     * and creates any new ones that do not exist.
-     *
-     * @return void
-     */
-    public function testSyncWithValidParameters(): void
-    {
-        $this->assertNull(
-            (new AccountController())->sync(
-                new SyncCommandDTO(
-                    provider: 'ENM',
-                    numberToFetch: 0
-                )
-            )
-        );
-    }
+test('showOnNetwork --> no parameters --> TypeError')
+    ->expectException(ArgumentCountError::class)
+    ->expect(fn() => (new AccountController())->showOnNetwork())
+    ->toBeInstanceOf(View::class);
 
-    /**
-     * TEST: Fetches accounts from external providers
-     * and creates any new ones that do not exist.
-     *
-     * @return void
-     */
-    public function testSyncWithInvalidParameters(): void
-    {
-        $this->expectException(\TypeError::class);
+test('showOnNetwork --> incorrect parameter type --> TypeError')
+    ->expectException(TypeError::class)
+    ->expect(fn() => (new AccountController())->showOnNetwork(0))
+    ->toBeInstanceOf(View::class);
 
-        $this->assertNull(
-            (new AccountController())->sync()
-        );
-    }
-}
+test('showOnNetwork --> incorrect identifier --> ModelNotFoundException')
+    ->expectException(\Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class)
+    ->expect(fn() => (new AccountController())->showOnNetwork('0'))
+    ->toBeInstanceOf(View::class);
+
+// sync
+test('sync --> correct parameters --> null')
+    ->expect(fn() => (new AccountController())->sync(
+        new SyncCommandDTO(
+            provider: 'ENM',
+            numberToFetch: 0
+        )
+    ))
+    ->toBeNull();
+
+test('sync --> no parameters --> ArgumentCountError')
+    ->expectException(ArgumentCountError::class)
+    ->expect(fn() => (new AccountController())->sync())
+    ->toBeNull();
+
+test('sync --> incorrect parameter type --> TypeError')
+    ->expectException(TypeError::class)
+    ->expect(fn() => (new AccountController())->sync(0))
+    ->toBeNull();
+
+test('sync --> incorrect provider --> Error')
+    ->expectException(Error::class)
+    ->expect(fn() => (new AccountController())->sync(
+        new SyncCommandDTO(
+            provider: '0',
+            numberToFetch: 0
+        )
+    ))
+    ->toBeNull();
+
+test('sync --> incorrect numberToFetch type --> Error')
+    ->expectException(TypeError::class)
+    ->expect(fn() => (new AccountController())->sync(
+        new SyncCommandDTO(
+            provider: 'ENM',
+            numberToFetch: '0'
+        )
+    ))
+    ->toBeNull();

@@ -2,68 +2,42 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Http\Controllers;
-
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
+use App\Http\Controllers\AccountController;
 use Illuminate\View\View;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\Currencies\CurrencyPopulator;
 
-class CurrencyControllerTest extends TestCase
-{
-    /**
-     * TEST: Show all currencies.
-     *
-     * @return void
-     */
-    public function testShowAll(): void
-    {
-        $this->assertInstanceOf(
-            View::class,
-            (new CurrencyController())->showAll()
-        );
-    }
+// construct
+test('new --> CurrencyController')
+    ->expect(fn() => new CurrencyController())
+    ->toBeInstanceOf(CurrencyController::class);
 
-    /**
-     * TEST: Show the profile for a given currency.
-     *
-     * @return void
-     */
-    public function testShowByIdentifierWithValidParameters(): void
-    {
-        $this->assertInstanceOf(
-            View::class,
-            (new CurrencyController())->showByIdentifier('GBP')
-        );
-    }
+// showAll
+test('showAll --> View')
+    ->expect(fn() => (new CurrencyController())->showAll())
+    ->toBeInstanceOf(View::class);
 
-    /**
-     * TEST: Show the profile for a given currency.
-     *
-     * @return void
-     */
-    public function testShowByIdentifierWithInvalidParameters(): void
-    {
-        $this->expectException(\TypeError::class);
+// showByIdentifier
+test('showByIdentifier --> correct parameters --> View')
+    ->expect(fn() => (new CurrencyController())->showByIdentifier('GBP'))
+    ->toBeInstanceOf(View::class);
 
-        $this->assertInstanceOf(
-            View::class,
-            (new CurrencyController())->showByIdentifier(0)
-        );
-    }
+test('showByIdentifier --> no parameters --> ArgumentCountError')
+    ->expectException(ArgumentCountError::class)
+    ->expect(fn() => (new CurrencyController())->showByIdentifier())
+    ->toBeInstanceOf(View::class);
 
-    /**
-     * TEST: Creates all required currencies.
-     *
-     * @return void
-     */
-    public function testPopulate(): void
-    {
-        $this->assertInstanceOf(
-            CurrencyPopulator::class,
-            (new CurrencyController())->populate()
-        );
-    }
-}
+test('showByIdentifier --> incorrect parameter type --> TypeError')
+    ->expectException(TypeError::class)
+    ->expect(fn() => (new CurrencyController())->showByIdentifier(0))
+    ->toBeInstanceOf(View::class);
+
+test('showByIdentifier --> incorrect identifier --> ModelNotFoundException')
+    ->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class)
+    ->expect(fn() => (new CurrencyController())->showByIdentifier('XXX'))
+    ->toBeInstanceOf(View::class);
+
+// populate
+test('populate --> null')
+    ->expect(fn() => (new CurrencyController())->populate())
+    ->toBeNull();

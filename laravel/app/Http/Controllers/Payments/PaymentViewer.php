@@ -78,6 +78,10 @@ class PaymentViewer implements
         string $network
     ): View {
         $payments = Payment::where('network', $network)->get();
+        // Abort if no matches found
+        if (empty($payments->count())) {
+            abort(404);
+        }
         return view(
             'network-payments',
             [

@@ -82,6 +82,10 @@ class AccountViewer implements
         string $network
     ): View {
         $accounts = Account::where('network', $network)->get();
+        // Abort if no matches found
+        if (empty($accounts->count())) {
+            abort(404);
+        }
         return view(
             'network-accounts',
             [

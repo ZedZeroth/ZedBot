@@ -34,7 +34,7 @@ class CurrencyViewer implements ViewerInterface
     public function showByIdentifier(
         string $identifier
     ): View {
-        $currency = Currency::where('code', $identifier)->first();
+        $currency = Currency::where('code', $identifier)->firstOrFail();
         return view('currency', [
             'currency' => $currency,
             'modelTable' =>

@@ -1,26 +1,36 @@
 <?php
 
-//declare(strict_types=1);
+declare(strict_types=1);
 
 use App\Http\Controllers\Currencies\CurrencyViewer;
 use Illuminate\View\View;
 
-it('should assert showAll returns View', function () {
-    $this->assertInstanceOf(
-        View::class,
-        (new CurrencyViewer())->showAll()
-    );
-});
+// construct
+test('new --> CurrencyViewer')
+    ->expect(fn() => new CurrencyViewer())
+    ->toBeInstanceOf(CurrencyViewer::class);
 
-it('should also assert showAll returns View', function () {
-    expect(
-        (new CurrencyViewer())->showAll()
-    )->toBeInstanceOf(View::class);
-});
+// showAll
+test('showAll --> View')
+    ->expect(fn() => (new CurrencyViewer())->showAll())
+    ->toBeInstanceOf(View::class);
 
-it('asserts construction constructs...', function () {
-    $this->assertInstanceOf(
-        CurrencyViewer::class,
-        new CurrencyViewer()
-    );
-});
+// showByIdentifier
+test('showByIdentifier --> correct parameters --> View')
+    ->expect(fn() => (new CurrencyViewer())->showByIdentifier('GBP'))
+    ->toBeInstanceOf(View::class);
+
+test('showByIdentifier --> no parameters --> ArgumentCountError')
+    ->expectException(ArgumentCountError::class)
+    ->expect(fn() => (new CurrencyViewer())->showByIdentifier())
+    ->toBeInstanceOf(View::class);
+
+test('showByIdentifier --> incorrect parameter type --> TypeError')
+    ->expectException(TypeError::class)
+    ->expect(fn() => (new CurrencyViewer())->showByIdentifier(0))
+    ->toBeInstanceOf(View::class);
+
+test('showByIdentifier --> incorrect identifier --> ModelNotFoundException')
+    ->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class)
+    ->expect(fn() => (new CurrencyViewer())->showByIdentifier('XXX'))
+    ->toBeInstanceOf(View::class);

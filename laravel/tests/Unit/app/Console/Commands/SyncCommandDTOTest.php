@@ -2,43 +2,38 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\App\Console\Commands;
-
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 use App\Console\Commands\SyncCommandDTO;
 
-class SyncCommandDTOTest extends TestCase
-{
-    /**
-     * TEST: The command data transfer object
-     * for moving command data between
-     * commands and controllers.
-     */
-    public function testConstructWithValidParameters(): void
-    {
-        $this->assertInstanceOf(
-            SyncCommandDTO::class,
-            new SyncCommandDTO(
-                provider: 'ENM',
-                numberToFetch: 0
-            )
-        );
-    }
+// construct
+test('new --> correct parameters --> SyncCommandDTO')
+    ->expect(fn() => new SyncCommandDTO(
+        provider: 'ENM',
+        numberToFetch: 0
+    ))
+    ->toBeInstanceOf(SyncCommandDTO::class);
 
-    /**
-     * TEST: The command data transfer object
-     * for moving command data between
-     * commands and controllers.
-     */
-    public function testConstructWithInvalidParameters(): void
-    {
-        $this->expectException(\TypeError::class);
+test('new --> no parameters --> ArgumentCountError')
+    ->expectException(ArgumentCountError::class)
+    ->expect(fn() => new SyncCommandDTO())
+    ->toBeInstanceOf(SyncCommandDTO::class);
 
-        $this->assertInstanceOf(
-            SyncCommandDTO::class,
-            new SyncCommandDTO()
-        );
-    }
-}
+test('new --> incorrect parameter type --> TypeError')
+    ->expectException(TypeError::class)
+    ->expect(fn() => new SyncCommandDTO(0))
+    ->toBeInstanceOf(SyncCommandDTO::class);
+
+test('new --> incorrect provider type --> TypeError')
+    ->expectException(TypeError::class)
+    ->expect(fn() => new SyncCommandDTO(
+        provider: 0,
+        numberToFetch: 0
+    ))
+    ->toBeInstanceOf(SyncCommandDTO::class);
+
+test('new --> incorrect numberToFetch type --> TypeError')
+    ->expectException(TypeError::class)
+    ->expect(fn() => new SyncCommandDTO(
+        provider: 'ENM',
+        numberToFetch: '0'
+    ))
+    ->toBeInstanceOf(SyncCommandDTO::class);

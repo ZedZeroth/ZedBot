@@ -10,9 +10,9 @@ class CurrencyPopulator
     /**
      * Creates all required currencies.
      *
-     * @return CurrencyPopulator
+     * @return void
      */
-    public function populate(): CurrencyPopulator
+    public function populate(): void
     {
         $currenciesPopulated = [];
 
@@ -188,6 +188,6 @@ class CurrencyPopulator
         // Refresh the web component
         (new CurrencyPopulatorComponent())->render();
 
-        return $this;
+        return;
     }
 }
