@@ -67,11 +67,11 @@ class AccountController extends Controller implements
      * Fetches accounts from external providers
      * and creates any new ones that do not exist.
      *
-     * @param SyncCommandDTO $commandDTO
+     * @param SyncCommandDTO $syncCommandDTO
      * @return void
      */
     public function sync(
-        SyncCommandDTO $commandDTO
+        SyncCommandDTO $syncCommandDTO
     ): void {
         // ↖️ Creat accounts from the DTOs
         (new AccountSynchronizer())
@@ -83,9 +83,9 @@ class AccountController extends Controller implements
                         (new AdapterBuilder())->build(
                             models: 'Accounts',
                             action: 'Synchronizer',
-                            provider: $commandDTO->provider
+                            provider: $syncCommandDTO->provider
                         ),
-                    numberToFetch: $commandDTO->numberToFetch
+                    numberToFetch: $syncCommandDTO->numberToFetch
                 )
             );
         return;

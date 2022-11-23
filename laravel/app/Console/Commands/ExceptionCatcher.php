@@ -30,21 +30,29 @@ class ExceptionCatcher
                 try {
                     try {
                         try {
-                            (new CommandInformer())
-                                ->run(command: $command);
-                        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                            try {
+                                try {
+                                    (new CommandInformer())
+                                        ->run(command: $command);
+                                } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                                    $exceptionCaught = $e;
+                                }
+                            } catch (\Illuminate\Http\Client\RequestException $e) {
+                                $exceptionCaught = $e;
+                            }
+                        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                             $exceptionCaught = $e;
                         }
-                    } catch (\Illuminate\Http\Client\RequestException $e) {
+                    } catch (\Illuminate\Support\ItemNotFoundException $e) {
                         $exceptionCaught = $e;
                     }
-                } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                } catch (\TypeError $e) {
                     $exceptionCaught = $e;
                 }
-            } catch (\Illuminate\Support\ItemNotFoundException $e) {
+            } catch (\ArgumentCountError $e) {
                 $exceptionCaught = $e;
             }
-        } catch (\TypeError $e) {
+        } catch (\Error $e) {
             $exceptionCaught = $e;
         }
 

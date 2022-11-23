@@ -66,11 +66,11 @@ class PaymentController extends Controller implements ControllerInterface
      * Fetches recent payments from external providers
      * and creates any new ones that do not exist.
      *
-     * @param SyncCommandDTO $commandDTO
+     * @param SyncCommandDTO $syncCommandDTO
      * @return void
      */
     public function sync(
-        SyncCommandDTO $commandDTO
+        SyncCommandDTO $syncCommandDTO
     ): void {
         // ↖️ Creat payments from the DTOs
         (new PaymentSynchronizer())
@@ -82,9 +82,9 @@ class PaymentController extends Controller implements ControllerInterface
                         (new AdapterBuilder())->build(
                             models: 'Payments',
                             action: 'Synchronizer',
-                            provider: $commandDTO->provider
+                            provider: $syncCommandDTO->provider
                         ),
-                    numberToFetch: $commandDTO->numberToFetch
+                    numberToFetch: $syncCommandDTO->numberToFetch
                 )
             );
         return;

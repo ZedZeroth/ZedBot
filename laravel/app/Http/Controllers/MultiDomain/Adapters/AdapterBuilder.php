@@ -48,7 +48,7 @@ class AdapterBuilder
         $generalPath = 'App\Http\Controllers\MultiDomain\Adapters';
         if (
             in_array(
-                $provider,
+                strtoupper($provider),
                 explode(',', env('USES_POST_TO_GET'))
             )
         ) {
