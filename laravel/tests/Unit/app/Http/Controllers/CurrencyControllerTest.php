@@ -103,4 +103,4 @@ test('Expect a general Error, when CurrencyController\'s "populate" method has n
     ->expect(fn() => (new CurrencyController())->showByIdentifier(
         xxx: 0
     ))
-    ->toBeInstanceOf(View::class);
+    ->toBeNull();

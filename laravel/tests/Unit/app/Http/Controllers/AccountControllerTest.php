@@ -14,11 +14,11 @@ use App\Console\Commands\SyncCommandDTO;
 /**
  * Instantiation
  */
-test('Expect instantiation of AccountController, with no parameters, to return a AccountController')
+test('Expect instantiation of AccountController, with no parameters, to return an AccountController')
     ->expect(fn() => new AccountController())
     ->toBeInstanceOf(AccountController::class);
 
-test('Expect instantiation of AccountController, with an unnamed parameter, to return a AccountController')
+test('Expect instantiation of AccountController, with an unnamed parameter, to return an AccountController')
     ->expect(fn() => new AccountController(
         0
     ))
