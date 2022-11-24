@@ -14,7 +14,7 @@ use App\Console\Commands\SyncCommandDTO;
 /**
  * Instantiation
  */
-test('Expect instantiation of AccountController, with no parameters, to return an AccountController')
+test('GIVEN no parameters WHEN instantiating THEN an instance is returned')
     ->expect(fn() => new AccountController())
     ->toBeInstanceOf(AccountController::class);
 

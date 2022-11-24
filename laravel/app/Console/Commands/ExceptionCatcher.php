@@ -26,33 +26,27 @@ class ExceptionCatcher
     ): void {
         $exceptionCaught = null;
         try {
-            try {
-                try {
-                    try {
-                        try {
-                            try {
-                                try {
-                                    (new CommandInformer())
-                                        ->run(command: $command);
-                                } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                                    $exceptionCaught = $e;
-                                }
-                            } catch (\Illuminate\Http\Client\RequestException $e) {
-                                $exceptionCaught = $e;
-                            }
-                        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                            $exceptionCaught = $e;
-                        }
-                    } catch (\Illuminate\Support\ItemNotFoundException $e) {
-                        $exceptionCaught = $e;
-                    }
-                } catch (\TypeError $e) {
-                    $exceptionCaught = $e;
-                }
-            } catch (\ArgumentCountError $e) {
-                $exceptionCaught = $e;
-            }
+            (new CommandInformer())
+                ->run(command: $command);
+        // Http exceptions
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            $exceptionCaught = $e;
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            $exceptionCaught = $e;
+        // Not found exceptions
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            $exceptionCaught = $e;
+        } catch (\Illuminate\Support\ItemNotFoundException $e) {
+            $exceptionCaught = $e;
+        // Argument errors
+        } catch (\TypeError $e) {
+            $exceptionCaught = $e;
+        } catch (\ArgumentCountError $e) {
+            $exceptionCaught = $e;
         } catch (\Error $e) {
+            $exceptionCaught = $e;
+        // String validation exceptions
+        } catch (\App\Http\Controllers\MultiDomain\Validators\StringValidationException $e) {
             $exceptionCaught = $e;
         }
 

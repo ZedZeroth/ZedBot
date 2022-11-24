@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\MultiDomain\Validators\StringValidator;
 
 class SyncAccountsCommand extends Command
 {
@@ -47,15 +48,28 @@ class SyncAccountsCommand extends Command
      */
     public function runThisCommand(): void
     {
+        // Validate the command arguments
+        (new StringValidator())->validate(
+            string: $this->argument('Provider'),
+            stringName: 'Provider',
+            shortestLength: 3,
+            longestLength: 4,
+            containsUppercase: true,
+            containsLowercase: false,
+            isAlphabetical: true,
+            isNumeric: false,
+            isAlphanumeric: true
+        );
+
         // Build the DTO
-        $commandDTO = new SyncCommandDTO(
+        $syncCommandDTO = new SyncCommandDTO(
             provider: $this->argument('Provider'),
             numberToFetch: (int) $this->argument('Number to fetch')
         );
 
         // Inject the DTO into the relevant controller method
         (new AccountController())
-            ->sync(commandDTO: $commandDTO);
+            ->sync(syncCommandDTO: $syncCommandDTO);
 
         return;
     }
