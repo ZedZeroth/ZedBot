@@ -25,6 +25,9 @@ class AccountsSynchronizerRequestAdapterForENM implements
     public function buildPostParameters(
         int $numberToFetch
     ): RequestAdapterInterface {
+
+        // Integer validation
+
         $this->postParameters = [
             'accountERN' => env('ZED_ENM_ACCOUNT_ERN'),
             'take' => $numberToFetch

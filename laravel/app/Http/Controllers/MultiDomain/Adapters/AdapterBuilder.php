@@ -6,7 +6,7 @@ class AdapterBuilder
 {
     /**
      * Builds the correct adapters for
-     * the specified account provider.
+     * the specified API platform.
      *
      * @param string $models
      * @param string $action
@@ -49,7 +49,7 @@ class AdapterBuilder
         if (
             in_array(
                 strtoupper($provider),
-                explode(',', env('USES_POST_TO_GET'))
+                explode(',', env('ZED_APIS_THAT_USE_POST_REQUESTS_FOR_FETCHING'))
             )
         ) {
             $getOrPostAdapterClass = $generalPath

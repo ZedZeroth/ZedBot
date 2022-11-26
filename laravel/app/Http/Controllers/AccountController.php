@@ -73,13 +73,13 @@ class AccountController extends Controller implements
     public function sync(
         SyncCommandDTO $syncCommandDTO
     ): void {
-        // ↖️ Creat accounts from the DTOs
+        // ↖️ Creat accounts from the AccountDTOs
         (new AccountSynchronizer())
             ->sync(
-                // ↖️ Build DTOs from the request
+                // ↖️ Array of AccountDTOs
                 (new Requester())->request(
                     adapterDTO:
-                        // ↖️ Build the required adapters
+                        // ↖️ AdapterDTO
                         (new AdapterBuilder())->build(
                             models: 'Accounts',
                             action: 'Synchronizer',

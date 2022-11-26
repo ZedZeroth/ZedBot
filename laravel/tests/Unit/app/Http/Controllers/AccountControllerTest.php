@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AccountController;
 use Illuminate\View\View;
-use App\Http\Controllers\Accounts\AccountSynchonizer;
+use App\Http\Controllers\Accounts\AccountSynchronizer;
 use App\Console\Commands\SyncCommandDTO;
 
 /**
@@ -37,6 +37,15 @@ test('Expect a general Error, when instantiating AccountController with named pa
 test('Expect AccountController\'s "showAll" method, with no parameters, to return a View')
     ->expect(fn() => (new AccountController())->showAll())
     ->toBeInstanceOf(View::class);
+
+test('Mock testing...', function () {
+    $mock = mock(AccountViewer::class)->expect(
+        showAll: fn () => true
+    );
+
+    expect((new AccountController())->showAll())->toBeInstanceOf(View::class);
+    expect($mock->showAll())->toBeTrue();
+});
 
 test('Expect AccountController\'s "showAll" method, with an unnamed parameter, to return a View')
     ->expect(fn() => (new AccountController())->showAll(
@@ -152,6 +161,14 @@ test('Expect AccountController\'s "sync" method, injected with a valid SyncComma
         )
     ))
     ->toBeNull();
+
+test('GIVEN xxx WHEN xxx THEN xxx', function () {
+    $mock = mock(AccountController::class)->expect(
+        sync: fn ($test) => false
+    );
+
+    expect($mock->sync(new SyncCommandDTO('', 0)))->toBeNull();
+});
 
 test('Expect an ArgumentCountError, when AccountController\'s "sync" method has no parameters')
     ->expectException(ArgumentCountError::class)
